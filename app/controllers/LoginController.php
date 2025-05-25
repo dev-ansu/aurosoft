@@ -30,16 +30,18 @@ class LoginController extends Controller{
             $request = $this->loginRequest->validated();
            
             if(!$request){
-                redirect();
-                exit;
+                $this->denied('message', 'Verifique os campos e tente novamente.');
             }
             
             $data = $request->data();
             $user = $this->auth->execute($data);
-            
+
             if(!$user){
-                setFlash("message", 'E-mail ou senha incorretos.');
-                redirect();
+                $this->denied('message', 'E-mail ou senha incorretos.');
+            }
+
+            if(strtolower($user->ativo) !== "sim"){
+                $this->denied('message', 'O seu acesso está bloqueado, pois o seu perfil não está ativo.');
             }
 
             App::authSession()->init($user);

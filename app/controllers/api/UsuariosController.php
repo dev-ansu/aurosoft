@@ -87,10 +87,27 @@ class UsuariosController extends Controller{
                 HTML;
 
         }
-
+        $assetsPath = ASSETS_PATH;
         echo <<<HTML
             </tbody>
+                <div id="mensagem-excluir" class="alert alert-danger d-flex justify-content-between" >
+                    <span></span>
+                    <span>X</span>
+                </div>
+                
             </table>
+            <script type="text/javascript">
+                $(document).ready( ()=> {
+                    const table = new DataTable("#tabela", {
+                        language: {
+                            url: "$assetsPath/js/pt-BR.js",
+                        },
+                        ordering: false,
+                        stateSave: true
+                    })
+                
+                })
+            </script>
         HTML;
 
         return;

@@ -72,16 +72,16 @@ $session = App::authSession()->get();
 
 
 <!-- Modal Perfil -->
-<div class="modal fade" id="modalPerfil" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="exampleModalLabel">Alterar Dados</h4>
-				<button id="btn-fechar-perfil" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
+				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_inserir">Inserir dados</span></h4>
+				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form id="form-perfil">
+			<form id="form">
 			<div class="modal-body">
 				
 
@@ -113,6 +113,23 @@ $session = App::authSession()->get();
 						<div class="col-md-4">							
 								<label>Confirmar Senha</label>
 								<input type="password" class="form-control" id="conf_senha_perfil" name="conf_senha" placeholder="Confirmar Senha" value="" required>							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">							
+								<label>Rua</label>
+								<input type="text" class="form-control" id="rua" name="rua" placeholder="Nome da rua" value="<?= @$session->rua ?>" required>							
+						</div>
+
+
+						<div class="col-md-4">							
+								<label>Número da casa</label>
+								<input type="password" class="form-control" id="numero" name="numero" placeholder="Número da casa" value="<?= @$session->numero ?>" required>							
+						</div>
+
+						<div class="col-md-4">							
+								<label>Bairro</label>
+								<input type="password" class="form-control" id="bairro" name="bairro" placeholder="Nome do bairro" value="<?= @$session->bairro ?>" required>							
 						</div>
 					</div>
 

@@ -25,7 +25,7 @@ class AuthService extends DBManager{
         $user = $prepare->fetch();
 
         if(!$user) return false;
-
+        
         $passwordVerify = password_verify($senha, $user->senha);
 
         if(!$passwordVerify) return false;

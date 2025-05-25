@@ -31,30 +31,35 @@ function component(string $componentName, array $componentData = []): void{
 }
 
 function setOld(string $key, mixed $value): void{
+    $key = $key . ".old";
     $session = App::session();
-
-    if(!$session->has($key) && empty($session->get($key))){
+       
+    if(empty($session->get($key))){
         $key = escape($key);
         $value = escape($value);
+   
         $session->__set($key, $value);
     }
+    
 
 }
 
 function getOld(string $key){
+  
     $session = App::session();
 
-    if($session->has($key) && !empty($session->get($key))){
+    
+    if($session->has($key) || !empty($session->get($key))){
         $key = escape($key);
 
         $old = $session->__get($key);
 
         $session->unset($key);
 
-        $old = escape($old);
-
         return $old;
     }
+
+    return null;
 }
 
 /**
@@ -71,6 +76,7 @@ function setFlash(string $key, string $message, string $type = "danger"){
         $_SESSION[$key] = [
             'message' => $message,
             'type' => $type,
+            'id' => 'css'.md5($key . $message . $type . time()),
         ];
 
     }
@@ -94,129 +100,117 @@ function getFlash($key, $onlyText = false){
 
         $message = $flash['message'];
         $type = $flash['type'];
+        $id = $flash['id'];
 
         $message = htmlspecialchars($flash['message'], ENT_QUOTES, 'UTF-8');
         $type = htmlspecialchars($flash['type'], ENT_QUOTES, 'UTF-8');
+        $id = htmlspecialchars($flash['id'], ENT_QUOTES, 'UTF-8');
         
-        // Define CSS e JS apenas na primeira vez
-        static $assetsLoaded = false;
+        // Controle separado de carregamento
+        static $basicAssetsLoaded = false;
+        static $fullCssLoaded = false;
 
         $styles = '';
         $scripts = '';
 
-        if (!$assetsLoaded) {
-            $assetsLoaded = true;
-            if(!$onlyText){
+        // Sempre carrega o básico na primeira execução
+        if (!$basicAssetsLoaded) {
+            $basicAssetsLoaded = true;
 
-                $styles = <<<STYLE
-                    <style>
-                        .alert {
-                            width: auto;
-                            height: auto;
-                            padding: 15px 10px;
-                            display: flex;
-                            border-radius: 10px;
-                            align-items: center;
-                            justify-content: space-between;
-                            font-size: 16px;
-                            font-family: sans-serif;
-                            margin-bottom: 10px;
-                        }
+            $styles .= <<<STYLE
+                <style>
+                    .my-alert {
+                        width: auto;
+                        height: auto;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        font-family: sans-serif;
+                    }
 
-                        .alert.alert-danger {
-                            background: #f8d7da;
-                            color: #7f4159;
-                        }
+                    .btn-close-alert::before {
+                        content: "X";
+                    }
 
-                        .alert.alert-success {
-                            background: #d4ecdb;
-                            color: #32643c;
-                        }
+                    .btn-close-alert {
+                        display: block;
+                        cursor: pointer;
+                        background-color: transparent;
+                        outline: none;
+                        border: 1px solid transparent;
+                    }
+                </style>
+            STYLE;
 
-                        .alert.alert-primary {
-                            background: #cde5fe;
-                            color: #8f6941;
-                        }
-
-                        .alert.alert-warning {
-                            background: #fef3cc;
-                            color: #8f6941;
-                        }
-
-                        .btn-close-alert::before {
-                            content: "X";
-                        }
-
-                        .btn-close-alert {
-                            display: block;
-                            cursor: pointer;
-                            background-color: transparent;
-                            outline: none;
-                            border: 1px solid transparent;
-                            padding: 5px 10px;
-                            border-radius: 4px;
-                            transition: all 0.4s ease;
-                        }
-
-                        .btn-close-alert:hover {
-                            background: #ccc;
-                        }
-                    </style>
-                STYLE;
-            }else{
-                $styles =<<<STYLE
-                    <style>
-                        .alert {
-                            width: auto;
-                            height: auto;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            font-family: sans-serif;
-                        }
-
-                        .btn-close-alert::before {
-                            content: "X";
-                        }
-
-                        .btn-close-alert {
-                            display: block;
-                            cursor: pointer;
-                            background-color: transparent;
-                            outline: none;
-                            border: 1px solid transparent;
-                        }
-
-
-                        </style>
-                STYLE;
-            }
-
-            $scripts = <<<SCRIPT
+            $scripts .= <<<SCRIPT
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         document.querySelectorAll('.btn-close-alert').forEach(function (btn) {
-                            btn.addEventListener('click', function () {
-                                const alert = this.closest('.alert')
-                                if(alert) { alert.remove() };
-                                const container = document.querySelector(".alert-container");
-                                if(container && container.children.length < 3){
-                                    container.remove()
-                                }
+                            btn.addEventListener('click', function (e) {
+                                let alertClicked = document.getElementById(e.target.parentNode.id);
+                                alertClicked.remove();
                             });
                         });
                     });
                 </script>
             SCRIPT;
         }
+      
+
+         // Carrega o CSS completo só uma vez e somente se !onlyText
+        if (!$onlyText && !$fullCssLoaded) {
+            $fullCssLoaded = true;
+
+            $styles .= <<<STYLE
+                <style>
+                   .$id.my-alert{
+                        padding: 15px 10px;
+                        border-radius: 10px;
+                        font-size: 16px;
+                        margin-bottom: 10px;
+                    }
+
+                   .$id.my-alert.my-alert-danger {
+                        background: #f8d7da;
+                        color: #7f4159;
+                    }
+
+                   .$id.my-alert.my-alert-success {
+                        background: #d4ecdb;
+                        color: #32643c;
+                    }
+
+                   .$id.my-alert.my-alert-primary {
+                        background: #cde5fe;
+                        color: #8f6941;
+                    }
+
+                    .$id.my-alert.my-alert-warning{
+                        background: #fef3cc;
+                        color: #8f6941;
+                    }
+
+                    .$id .btn-close-alert {
+                        padding: 5px 10px;
+                        border-radius: 4px;
+                        transition: all 0.4s ease;
+                    }
+
+                    .$id .btn-close-alert:hover {
+                        background: #ccc;
+                    }
+                </style>
+            STYLE;
+        }
+
 
         $html = <<<HTML
-            {$styles}
-            <span class="alert alert-{$type}">
-                <span>{$message}</span>
-                <span class="btn-close-alert"></span>
-            </span>
-            {$scripts}
+                {$styles}
+                <span id="$id" class="my-alert my-alert-{$type} {$id}">
+                    <span>{$message}</span>
+                    <span class="btn-close-alert"></span>
+                </span>
+                {$scripts}
         HTML;
 
         return $html;
@@ -248,8 +242,8 @@ function route(string $route = "/"){
 /**
  * Função para escapar dados
  * @param string $value
- * @return string
+ * @return mixed
  */
-function escape($value): string{
+function escape($value){
     return is_string($value) ? htmlspecialchars($value, ENT_QUOTES, 'UTF-8'):$value;
 }

@@ -5,6 +5,8 @@ namespace app\requests;
 use app\classes\Validate;
 use app\facade\App;
 
+use function DI\get;
+
 class RequestValidation extends Validate{
 
     private $data;
@@ -33,7 +35,8 @@ class RequestValidation extends Validate{
             $value = App::request()->input($field);
             setOld($field, $value);
         }
-        
+
+            
     }
     
     public function validated(){

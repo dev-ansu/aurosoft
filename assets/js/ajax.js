@@ -9,6 +9,14 @@ const listar = ()=>{
         dataType: "html",
         success: (result)=>{
             $("#listar").html(result);
+            $("#mensagem-excluir").remove();
         }
     });
+}
+
+const inserir = ()=>{
+    $("#mensagem").text("");
+    $("#titulo_inserir").text("Inserir registro");
+    $("#modalForm").modal("show");
+    limparCampos();
 }

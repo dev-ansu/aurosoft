@@ -30,8 +30,20 @@ class Controller{
             echo "Ocorreu um erro ao carregar a página.";
 
         }
-
         
+    }
+
+
+    /**
+     * Nega o acesso de um usuário
+     * @param string $key - chave da mensagem
+     * @param string $message - mensagem para o usuário
+     * @param string $to - url de redirecionamento
+     */
+    protected function denied($key, $message,  $to = '/'){
+        setFlash($key, escape($message));
+        redirect($to);
+        exit;
     }
 
 }

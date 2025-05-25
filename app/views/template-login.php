@@ -11,7 +11,7 @@
     <div class="alert-container absolute top-5 right-5">
         <?= getFlash("message") ?>
     </div>
-    <main class="h-screen w-full bg-orange-500 flex justify-center items-center p-4">
+    <main class="h-screen w-full bg-[#1d1d1d] flex justify-center items-center p-4">
         <?php $this->load($view, $viewData); ?>
     </main>
 

@@ -92,7 +92,7 @@ $session = App::authSession()->get();
 	</script>
 	<!-- //pie-chart --><!-- index page sales reviews visitors pie chart -->
 	<link rel="stylesheet" href="//cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css">
-	<script src="//cdn.datatables.net/2.3.1/js/dataTables.min.js" type="text/javascript"></script>
+	<script defer src="//cdn.datatables.net/2.3.1/js/dataTables.min.js" type="text/javascript"></script>
 	
 </head> 
 
@@ -221,7 +221,7 @@ $session = App::authSession()->get();
 							</a>
 							<ul class="dropdown-menu drp-mnu">
 								<li> <a href="" data-toggle="modal" data-target="#modalConfig"><i class="fa fa-cog"></i> Configurações</a> </li> 
-								<li> <a href="" data-toggle="modal" data-target="#modalPerfil"><i class="fa fa-user"></i> Perfil</a> </li> 								
+								<li> <a href="" data-toggle="modal" data-target="#modalForm"><i class="fa fa-user"></i> Perfil</a> </li> 								
 								<li> <a href="<?= route("/logout") ?>"><i class="fa fa-sign-out"></i> Sair</a> </li>
 							</ul>
 						</li>
