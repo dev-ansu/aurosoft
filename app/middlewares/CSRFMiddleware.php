@@ -2,8 +2,11 @@
 namespace app\middlewares;
 
 use app\classes\CSRFToken;
+use app\classes\DeniedAcess;
 use app\contracts\CSRFMiddlewareContract;
 use app\facade\App;
+use app\services\Redirect;
+use app\services\Response;
 
 class CSRFMiddleware implements CSRFMiddlewareContract{
     
@@ -12,25 +15,20 @@ class CSRFMiddleware implements CSRFMiddlewareContract{
         
     }
 
-    public function handle(){
+    public function handle(): ?Response{
         
         if(!App::request()->isPost()){
-            return true;
+            return null;
         }
 
-        $token = App::request()->getPost($this->csrftoken->getTokenName());
+        $token = App::request()->input($this->csrftoken->getTokenName());
         
         if(!$token || !$this->csrftoken->validateToken($token)){
-            $this->denyAccess();
-            return false;
+            return new DeniedAcess('CSRF token inválido');
         }
 
-        return true;
+        return null;
     }
 
-    protected function denyAccess(): void {
-        setFlash('message', 'Token CSRF inválido ou expirado.');
-        http_response_code(403);
-        redirect("/");
-    }
+ 
 }

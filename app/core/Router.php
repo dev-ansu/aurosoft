@@ -40,38 +40,64 @@ class Router{
 
     public static function resolve(string $url, string $requestMethod): ?array{
         
-        foreach(self::$routes[$requestMethod] as $route => $action){
-          
-            // Converte "{id:\d+}" em "(?P<id>\d+)" e "{slug}" em "(?P<slug>[^/]+)"
-            // Converte uma rota com parâmetros nomeados (ex.: /user/{id}) em uma expressão regular.
-            // A regex resultante permite extrair os valores dos parâmetros da URL real
-            $pattern = preg_replace_callback(
-                '/\{(\w+)(?::([^}]+))?\}/',
-                function ($matches) {
-                    $paramName = $matches[1]; // Nome do parâmetro (ex.: id)
-                    $regexPattern = $matches[2] ?? '[^/]+'; // Se não houver regex definida, aceita qualquer coisa menos "/"
-                    return "(?P<{$paramName}>{$regexPattern})"; // Cria o grupo para capturar o valor da URL
-                },
-                ltrim($route, '/') // Remove a barra inicial da rota
-            );
-            // Finaliza o padrão regex adicionando delimitadores e âncoras de início/fim.
-            $pattern = "#^{$pattern}$#";
-            
-            if(preg_match($pattern, $url, $matches)){
-                // Filtra apenas os parâmetros nomeados (ex: 'id' => '123')
-                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-                array_shift($matches);
-                
-                [$controller, $method] = explode("@", $action['action']);
+        $response = [];
+        $matchedUrl = false;
 
-                return [
-                    'controller' => "app\\controllers\\" . $controller,
-                    'method' => $method,
-                    'params' => $params,
-                    'middlewares' => $action['middlewares']
-                ];
+        foreach(self::$routes as $method  => $routes){   
+            foreach($routes as $route => $action){
+                // Converte "{id:\d+}" em "(?P<id>\d+)" e "{slug}" em "(?P<slug>[^/]+)"
+                // Converte uma rota com parâmetros nomeados (ex.: /user/{id}) em uma expressão regular.
+                // A regex resultante permite extrair os valores dos parâmetros da URL real
+                $pattern = preg_replace_callback(
+                    '/\{(\w+)(?::([^}]+))?\}/',
+                    function ($matches) {
+                        $paramName = $matches[1]; // Nome do parâmetro (ex.: id)
+                        $regexPattern = $matches[2] ?? '[^/]+'; // Se não houver regex definida, aceita qualquer coisa menos "/"
+                        return "(?P<{$paramName}>{$regexPattern})"; // Cria o grupo para capturar o valor da URL
+                    },
+                    ltrim($route, '/') // Remove a barra inicial da rota
+                );
+                // Finaliza o padrão regex adicionando delimitadores e âncoras de início/fim.
+                $pattern = "#^{$pattern}$#";
+                
+                if(preg_match($pattern, $url)){
+                    if($method === $requestMethod){
+                        // MATCH URL e MÉTODO
+                        $matches = [];
+                        preg_match($pattern, $url, $matches);
+                        // Filtra apenas os parâmetros nomeados (ex: 'id' => '123')
+                        $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                        array_shift($matches);
+                        
+                        [$controller, $methodName] = explode("@", $action['action']);
+                        
+                        $response = [
+                            'status' => 'FOUND',
+                            'controller' => "app\\controllers\\" . $controller,
+                            'method' => $methodName,
+                            'params' => $params,
+                            'middlewares' => $action['middlewares']
+                        ];
+                        return $response;
+              
+                    }else{
+                        $matchedUrl = true;
+                        $response = [
+                            'status' => 'METHOD_NOT_ALLOWED',
+                            'middlewares' => $action['middlewares']
+                        ];
+                    }
+                }
             }
+
         }
-        return null;
+
+        if($matchedUrl){   
+            return $response;
+        }
+        
+        return [
+            'status' => 'NOT_FOUND'
+        ];
     }
 }

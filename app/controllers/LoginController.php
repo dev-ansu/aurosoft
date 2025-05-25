@@ -3,10 +3,13 @@
 namespace app\controllers;
 
 use app\classes\CSRFToken;
+use app\classes\DeniedAcess;
 use app\core\Controller;
 use app\facade\App;
 use app\requests\LoginRequest;
 use app\services\Auth\AuthService;
+use app\services\Redirect;
+use app\services\Response;
 
 class LoginController extends Controller{
 
@@ -17,46 +20,40 @@ class LoginController extends Controller{
     {
     }
     
-    public function index(){
-        $csrf = new CSRFToken();
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $token = $_POST['_csrf_token'] ?? '';
-                    
-            if (!$csrf->validateToken($token)) {
-                redirect();
-                die('CSRF token inválido ou expirado!');
-            }
+    public function index(): Response {
+                          
+        
             $request = $this->loginRequest->validated();
-           
+     
             if(!$request){
-                $this->denied('message', 'Verifique os campos e tente novamente.');
+                return new DeniedAcess('Verifique os campos e tente novamente.');
             }
             
             $data = $request->data();
+
             $user = $this->auth->execute($data);
 
             if(!$user){
-                $this->denied('message', 'E-mail ou senha incorretos.');
+                return new DeniedAcess('E-mail ou senha incorreto.');
             }
 
             if(strtolower($user->ativo) !== "sim"){
-                $this->denied('message', 'O seu acesso está bloqueado, pois o seu perfil não está ativo.');
+                return new DeniedAcess('O seu acesso está bloqueado, pois o seu perfil não está ativo.');
             }
 
             App::authSession()->init($user);
-                        
-            $csrf->invalidateToken();
 
-            redirect("/dashboard");
-
-        }
+            return new Redirect('/dashboard');
+        
     }
 
 
-    public function logout(){
+    public function logout(): Response{
+
         App::authSession()->end();
-        redirect("/");
+
+        return new Redirect("/", 302);
+
     }
 
 }

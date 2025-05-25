@@ -1,17 +1,24 @@
 <?php
 
 namespace app\controllers\dashboard;
-use app\core\Controller;
 
+use app\classes\CSRFToken;
+use app\core\Controller;
+use app\services\Response;
 
 class UsuariosController extends Controller{
 
   
-    public function index(){
-        $this->load('dashboard/template', [
-            'title' => 'Usuários',
-            'view' => 'dashboard/usuarios/index'
-        ]);
+    public function index(): Response{
+        $token = (new CSRFToken)->generateToken();
+
+        return new Response(
+            $this->load('dashboard/template', [
+                'title' => 'Usuários',
+                'token' => $token,
+                'view' => 'dashboard/usuarios/index'
+            ])
+        );
     }
 
 }

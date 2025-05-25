@@ -1,6 +1,9 @@
 <?php
 
 namespace app\core;
+
+use app\classes\DeniedAcess;
+use app\services\Response;
 use Exception;
 
 class Controller{
@@ -40,10 +43,5 @@ class Controller{
      * @param string $message - mensagem para o usuário
      * @param string $to - url de redirecionamento
      */
-    protected function denied($key, $message,  $to = '/'){
-        setFlash($key, escape($message));
-        redirect($to);
-        exit;
-    }
-
+  
 }

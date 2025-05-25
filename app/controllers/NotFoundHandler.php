@@ -1,10 +1,12 @@
 <?php
-namespace app\classes;
+namespace app\controllers;
 
+use app\core\Controller;
+use app\services\Response;
 
-class NotFoundHandler{
+class NotFoundHandler extends Controller{
     
-    public static function handle(){
+    public function handle(): Response{
         http_response_code(404);
         header("Content-Type: text/html"); 
 
@@ -12,35 +14,41 @@ class NotFoundHandler{
             'title' => 'Página não encontrada',
             'message' => 'A URL solicitada não existe.',
         ];
+        
         extract($viewData);
         if(file_exists(VIEWS_PATH . "/not-found.php")){
-            include VIEWS_PATH . "/not-found.php";
+            return new Response(
+                $this->load('not-found', $viewData),
+                404,
+            );
         }else{
             $html = <<<HTML
                 <style>
                     *{
                         padding:0;
                         margin:0;
-                        font-size: 16px;
                         font-family:"sans-serif";
                     }
                     div{
-                        background: #1E1E1E;
-                        color: #d1d1d1;
+                        background: #0e172a;
+                        color: #fff;
                         height: 100vh;
                         display:flex;
                         justify-content:center;
                         align-items:center;
                     }
                     h1{
-                        font-family: "sans-serif";
+                        font-family: ui-sans-serif, system-ui, sans-serif;
+                        font-size: 20px;
+                        font-weight: 100;
                     }
                 </style>
                 <div>
                     <h1>404 | PÁGINA NÃO ENCONTRADA</h1>
                 </div>
             HTML;
-            echo $html;
+
+            return new Response($html, 404);
         }
     }
 }

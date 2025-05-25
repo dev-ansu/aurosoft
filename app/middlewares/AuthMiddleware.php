@@ -2,22 +2,33 @@
 namespace app\middlewares;
 
 use app\classes\Session;
+use app\services\Redirect;
+use app\services\Request;
+use app\services\Response;
 
 class AuthMiddleware{
 
-
-    public static function handle(){
+    public function __construct(private Session $session, private Request $request)
+    {
         
-        $session = new Session;
-        // Verifica se a sessão possui o índice SESSION_LOGIN
-        if(!$session->has(SESSION_LOGIN) || empty($session->__get(SESSION_LOGIN))){
-            setFlash('message', 'Não autorizado');
-            http_response_code(403);
-            redirect("/");
-            return false;
-        } 
-        return true;
+    }
 
+    public function handle(): ?Response{
+                // Verifica se a sessão possui o índice SESSION_LOGIN
+        if(!$this->session->has(SESSION_LOGIN) || empty($this->session->__get(SESSION_LOGIN))){
+            if($this->request->isAjax()){
+                return new Response(
+                    'Não autorizado',
+                    403
+                );
+            }else{
+                setFlash('message', 'Não autorizado');
+                return new Redirect('/', 403);
+            }
+
+        } 
+
+        return null;
     }
 
 }

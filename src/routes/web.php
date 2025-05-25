@@ -17,5 +17,6 @@ Router::get("/", 'HomeController@index');
 
 Router::get("/user/{id}", 'UserController@index');
 
+
 Router::post("/login", 'LoginController@index', [CSRFMiddleware::class]);
 Router::get("/logout", 'LoginController@logout');

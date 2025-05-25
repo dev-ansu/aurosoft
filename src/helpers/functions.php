@@ -228,6 +228,7 @@ function redirect(string | null $to = null): void{
     die;
 }
 
+
 /**
  * Define uma rota a ser seguida
  * @param string $route

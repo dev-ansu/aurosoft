@@ -2,9 +2,12 @@
 
 namespace app\core;
 
-use app\classes\NotFoundHandler;
+use app\controllers\NotFoundHandler;
+use app\facade\App;
 use app\services\Request;
+use app\services\Response;
 use DI\Container;
+use Symfony\Component\Config\Builder\Method;
 
 class Core{
 
@@ -22,82 +25,62 @@ class Core{
         $url = implode("/", $this->parseUrl());
         $requestMethod = $_SERVER['REQUEST_METHOD'];
         $route = Router::resolve($url, $requestMethod);
-     
-        if(!$route){
-            NotFoundHandler::handle();
-            return;
-        }
-      
-        // if(isset($url[1]) && file_exists(CONTROLLERS_PATH . $url[0] . "/". ucfirst($url[1]) . "Controller.php")){
-            
-            
-        //     $this->controller = "app\\controllers\\" . $url[0] . "\\" . ucfirst($url[1]) . "Controller";
-        //     array_shift($url); // remove subpasta
-        //     array_shift($url); // remove o controller
-      
-            
-        // }elseif(isset($url[0])){
-         
-        //     if(is_dir(CONTROLLERS_PATH . $url[0])){
-                
-        //         if(isset($url[1]) && file_exists(CONTROLLERS_PATH . $url[0] . "/". ucfirst($url[1]) . "Controller.php")){
-        //             $this->controller = "app\\controllers\\" . $url[0] ."\\". ucfirst($url[1]) . "Controller";
-        //         }elseif(isset($url[1]) && !file_exists(CONTROLLERS_PATH . $url[0] . "/". ucfirst($url[1]) . "Controller.php")){
-        //             NotFoundHandler::handle();
-        //             exit;
-        //         }else{
-        //             $this->controller = "app\\controllers\\" . $url[0] . "\\HomeController";
-        //         }
-        //     }elseif(!is_dir(CONTROLLERS_PATH . $url[0]) && file_exists(CONTROLLERS_PATH . ucfirst($url[0]) . "Controller.php")){
-                
-        //         $this->controller = "app\\controllers\\" . ucfirst($url[0]) . "Controller";
-        //     }else{
-        //         NotFoundHandler::handle();
-        //         exit;
-        //     }
-                
-            
-        //     array_shift($url); // remove o controller
-        // }
-        // instância controller
-
-        $this->controller = $route['controller'];
-        $controller = $this->container->get($this->controller);
-        $this->method = $route['method'];
-        $this->params = $route['params'];
-       
-        // // verifica método
-        // if(isset($url[0]) && method_exists($controllerInstance, $url[0])){
-        //     $this->method = $url[0];
-        //     array_shift($url);
-        // }
 
         // Middlewares definidos na ROTA (executados primeiro)
         foreach ($route['middlewares'] ?? [] as $middleware) {
             $middlewareInstance = $this->container->get($middleware);
-            if (!$middlewareInstance->handle()) {
+            $response = $middlewareInstance->handle();
+
+            if($response instanceof Response){
+                $response->send();
                 return;
             }
         }
+     
+        switch ($route['status']){
+            case 'NOT_FOUND':
+                $response = (new NotFoundHandler)->handle();
+                $response->send();
+                break;
+            case 'METHOD_NOT_ALLOWED':
+                $response = new Response("Cannot get");
+                return $response->send();
+                break;
+            default:
 
-        if($controller instanceof \app\contracts\MiddlewareProtected){
-            $middlewares = $controller->middlewareMap();
-            if(isset($middlewares[$this->method])){
-                foreach($middlewares[$this->method] as $middleware){
-                    if(is_array($middleware)){
-                        [$middlewareClass, $params] = $middleware;
-                        $middlewareClass::handle($params);
-                    }else{
-                        $middleware::handle();
+                $this->controller = $route['controller'];
+                $controller = $this->container->get($this->controller);
+                $this->method = $route['method'];
+                $this->params = $route['params'];
+            
+                
+
+                if($controller instanceof \app\contracts\MiddlewareProtected){
+                    $middlewares = $controller->middlewareMap();
+                    if(isset($middlewares[$this->method])){
+                        foreach($middlewares[$this->method] as $middleware){
+                            if(is_array($middleware)){
+                                [$middlewareClass, $params] = $middleware;
+                                $middlewareClass::handle($params);
+                            }else{
+                                $middleware::handle();
+                            }
+                        }
                     }
                 }
-            }
+
+                // $this->params = $url;
+            
+                $response = call_user_func_array([$controller, $this->method], $this->params);
+            
+                if(!$response || !$response instanceof Response){
+                    throw new \Exception("Response not found in {$controller} controller and {$this->method} method.");
+                }
+        
+                $response->send();
         }
 
-        // $this->params = $url;
-    
-        call_user_func_array([$controller, $this->method], $this->params);
-
+        
     }
 
     private function parseUrl(): array {

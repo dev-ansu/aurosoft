@@ -1,17 +1,18 @@
 <?php
 namespace app\controllers\api;
 
-use app\classes\Session;
+use app\classes\DeniedAcess;
 use app\core\Controller;
-use app\services\AuthSessionService;
+use app\facade\App;
+use app\services\Response;
 use app\services\usuarios\UsuariosService;
 
 class UsuariosController extends Controller{
        
-    public function index(){
+    public function index(): Response{
         $users = (new UsuariosService())->all();
         
-        echo <<<HTML
+        $html = <<<HTML
             <table class="table table-hover" id="tabela">
                 <thead>
                     <tr>
@@ -34,7 +35,7 @@ class UsuariosController extends Controller{
             $titulo_link = $ativo === "Sim" ? "Inativar":"Ativar";
             $classe_ativo = $ativo === "Sim" ? "#c4c4c4":"";
 
-            echo <<<HTML
+            $html.= <<<HTML
 
                     <tr class="{$classe_ativo}">
                         <td>{$nome}</td>
@@ -88,7 +89,7 @@ class UsuariosController extends Controller{
 
         }
         $assetsPath = ASSETS_PATH;
-        echo <<<HTML
+        $html.= <<<HTML
             </tbody>
                 <div id="mensagem-excluir" class="alert alert-danger d-flex justify-content-between" >
                     <span></span>
@@ -109,8 +110,20 @@ class UsuariosController extends Controller{
                 })
             </script>
         HTML;
+        
+        return new Response(
+            $html,
+        );
+    }
 
-        return;
+    public function insert(): Response{
+        if(!App::request()->isPost()) new DeniedAcess('Cannot get route');
+        
+        
+
+        return new Response(
+            'Salvo com sucesso',
+        );
     }
 
     public function activateUser(){

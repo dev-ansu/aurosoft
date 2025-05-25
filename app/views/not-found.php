@@ -12,6 +12,5 @@
         <span class="text-white font-thin text-xl">404 | Página não encontrada</span>        
     </main>
 
-
 </body>
 </html>

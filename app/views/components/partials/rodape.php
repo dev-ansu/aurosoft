@@ -56,11 +56,12 @@ $session = App::authSession()->get();
 
 
 
+	
+	<!-- Ajax para funcionar Mascaras JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script> 
+	
 	<!-- Mascaras JS -->
-<script type="text/javascript" src="<?= asset("/js/mascaras.js") ?>"></script>
-
-<!-- Ajax para funcionar Mascaras JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script> 
+	<script type="text/javascript" src="<?= asset("/js/mascaras.js") ?>"></script>
 
 	
 </body>
@@ -72,7 +73,7 @@ $session = App::authSession()->get();
 
 
 <!-- Modal Perfil -->
-<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalPerfil" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -81,7 +82,7 @@ $session = App::authSession()->get();
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form id="form">
+			<form id="form_perfil">
 			<div class="modal-body">
 				
 
@@ -118,18 +119,18 @@ $session = App::authSession()->get();
 					<div class="row">
 						<div class="col-md-4">							
 								<label>Rua</label>
-								<input type="text" class="form-control" id="rua" name="rua" placeholder="Nome da rua" value="<?= @$session->rua ?>" required>							
+								<input type="text" class="form-control" id="rua_perfil" name="rua" placeholder="Nome da rua" value="<?= @$session->rua ?>" required>							
 						</div>
 
 
 						<div class="col-md-4">							
 								<label>Número da casa</label>
-								<input type="password" class="form-control" id="numero" name="numero" placeholder="Número da casa" value="<?= @$session->numero ?>" required>							
+								<input type="text" class="form-control" id="numero_perfil" name="numero" placeholder="Número da casa" value="<?= @$session->numero ?>" required>							
 						</div>
 
 						<div class="col-md-4">							
 								<label>Bairro</label>
-								<input type="password" class="form-control" id="bairro" name="bairro" placeholder="Nome do bairro" value="<?= @$session->bairro ?>" required>							
+								<input type="text" class="form-control" id="bairro_perfil" name="bairro" placeholder="Nome do bairro" value="<?= @$session->bairro ?>" required>							
 						</div>
 					</div>
 
@@ -147,13 +148,10 @@ $session = App::authSession()->get();
 
 						
 					</div>
-
-
-					<input type="hidden" name="id" value="<?= @$session->id ?>">
 				
 
 				<br>
-				<small><div id="msg-perfil" align="center"></div></small>
+				<small><div id="mensagem" align="center"></div></small>
 			</div>
 			<div class="modal-footer">       
 				<button type="submit" class="btn btn-primary">Salvar</button>
