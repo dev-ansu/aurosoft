@@ -70,11 +70,18 @@ class Core{
                 }
 
                 // $this->params = $url;
-            
+
+                if(!method_exists($controller, $this->method)){
+                    $response = new Response("Esta rota não existe.");
+                    return $response->send();
+                    break;
+                }
+                
                 $response = call_user_func_array([$controller, $this->method], $this->params);
             
                 if(!$response || !$response instanceof Response){
-                    throw new \Exception("Response not found in {$controller} controller and {$this->method} method.");
+                    $controllerName = $controller::class;
+                    throw new \Exception("Response not found in {$controllerName} controller and {$this->method} method.");
                 }
         
                 $response->send();

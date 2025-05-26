@@ -147,8 +147,9 @@ class Validate extends Model{
     private static function setMessages(){
         $object = self::$request;
         if(method_exists($object, 'messages')){
-            if($object->messages()){
-                foreach($object->messages() as $key => $value){
+            $combinedMessages = array_merge($object->messages(), $object->customMessages);
+            if($combinedMessages){
+                foreach($combinedMessages as $key => $value){
                     if(str_contains($key,".")){
                         [$field, $method] = explode(".",$key);
                         if(isset(self::$errors[$field][$method])){
@@ -214,18 +215,18 @@ class Validate extends Model{
     }
     private static function numberInt($field){
         $number = App::request()->input($field);
-     
-        if(is_int($number)){
-            return $number;
+        
+        if(filter_var($number, FILTER_VALIDATE_INT) !== false){
+            return (int) $number;
         }        
         // setFlash($field, "O campo {$field} deve ser um número inteiro.");
         self::setError($field, 'numberInt', "O campo {$field} deve ser um número inteiro."); 
-        return null;
+        return false;
     }
 
     private static function numberFloat($field){
         $number = App::request()->input($field);
-        if(is_float($number)){
+        if(filter_var($number, FILTER_VALIDATE_FLOAT) !== false){
             return $number;
         }        
         return null;
@@ -234,7 +235,7 @@ class Validate extends Model{
     private static function notNull($field){
         $value = App::request()->input($field);
         
-        if(empty(trim($value)) || trim($value) == ''){
+        if(empty($value) || trim($value) == ''){
             setFlash($field, 'O campo não está vazio.');
             self::setError($field, 'notNull', 'O campo não pode ser vazio.'); 
             return false;

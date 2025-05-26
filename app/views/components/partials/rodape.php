@@ -38,7 +38,7 @@ $session = App::authSession()->get();
 
 	<!--scrolling js-->
 	<script src="<?= asset("/js/jquery.nicescroll.js") ?>"></script>
-	<script src="js/scripts.js"></script>
+	<script src="<?= asset("/js/scripts.js") ?>"></script>
 	<!--//scrolling js-->
 	
 	<!-- side nav js -->

@@ -11,6 +11,8 @@ class RequestValidation extends Validate{
 
     private $data;
     protected array $fields;
+    protected array $customRules = [];
+    protected array $customMessages = [];
 
     public function __construct(){
         self::$method = App::request()->getServer('REQUEST_METHOD') === 'GET' ? $_GET : $_POST;
@@ -38,13 +40,25 @@ class RequestValidation extends Validate{
 
             
     }
+
+    public function custom(array $rules = []): void{
+
+        if(isset($rules['messages'])){
+            $this->customMessages = $rules['messages'];
+            unset($rules['messages']);
+        }
+        
+        $this->customRules = $rules;
+    }
     
     public function validated(){
         if(Validate::$request->authorize()){
+
+            $combinedRules = array_merge(Validate::$request->rules(), $this->customRules);
             
-            $this->setFields(array_keys(Validate::$request->rules()));
+            $this->setFields(array_keys($combinedRules));
        
-            $validate = $this->validate(Validate::$request->rules());
+            $validate = $this->validate($combinedRules);
             
             if(!$validate){
                 $this->setOld();

@@ -16,7 +16,7 @@ class CSRFMiddleware implements CSRFMiddlewareContract{
     }
 
     public function handle(): ?Response{
-        
+
         if(!App::request()->isPost()){
             return null;
         }

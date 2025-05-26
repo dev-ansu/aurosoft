@@ -26,6 +26,7 @@ class Router{
         $prefix = $options['prefix'] ?? '';
 
         //Executa o callback (onde as rotas são definidas) com as opções do grupo
+        
         $callback(function (string $method, string $route, string $action, array $routeMiddlewares = []) use ($prefix, $middlewares){
             $fullRoute = $prefix . $route;
             $combinedMiddlewares = array_merge($middlewares, $routeMiddlewares);
@@ -76,6 +77,7 @@ class Router{
                             'controller' => "app\\controllers\\" . $controller,
                             'method' => $methodName,
                             'params' => $params,
+                            'request_method' => $method,
                             'middlewares' => $action['middlewares']
                         ];
                         return $response;

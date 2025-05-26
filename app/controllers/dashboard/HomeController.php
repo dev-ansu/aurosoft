@@ -2,11 +2,7 @@
 
 namespace app\controllers\dashboard;
 
-use app\classes\Session;
-use app\contracts\MiddlewareProtected;
 use app\core\Controller;
-use app\middlewares\AuthMIddleware;
-use app\middlewares\RoleMiddleware;
 use app\services\Response;
 
 class HomeController extends Controller{

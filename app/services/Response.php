@@ -19,6 +19,8 @@ class Response{
         $this->setHeaders();
 
         echo $this->body;
+
+        return;
         
     }  
 

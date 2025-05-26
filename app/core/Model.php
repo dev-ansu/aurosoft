@@ -1,7 +1,7 @@
 <?php
+
 namespace app\core;
 
-use PDO;
 
 abstract class Model extends DBManager{
     
@@ -9,18 +9,19 @@ abstract class Model extends DBManager{
     protected string $table;
     protected array $columns = [];
 
-    public function all():array{
-        $stmt = $this->connection($this->name)->prepare("SELECT * FROM {$this->table}");
+    public function all(array $columns = []):array{
+        $columnsFetch = count($columns) > 0 ? implode(",", $columns):implode(",", $this->columns);
+        $stmt = $this->connection($this->name)->prepare("SELECT {$columnsFetch} FROM {$this->table}");
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
-    public function find($key, $value): ?array{
+    public function find($key, $value): ?object{
         
         $key = $this->validateColumn($key);
 
         $stmt = $this->connection($this->name)->prepare("SELECT * FROM {$this->table} WHERE {$key} = :{$key}");
-        $stmt->execute(["$key" => $value]);
+        $stmt->execute([$key => $value]);
         $result = $stmt->fetch();
         return $result ?: null;
 
@@ -34,13 +35,15 @@ abstract class Model extends DBManager{
         return $stmt->execute(["$key" => $value]);
     }
 
-    public function update(int $id, array $data): bool
+    public function update(mixed $key, array $data): bool
     {
-        $fields = array_keys($data);
+        $key = $this->validateColumn($key);
+        $fields = array_values($this->columns);
         $set = implode(", ", array_map(fn($field) => "$field = :$field", $fields));
-        $data['id'] = $id;
 
-        $stmt = $this->connection($this->name)->prepare("UPDATE {$this->table} SET $set WHERE id = :id");
+        // $data[$key] = $key;
+
+        $stmt = $this->connection($this->name)->prepare("UPDATE {$this->table} SET $set WHERE {$key} = :{$key}");
         return $stmt->execute($data);
     }
 
