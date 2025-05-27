@@ -1,0 +1,83 @@
+#!/usr/bin/env php
+<?php
+
+
+require_once __DIR__ . "/vendor/autoload.php";
+
+use app\classes\CLI;
+
+
+(new CLI)->init($argv);
+
+$commands = $argv;
+
+array_shift($commands); // remove o nome do script
+
+if(count($commands) < 2){
+    echo "Uso: php maker make:controller Nom/do/Controller";
+    exit;
+}
+
+$action = $commands[0]; // ação
+$nameInput = $commands[1]; // exemplo Usuairos/Usuarios
+
+$parts = explode("/", $nameInput);
+$className = array_pop($parts); // pegar o último arquivo (que será o .php)
+
+$subPath = implode("/", $parts); //subpastas, se houver
+
+
+switch($action){
+
+    case "make:controller":
+        $folder = "app/controllers/" . $subPath;
+        $path = "$folder/{$className}Controller.php";
+        $namespace = $subPath ? str_replace('/','\\', "app/controllers/". $subPath):'';
+        $classFullName = $className . "Controller";
+        createFile($folder, $path, $classFullName, $namespace);
+        break;
+
+}
+
+function createFile($folder, $path, $classFullName, $namespace = ''){
+    $php = <<<PHP
+<?php
+
+namespace {$namespace};
+
+use app\core\Controller;
+use app\services\Response;
+
+class $classFullName extends Controller{
+
+    public function index(): Response{
+        return new Response(
+            'Hello world!'
+        );
+    }
+
+}
+
+PHP;
+
+$dir = dirname($path);
+if(!is_dir($dir)){
+    mkdir($dir, 0777, true);
+}
+
+file_put_contents($path, $php);
+
+if(file_exists($path)){
+    echo "Arquivo de Controller criado com sucesso.";
+    exit;
+}
+
+echo "Arquivo de Controller não foi criado.";
+exit;
+
+}
+
+print_r($commands);
+
+
+

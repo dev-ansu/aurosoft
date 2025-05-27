@@ -2,10 +2,9 @@
 
 namespace app\services\usuarios;
 
-use app\core\DBManager;
 use app\core\Model;
 use app\core\ServiceResponse;
-use Cake\Core\ServiceConfig;
+
 
 class UsuariosService extends Model{
     

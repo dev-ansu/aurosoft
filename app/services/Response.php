@@ -6,7 +6,7 @@ class Response{
 
     public function __construct(
         private $body, 
-        private int $statusCode = 200, 
+        private int $statusCode = 200,
         private array $headers = [])
     {
         
