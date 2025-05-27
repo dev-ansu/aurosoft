@@ -1,5 +1,7 @@
 
 
+<script defer type="text/javascript" src="<?= asset("/js/ajax.js") ?>"></script>
+
 <a onclick="inserir()" class="btn btn-primary">
     <span class="fa fa-plus"></span>
     Usuário
@@ -182,6 +184,23 @@
 </div>
 
 <script>
+
+	$(document).ready(()=>{
+		listar();
+	})
+
+	const listar = ()=>{
+		$.ajax({
+			url: "<?php echo route("/api/usuarios") ?>",
+			method: "GET",
+			dataType: "html",
+			success: (result)=>{
+				$("#listar").html(result);
+				$("#mensagem-excluir").remove();
+			}
+		});
+	}
+
 	const editar = ($user)=>{
 		$(document).ready(()=>{
 			$("#mensagem").text("");

@@ -17,13 +17,17 @@ class AddConfigInitialData extends AbstractSeed
                 'instagram' => '@sistema',
                 'rua' => 'ali',
                 'numero' => 3333,
-                'bairro' => 'acolá'
+                'bairro' => 'acolá',
+                'ativo' => 'Sim',
             ]
         ];
         $users = $this->table("config");
-        $existingUser = $this->fetchRow("SELECT * FROM config WHERE email = 'anderson@gmail.com'");
+        $existingUser = $this->fetchRow("SELECT * FROM config WHERE email = 'sistema@gmail.com'");
         
         if($existingUser){
+            $this->execute(
+                'UPDATE config SET ativo = "Sim" WHERE email = "sistema@gmail.com"'
+            );
             return;
         }else{
             $users->insert($data)->save();

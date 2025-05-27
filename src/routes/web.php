@@ -10,6 +10,8 @@ Router::group([
 ],function($route){
     $route('GET','', "dashboard\HomeController@index");
     $route('GET', "/usuarios", 'dashboard\UsuariosController@index');
+    $route('GET', "/grupoacessos", 'dashboard\GrupoAcessosController@index');
+    $route('GET', "/acessos", 'dashboard\AcessosController@index');
 });
 
 Router::get("/", 'HomeController@index');

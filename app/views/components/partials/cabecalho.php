@@ -9,11 +9,10 @@ $configSession = App::session()->__get('config');
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title><?= @$configSession->nome ?></title>
+	<title><?= @$configSession->nome ?><?= @$title ? " - ".@$title:'' ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="" type="image/x-icon">
-	<script defer type="text/javascript" src="<?= asset("/js/ajax.js") ?>"></script>
 	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 	<!-- Bootstrap Core CSS -->
@@ -93,7 +92,7 @@ $configSession = App::session()->__get('config');
 
 	</script>
 	<!-- //pie-chart --><!-- index page sales reviews visitors pie chart -->
-	<link rel="stylesheet" href="<?= asset("/css/DataTables.min.css") ?>">
+	<link rel="stylesheet" href="<?= asset("/css/DataTables.css") ?>">
 	<script defer src="<?= asset("/js/DataTables.min.js") ?>" type="text/javascript"></script>
 
 	
@@ -130,6 +129,18 @@ $configSession = App::session()->__get('config');
 								</a>
 								<ul class="treeview-menu">
 									<li><a href="<?= route("/dashboard.usuarios") ?>"><i class="fa fa-angle-right"></i> Usuários</a></li>
+									
+								</ul>
+							</li>
+							<li class="treeview">
+								<a href="#">
+									<i class="fa fa-plus"></i>
+									<span>Cadastros</span>
+									<i class="fa fa-angle-left pull-right"></i>
+								</a>
+								<ul class="treeview-menu">
+									<li><a href="<?= route("/dashboard.grupoacessos") ?>"><i class="fa fa-angle-right"></i> Grupos</a></li>
+									<li><a href="<?= route("/dashboard.acessos") ?>"><i class="fa fa-angle-right"></i> Acessos</a></li>
 									
 								</ul>
 							</li>

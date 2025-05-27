@@ -1,0 +1,130 @@
+
+
+<script>
+
+	const inserir = ()=>{
+		$("#mensagem").text("");
+		$("#titulo_inserir").text("Inserir registro");
+		$("#modalFormGrupo").modal("show");
+}
+</script>
+
+<a onclick="inserir()" class="btn btn-primary">
+    <span class="fa fa-plus"></span>
+    Grupo
+</a>
+
+
+<section class="bs-example widget-shadow p-15" id="listar">
+
+</section>
+ 
+
+<!-- Modal Form -->
+<div class="modal fade" id="modalFormGrupo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_inserir"></span></h4>
+				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form action="<?= route('/api/grupoacessos/insert') ?>" id="form">
+			<div class="modal-body">
+				
+
+					<div class="row">
+						<div class="col-md-6">							
+								<label>Nome</label>
+								<input type="text" class="form-control" id="nome" name="nome" placeholder="Seu Nome">							
+						</div>
+						<input type="hidden" name="_csrf_token" value="<?= @$token ?>" />
+						
+					</div>
+
+
+				<br>
+				<small><div id="mensagem" align="center"></div></small>
+			</div>
+			<div class="modal-footer">       
+				<button type="submit" class="btn btn-primary">Salvar</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+<script>
+	const editar = ($user)=>{
+		$(document).ready(()=>{
+			$("#mensagem").text("");
+			$("#titulo_inserir").text("Atualizar registro");
+			$("#modalFormGrupo").modal("show");
+			$("#form").attr("action", "../api/grupoacessos/patch");
+			const parseUser = JSON.parse($user);
+			for(let i in parseUser){
+				if($(`#${i}`).is("select")){
+					$(`#${i}`).val(parseUser[i]).change();
+				}else{
+					$(`#${i}`).val(parseUser[i]);				
+				}
+			}
+		})
+	}
+
+</script>
+
+<script>
+
+    const listar = ()=>{
+		$.ajax({
+			url: "<?php echo route("/api/grupoacessos") ?>",
+			method: "GET",
+			dataType: "html",
+			success: (result)=>{
+				$("#listar").html(result);
+				$("#mensagem-excluir").remove();
+			}
+		});
+	}
+
+	$("#form").submit((e)=>{
+		e.preventDefault();
+		
+		const formData = new FormData(e.target);
+
+		$.ajax({
+			processData: false,
+			type: "POST",
+			data: formData,
+			contentType: false,
+			cache: false,
+			url: e.target.action,
+			success: (data)=>{
+            const response = JSON.parse(data);
+ 
+            if(response.error == false){
+                $(`#mensagem`).text(response.message);
+                $(`#btn-fechar`).click();
+                clearErrorMessages(); 
+                listar()
+                limparCampos($("#modalForm"));
+            }else{
+                if(response.issues){
+                    const { issues } = response;
+                    setErrorMessages(issues);
+                }
+                $(`#mensagem`).addClass("text-danger");
+                $(`#mensagem`).text(response.message);
+				}
+			},
+			error:(xhr, status, error)=>{
+				$(`#mensagem`).text(xhr.responseText);
+			}
+		})
+	})
+
+	
+</script>
