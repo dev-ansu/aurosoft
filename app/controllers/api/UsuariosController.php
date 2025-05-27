@@ -8,6 +8,7 @@ use app\facade\App;
 use app\requests\Usuarios\UsuariosValidation;
 use app\services\Response;
 use app\services\usuarios\UsuariosService;
+use DateTime;
 
 class UsuariosController extends Controller{
 
@@ -41,11 +42,10 @@ class UsuariosController extends Controller{
         HTML;
 
         foreach($users as $user){
-            $user->created_at = date('d/m/Y', strtotime($user->created_at));
+            $user->created_at = (new DateTime($user->created_at))->format('d/m/Y');
             $editUser = json_encode($user);
             extract(json_decode(json_encode($user), true));
-     
-            $created_at = date('d/m/Y', strtotime(($created_at)));
+            $urlAtivar = $ativo === "Sim" ? route("/api/usuarios/deactivate/$id"):route("/api/usuarios/activate/$id");
             $icone = $ativo === "Sim" ? "fa-check-square":"fa-square-o";
             $titulo_link = $ativo === "Sim" ? "Inativar":"Ativar";
             $classe_ativo = $ativo === "Sim" ? "#c4c4c4":"";
@@ -89,7 +89,7 @@ class UsuariosController extends Controller{
                                 </a>
                             </big>
                              <big>
-                                <a href="#" onclick='ativar("{$id}")' title="{$titulo_link}">
+                                <a href="#" onclick='ativar(`{$urlAtivar}`)' title="{$titulo_link}">
                                     <i class="fa {$icone} text-success"></i>
                                 </a>
                             </big>
@@ -242,9 +242,22 @@ class UsuariosController extends Controller{
 
     }
 
-    public function activateUser(){
-        
+    public function activate(int $id): Response{
+        $response = $this->usuariosService->activate('id', $id);
+   
+        return new Response(
+            json_encode($response)
+        );
+    }
+
+    public function deactivate(int $id): Response{
+        $response = $this->usuariosService->deactivate('id', $id);
+   
+        return new Response(
+            json_encode($response)
+        );
 
     }
 
+    
 }

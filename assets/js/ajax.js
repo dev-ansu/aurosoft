@@ -45,7 +45,7 @@ const clearErrorMessages = ()=>{
     });
 }
 
-const setErrorMessages = (issues)=>{
+const setErrorMessages = (issues, prefix = '')=>{
 
 
     // 1. Limpa todos os erros anteriores
@@ -53,7 +53,7 @@ const setErrorMessages = (issues)=>{
 
     for(let issue in issues){
         
-        const input = document.getElementById(issue);
+        const input = document.getElementById(issue+prefix);
         if (!input) continue;
 
         const container = input.parentElement;
@@ -89,7 +89,7 @@ const setErrorMessages = (issues)=>{
 }
 
 
-const onSubmit = (e)=>{
+const onSubmit = (e, prefixMessages = '')=>{
     e.preventDefault();
     const url = e.target.action;
     let formData = new FormData(e.target);
@@ -103,24 +103,24 @@ const onSubmit = (e)=>{
         cache: false,
         success: (data)=>{
             const response = JSON.parse(data);
-            console.log(response);
+ 
             if(response.error == false){
-                $("#mensagem").text(response.message);
-                $("#btn-fechar").click();
-                listar()
+                $(`#mensagem${prefixMessages}`).text(response.message);
+                $(`#btn-fechar${prefixMessages}`).click();
                 clearErrorMessages(); 
+                listar()
                 limparCampos($("#modalForm"));
             }else{
                 if(response.issues){
                     const { issues } = response;
-                    setErrorMessages(issues);
+                    setErrorMessages(issues, prefixMessages);
                 }
-                $("#mensagem").addClass("text-danger");
-                $("#mensagem").text(response.message);
+                $(`#mensagem${prefixMessages}`).addClass("text-danger");
+                $(`#mensagem${prefixMessages}`).text(response.message);
             }
         },
         error:(xhr, status, error)=>{
-            $("#mensagem").text(xhr.responseText);
+            $(`#mensagem${prefixMessages}`).text(xhr.responseText);
         }
         
     })
@@ -146,10 +146,33 @@ const onDelete = (url)=>{
     })
 }
 
+const ativar = (url)=>{
+        console.log(url);
+        $.ajax({
+        url: url,
+        type: "GET",
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: (response)=>{
+            $("#mensagem-excluir").text(response.message);
+            listar()
+        },
+        error:(xhr, status, error)=>{
+            $("#mensagem-excluir").text(xhr.responseText)
+        }
+    })
+}
+
 
 $("#form").submit(function(e){
     e.preventDefault();
     onSubmit(e)
+})
+
+$("#form-config").submit(function(e){
+    e.preventDefault();
+    onSubmit(e, '_sistema')
 })
 
 $("#modalForm").on("hidden.bs.modal", clearErrorMessages);

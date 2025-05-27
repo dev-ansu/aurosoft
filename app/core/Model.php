@@ -38,12 +38,17 @@ abstract class Model extends DBManager{
     public function update(mixed $key, array $data): bool
     {
         $key = $this->validateColumn($key);
+        
         $fields = array_values($this->columns);
+        
         $set = implode(", ", array_map(fn($field) => "$field = :$field", $fields));
-
+        
         // $data[$key] = $key;
+        
+        $sql = "UPDATE {$this->table} SET $set WHERE {$key} = :{$key}";
+        
+        $stmt = $this->connection($this->name)->prepare($sql);
 
-        $stmt = $this->connection($this->name)->prepare("UPDATE {$this->table} SET $set WHERE {$key} = :{$key}");
         return $stmt->execute($data);
     }
 

@@ -8,6 +8,7 @@ use app\core\Controller;
 use app\facade\App;
 use app\requests\LoginRequest;
 use app\services\Auth\AuthService;
+use app\services\Config\ConfigService;
 use app\services\Redirect;
 use app\services\Response;
 
@@ -15,7 +16,8 @@ class LoginController extends Controller{
 
     public function __construct(
         protected LoginRequest $loginRequest,
-        protected AuthService $auth
+        protected AuthService $auth,
+        private ConfigService $config
     )
     {
     }
@@ -42,6 +44,9 @@ class LoginController extends Controller{
             }
 
             App::authSession()->init($user);
+
+            App::session()->__set('config', $this->config->fetch());
+            
 
             return new Redirect('/dashboard');
         

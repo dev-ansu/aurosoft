@@ -2,16 +2,18 @@
 
 use app\facade\App;
 $session = App::authSession()->get();
+$configSession = App::session()->__get('config');
+
 
 ?>
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title>Nome Sistema</title>
+	<title><?= @$configSession->nome ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="" type="image/x-icon">
-
+	<script defer type="text/javascript" src="<?= asset("/js/ajax.js") ?>"></script>
 	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 	<!-- Bootstrap Core CSS -->
@@ -91,8 +93,8 @@ $session = App::authSession()->get();
 
 	</script>
 	<!-- //pie-chart --><!-- index page sales reviews visitors pie chart -->
-	<link rel="stylesheet" href="//cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css">
-	<script defer src="//cdn.datatables.net/2.3.1/js/dataTables.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="<?= asset("/css/DataTables.min.css") ?>">
+	<script defer src="<?= asset("/js/DataTables.min.js") ?>" type="text/javascript"></script>
 
 	
 </head> 
@@ -110,7 +112,7 @@ $session = App::authSession()->get();
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<h1><a class="navbar-brand" href="<?= route("/dashboard") ?>"><span class="fa fa-cutlery"></span> Sistema<span class="dashboard_text">Nome do Sistema</span></a></h1>
+						<h1><a class="navbar-brand" href="<?= route("/dashboard") ?>"><span class="fa fa-cutlery"></span> Sistema<span class="dashboard_text"><?= $configSession->nome ?></span></a></h1>
 					</div>
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="sidebar-menu">

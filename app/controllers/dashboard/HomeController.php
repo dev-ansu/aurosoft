@@ -3,7 +3,10 @@
 namespace app\controllers\dashboard;
 
 use app\core\Controller;
+use app\facade\App;
+use app\services\Config\ConfigService;
 use app\services\Response;
+
 
 class HomeController extends Controller{
 
@@ -19,7 +22,13 @@ class HomeController extends Controller{
     //     ];
     // }
     
+    public function __construct()
+    {
+        
+    }
+
     public function index(): Response{
+  
         return new Response(
             $this->load('dashboard/template', [
                 'title' => 'Dashboard',
