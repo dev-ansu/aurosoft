@@ -51,7 +51,7 @@ class CLI{
      
         $classFullName = $className . "Controller";
 
-        $this->createFile($path, call_user_func_array([$this, $method], [$classFullName, $namespace]));
+        $this->createFile($path, call_user_func_array([$this, $method], [$classFullName, $namespace]), $actionName);
 
     }
 
@@ -178,7 +178,7 @@ class CLI{
 
     }  
 
-    private function createFile($path, $content){
+    private function createFile($path, $content, $actionName){
 
         $dir = dirname($path);
 
@@ -189,11 +189,11 @@ class CLI{
         file_put_contents($path,  $content);
 
         if(file_exists($path)){
-            echo "Arquivo de Controller criado com sucesso.";
+            echo "Arquivo de {$actionName} criado com sucesso.";
             exit;
         }
 
-        echo "Arquivo de Controller não foi criado.";
+        echo "Arquivo de {$actionName} não foi criado.";
         exit;
 
     }
