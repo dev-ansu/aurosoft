@@ -94,7 +94,9 @@ $configSession = App::session()->__get('config');
 	<!-- //pie-chart --><!-- index page sales reviews visitors pie chart -->
 	<link rel="stylesheet" href="<?= asset("/css/DataTables.css") ?>">
 	<script defer src="<?= asset("/js/DataTables.min.js") ?>" type="text/javascript"></script>
-
+	<script defer type="text/javascript" src="<?= asset("/js/errorMessages.js") ?>"></script>
+	<script defer type="text/javascript" src="<?= asset("/js/ajax.js") ?>"></script>
+	
 	
 </head> 
 

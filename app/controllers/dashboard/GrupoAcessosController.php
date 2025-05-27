@@ -31,11 +31,13 @@ class GrupoAcessosController extends Controller{
     }
 
     public function index(): Response{
+
         $token = $this->csrfToken->generateToken();
+
         return new Response(
             $this->load('dashboard/template', [
                 'title' => 'Grupo de acessos',
-                'token' => $token,
+                'token_csrf' => $token,
                 'view' => 'dashboard/grupo_acessos/index'
             ])
         );

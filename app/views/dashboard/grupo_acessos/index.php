@@ -2,14 +2,14 @@
 
 <script>
 
-	const inserir = ()=>{
+	const inserirGrupo = ()=>{
 		$("#mensagem").text("");
 		$("#titulo_inserir").text("Inserir registro");
 		$("#modalFormGrupo").modal("show");
 }
 </script>
 
-<a onclick="inserir()" class="btn btn-primary">
+<a onclick="inserirGrupo()" class="btn btn-primary">
     <span class="fa fa-plus"></span>
     Grupo
 </a>
@@ -30,16 +30,16 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="<?= route('/api/grupoacessos/insert') ?>" id="form">
+			<form action="<?= route('/api/grupoacessos/insert') ?>" id="formGrupo">
 			<div class="modal-body">
 				
 
 					<div class="row">
-						<div class="col-md-6">							
+						<div class="col-md-12">							
 								<label>Nome</label>
-								<input type="text" class="form-control" id="nome" name="nome" placeholder="Seu Nome">							
+								<input type="text" class="form-control" id="nome_grupo" name="nome_grupo" placeholder="Seu Nome">							
 						</div>
-						<input type="hidden" name="_csrf_token" value="<?= @$token ?>" />
+						<input type="hidden" name="_csrf_token" value="<?= $token_csrf ?>" />
 						
 					</div>
 
@@ -57,7 +57,7 @@
 
 
 <script>
-	const editar = ($user)=>{
+	const editarGrupo = ($user)=>{
 		$(document).ready(()=>{
 			$("#mensagem").text("");
 			$("#titulo_inserir").text("Atualizar registro");
@@ -78,6 +78,10 @@
 
 <script>
 
+	$(document).ready(()=>{
+		listar()
+	})
+
     const listar = ()=>{
 		$.ajax({
 			url: "<?php echo route("/api/grupoacessos") ?>",
@@ -90,34 +94,35 @@
 		});
 	}
 
-	$("#form").submit((e)=>{
+	$("#formGrupo").submit((e)=>{
 		e.preventDefault();
 		
 		const formData = new FormData(e.target);
 
 		$.ajax({
-			processData: false,
+			url: e.target.action,
 			type: "POST",
+			processData: false,
 			data: formData,
 			contentType: false,
 			cache: false,
-			url: e.target.action,
+
 			success: (data)=>{
-            const response = JSON.parse(data);
- 
-            if(response.error == false){
-                $(`#mensagem`).text(response.message);
-                $(`#btn-fechar`).click();
-                clearErrorMessages(); 
-                listar()
-                limparCampos($("#modalForm"));
-            }else{
-                if(response.issues){
-                    const { issues } = response;
-                    setErrorMessages(issues);
-                }
-                $(`#mensagem`).addClass("text-danger");
-                $(`#mensagem`).text(response.message);
+				const response = JSON.parse(data);
+	
+				if(response.error == false){
+					$(`#mensagem`).text(response.message);
+					$(`#btn-fechar`).click();
+					clearErrorMessages(); 
+					listar();
+					// limparCampos($("#modalForm"));
+				}else{
+					if(response.issues){
+						const { issues } = response;
+						setErrorMessages(issues);
+					}
+					$(`#mensagem`).addClass("text-danger");
+					$(`#mensagem`).text(response.message);
 				}
 			},
 			error:(xhr, status, error)=>{

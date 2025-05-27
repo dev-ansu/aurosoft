@@ -2,10 +2,8 @@
 
 namespace app\controllers\api;
 
-use app\classes\CSRFToken;
 use app\core\Controller;
-use app\facade\App;
-use app\services\Config\ConfigService;
+use app\requests\GrupoAcessos\GrupoAcessosRequest;
 use app\services\GrupoAcessos\GrupoAcessosService;
 use app\services\Response;
 use DateTime;
@@ -26,6 +24,7 @@ class GrupoAcessosController extends Controller{
     
     public function __construct(
         private GrupoAcessosService $grupoAcessoService, 
+        private GrupoAcessosRequest $grupoAcessosRequest
         
         )
     {
@@ -42,7 +41,6 @@ class GrupoAcessosController extends Controller{
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th class="esc">Telefone</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -50,7 +48,7 @@ class GrupoAcessosController extends Controller{
         HTML;
 
         foreach($users as $user){
-            $user->created_at = (new DateTime($user->created_at))->format('d/m/Y');
+            // $user->created_at = (new DateTime($user->created_at))->format('d/m/Y');
             $editUser = json_encode($user);
             extract(json_decode(json_encode($user), true));
   
@@ -118,10 +116,24 @@ class GrupoAcessosController extends Controller{
         );
     }
 
-    public function insert():Response{
-        return new Response(json_encode([
-            'error' => false,
-            'message' => 'SUCESSO'
-        ]));
+    public function insert(): Response{
+
+        $request = $this->grupoAcessosRequest->validated();
+
+        if(!$request){
+            
+            return new Response(
+                json_encode([
+                    'error' => true,
+                    'message' => 'Verifique os dados e tente novamente.',
+                    'issues' => $this->grupoAcessosRequest->getErrors()
+                ])
+            );
+        }
+
+        $response = $this->grupoAcessoService->insert($this->grupoAcessosRequest->data());
+
+
+        return new Response(json_encode($response));
     }
 }

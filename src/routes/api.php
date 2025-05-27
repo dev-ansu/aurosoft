@@ -21,5 +21,6 @@ Router::group([
     $route("POST", '/config', 'api\ConfigController@index');
 
     // Rotas de grupo de acessos
+    $route("GET", '/grupoacessos', 'api\GrupoAcessosController@index', [CSRFMiddleware::class]);
     $route("POST", '/grupoacessos/insert', 'api\GrupoAcessosController@insert', [CSRFMiddleware::class]);
 });

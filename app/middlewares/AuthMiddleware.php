@@ -14,7 +14,7 @@ class AuthMiddleware{
     }
 
     public function handle(): ?Response{
-                // Verifica se a sessão possui o índice SESSION_LOGIN
+        // Verifica se a sessão possui o índice SESSION_LOGIN
         if(!$this->session->has(SESSION_LOGIN) || empty($this->session->__get(SESSION_LOGIN))){
             if($this->request->isAjax()){
                 return new Response(

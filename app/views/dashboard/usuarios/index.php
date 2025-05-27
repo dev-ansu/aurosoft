@@ -1,6 +1,5 @@
 
 
-<script defer type="text/javascript" src="<?= asset("/js/ajax.js") ?>"></script>
 
 <a onclick="inserir()" class="btn btn-primary">
     <span class="fa fa-plus"></span>

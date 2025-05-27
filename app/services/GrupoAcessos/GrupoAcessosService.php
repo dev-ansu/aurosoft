@@ -25,6 +25,16 @@ class GrupoAcessosService extends Model{
         return ServiceResponse::success('', $grupoAcessos);
     }
 
+    public function insert($data): ServiceResponse{
+        
+        $created = $this->create(['nome' => $data['nome_grupo']]);        
+
+        if(!$created) return ServiceResponse::error("Não foi possível criar o grupo de acesso.", null); 
+
+        return ServiceResponse::success("Grupo de acesso criado com sucesso.", null, 201);
+
+    }
+
     public function trash($key, $value): ServiceResponse{
         $find = $this->find($key, $value);
         
