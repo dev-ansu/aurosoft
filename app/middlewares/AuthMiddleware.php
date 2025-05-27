@@ -2,18 +2,19 @@
 namespace app\middlewares;
 
 use app\classes\Session;
+use app\contracts\MiddlewareContract;
 use app\services\Redirect;
 use app\services\Request;
 use app\services\Response;
 
-class AuthMiddleware{
+class AuthMiddleware implements MiddlewareContract{
 
     public function __construct(private Session $session, private Request $request)
     {
         
     }
 
-    public function handle(): ?Response{
+    public function handle(mixed $data = null): ?Response{
         // Verifica se a sessão possui o índice SESSION_LOGIN
         if(!$this->session->has(SESSION_LOGIN) || empty($this->session->__get(SESSION_LOGIN))){
             if($this->request->isAjax()){

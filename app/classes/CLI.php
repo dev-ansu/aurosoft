@@ -19,6 +19,8 @@ class CLI{
         $actionName = $action[1];
         $afterTwoDot = ucfirst($actionName);
         $method = $action[0].$afterTwoDot;
+        
+        
 
         if(!method_exists($this, $method)){
             echo $method;
@@ -34,12 +36,18 @@ class CLI{
 
         $parts = explode("/", $nameInput);
         $className = array_pop($parts); // pegar o último arquivo (que será o .php)
-
+        $className = ucfirst($className);
         $subPath = implode("/", $parts); //subpastas, se houver
         $folder = "app/{$actionName}s/" . $subPath;
-        $path = "{$folder}/{$className}{$afterTwoDot}.php";
+        $path = '';
+
+        if($actionName != "view"){
+            $path = "{$folder}/{$className}{$afterTwoDot}.php";
+        }else{
+            $path = "{$folder}/{$className}.php";
+        }
   
-        $namespace = $subPath ? str_replace('/','\\', $folder): rtrim(str_replace("/", "\\", $folder), "\\");
+        $namespace = $subPath ? strtolower(str_replace('/','\\', $folder)): strtolower(rtrim(str_replace("/", "\\", $folder), "\\"));
      
         $classFullName = $className . "Controller";
 
@@ -99,6 +107,76 @@ class CLI{
         PHP;
 
     }    
+
+    private function makeMiddleware($classFullName, $namespace){
+        return <<<PHP
+        <?php
+
+        namespace {$namespace};
+
+    
+        use app\contracts\MiddlewareContract;
+        use app\services\Response;
+
+        class {$classFullName} implements MiddlewareContract{
+            
+          
+            public function handle(mixed \$data = null): Response | null{
+        
+                return new Response('ok') ?? null;
+            }
+
+        
+        }
+
+        PHP;
+
+    } 
+
+    private function makeView(){
+        return <<<PHP
+            <h1> Welcome to your new view </h1>
+        PHP;
+
+    } 
+
+    private function makeRequest($classFullName, $namespace){
+        return <<<PHP
+        <?php
+
+        namespace {$namespace};
+      
+        use app\contracts\RequestValidationContract;
+        use app\\requests\RequestValidation;
+     
+
+        class $classFullName extends RequestValidation implements RequestValidationContract{
+
+            public function __construct(){
+                parent::__construct();
+            }
+
+            public function authorize(): bool{
+                return true;
+            }
+
+            public function rules(): array{
+                return [
+                    'email' => 'required|notNull',
+                ];
+            }
+            
+            public function messages(): array{
+                return [
+                    'email.notNull' => "O campo e-mail não pode ser vazio.",
+                ];
+            }
+
+        }
+
+        PHP;
+
+    }  
 
     private function createFile($path, $content){
 

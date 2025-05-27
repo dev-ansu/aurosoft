@@ -2,20 +2,18 @@
 namespace app\middlewares;
 
 use app\classes\CSRFToken;
-use app\classes\DeniedAcess;
-use app\contracts\CSRFMiddlewareContract;
+use app\contracts\MiddlewareContract;
 use app\facade\App;
-use app\services\Redirect;
 use app\services\Response;
 
-class CSRFMiddleware implements CSRFMiddlewareContract{
+class CSRFMiddleware implements MiddlewareContract{
     
     public function __construct(protected CSRFToken $csrftoken)
     {
         
     }
 
-    public function handle(): ?Response{
+    public function handle(mixed $data = null): Response | null{
 
         if(!App::request()->isPost()){
             return null;
