@@ -1,38 +1,23 @@
 <?php
 
-namespace app\services\Permissoes;
+namespace app\services\permissoes;
 
-use app\classes\Session;
-use app\core\DBManager;
+use app\core\ServiceResponse;
+use app\core\Model;
 
-class PermissoesService extends DBManager{
-    
-    protected $table = 'permissoes';
-    protected $userId;
-        
-    public function __construct()
+class PermissoesService extends Model{
+
+    protected string $table = '';
+    protected array $columns = [];
+
+    public function __construct(string | null $env = '')
     {
-        $session = new Session();
-
-        $user = $session->__get(SESSION_LOGIN);
-
-        if (!$user) {
-            throw new \Exception("Usuário não autenticado.");
-        }
-
-        $this->userId = $user->id;
+        $this->name = $env;
     }
 
-    /**
-     * Autenticar o usuário no sistema
-     * @param array $data[$email, $senha]
-     */
-    public function getAllPermissions(){
-        
-        
-        return [
-            'editar',
-        ];
+    public function fetchAll(): ServiceResponse
+    {
+        return ServiceResponse::success('ok', $this->all());
     }
 
 }

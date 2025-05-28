@@ -38,7 +38,7 @@
 				<input type="text" id="id_permissoes" name="id_permissoes">
 
 				<br>
-				<small><div id="mensagem" align="center"></div></small>
+				<small><div id="mensagem_permissao" align="center"></div></small>
 			</div>
 			<div class="modal-footer">       
 				<button type="submit" class="btn btn-primary">Salvar</button>
@@ -273,6 +273,19 @@
 		})
 		$("#modalDados").modal("show");
 	}
+	
+	const listarPermissoes = (id)=>{
+		$.ajax({
+			url: "<?php echo route("/api/permissoes/") ?>" + id,
+			method: "GET",
+			dataType: "html",
+			success: (result)=>{
+				$("#listar_permissoes").html(result);
+				$("#mensagem_permissao").text('');
+			}
+		});
+	}
+
 	const definirPermissoes = (id, nome)=>{
 		
 		$(document).ready(()=>{
@@ -280,6 +293,9 @@
 			$("#mensagem_permissoes").text("");
 			$("#id_permissoes").val(id)
 			$("#permissoesModal").modal("show");
+
+			listarPermissoes(id);
+
 		})
 	}
 

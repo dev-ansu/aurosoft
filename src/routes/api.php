@@ -31,4 +31,8 @@ Router::group([
     $route("GET", '/acessos/delete/{id:\d+}', 'api\AcessosController@delete', [CSRFMiddleware::class]);
     $route("POST", '/acessos/insert', 'api\AcessosController@insert', [CSRFMiddleware::class]);
     $route("POST", '/acessos/patch', 'api\AcessosController@patch', [CSRFMiddleware::class]);
+
+    // Rotas de permissões
+    $route("GET", "/permissoes", "api\PermissoesController@index");
+    
 });
