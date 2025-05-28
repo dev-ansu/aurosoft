@@ -1,3 +1,7 @@
+<?php
+
+use app\facade\App;
+?>
 
 
 
@@ -35,7 +39,8 @@
 				</div>
 
 	
-				<input type="text" id="id_permissoes" name="id_permissoes">
+				<input type="hidden" id="id_permissoes" name="id_permissoes">
+				<input type="hidden" id="permissoes_csrf_token" name="_csrf_token" value="<?= App::_csrf() ?>">
 
 				<br>
 				<small><div id="mensagem_permissao" align="center"></div></small>
@@ -275,13 +280,16 @@
 	}
 	
 	const listarPermissoes = (id)=>{
+		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
+
 		$.ajax({
-			url: "<?php echo route("/api/permissoes/") ?>" + id,
-			method: "GET",
+			url: "<?php echo route("/api/permissoes") ?>",
+			method: "POST",
+			data: {id, _csrf_token: _csrf_token},
 			dataType: "html",
 			success: (result)=>{
 				$("#listar_permissoes").html(result);
-				$("#mensagem_permissao").text('');
+				$("#mensagem_permissao").text(result);
 			}
 		});
 	}

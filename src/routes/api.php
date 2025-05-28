@@ -33,6 +33,6 @@ Router::group([
     $route("POST", '/acessos/patch', 'api\AcessosController@patch', [CSRFMiddleware::class]);
 
     // Rotas de permissões
-    $route("GET", "/permissoes", "api\PermissoesController@index");
-    
+    $route("POST", "/permissoes", "api\PermissoesController@index", [CSRFMiddleware::class]);
+
 });

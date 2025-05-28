@@ -10,7 +10,7 @@ class PermissoesController extends Controller{
     public function index(): Response{
         
         return new Response(
-            'Hello world!'
+            'Olá',
         );
     }
 

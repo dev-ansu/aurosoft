@@ -15,9 +15,9 @@ class PermissoesService extends Model{
         $this->name = $env;
     }
 
-    public function fetchAll(): ServiceResponse
+    public function fetchAll(int $id): ServiceResponse
     {
-        return ServiceResponse::success('ok', $this->all());
+       return new ServiceResponse(false, 'teste');
     }
 
 }
