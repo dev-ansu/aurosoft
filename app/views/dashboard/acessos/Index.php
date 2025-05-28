@@ -6,6 +6,7 @@
 		$("#mensagem").text("");
 		$("#titulo_inserir").text("Inserir registro");
 		$("#modalformAcesso").modal("show");
+		
 }
 </script>
 
@@ -70,7 +71,7 @@
 
 
 				<br>
-				<small><div id="mensagem" align="center"></div></small>
+				<small><div id="mensagem_acesso" align="center"></div></small>
 			</div>
 			<div class="modal-footer">       
 				<button type="submit" class="btn btn-primary">Salvar</button>
@@ -138,22 +139,22 @@
 				const response = JSON.parse(data);
 	
 				if(response.error == false){
-					$(`#mensagem`).text(response.message);
+					$(`#mensagem_acesso`).text(response.message);
 					$(`#btn-fechar`).click();
 					clearErrorMessages(); 
 					listar();
-					// limparCampos($("#modalForm"));
+					limparCampos("#modalformAcesso");
 				}else{
 					if(response.issues){
 						const { issues } = response;
 						setErrorMessages(issues);
 					}
-					$(`#mensagem`).addClass("text-danger");
-					$(`#mensagem`).text(response.message);
+					$(`#mensagem_acesso`).addClass("text-danger");
+					$(`#mensagem_acesso`).text(response.message);
 				}
 			},
 			error:(xhr, status, error)=>{
-				$(`#mensagem`).text(xhr.responseText);
+				$(`#mensagem_acesso`).text(xhr.responseText);
 			}
 		})
 	})

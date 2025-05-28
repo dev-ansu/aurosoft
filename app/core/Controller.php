@@ -2,14 +2,13 @@
 
 namespace app\core;
 
-use app\classes\DeniedAcess;
-use app\services\Response;
 use Exception;
 
 class Controller{
     
     public function load(string $viewName, array $viewData = []){
         try{
+            
             // Validação do caminho da view
             $viewPath = realpath(VIEWS_PATH . $viewName . ".php");
             $viewsDir = realpath(VIEWS_PATH);

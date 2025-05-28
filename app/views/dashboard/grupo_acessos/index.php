@@ -116,7 +116,7 @@
 					$(`#btn-fechar`).click();
 					clearErrorMessages(); 
 					listar();
-					// limparCampos($("#modalForm"));
+					limparCampos("#formGrupo");
 				}else{
 					if(response.issues){
 						const { issues } = response;

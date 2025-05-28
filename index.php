@@ -4,22 +4,17 @@
 require_once __DIR__ . "/vendor/autoload.php";
 require_once __DIR__ . "/config/config.php";
 
+use app\core\Core;
+use app\classes\ErrorHandler;
+use app\core\Container;
+use app\facade\App;
+use app\middlewares\SessionMiddleware;
+use app\services\Request;
+
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ );
 $dotenv->load();
 
-use app\classes\CSRFToken;
-use app\core\Core;
-use app\classes\ErrorHandler;
-use app\contracts\AuthSessionService;
-use app\contracts\Controller;
-use app\contracts\CSRFMiddlewareContract;
-use app\core\Container;
-use app\core\Controller as CoreController;
-use app\facade\App;
-use app\middlewares\CSRFMiddleware;
-use app\services\Request;
-
-// use DI\ContainerBuilder;
+(new SessionMiddleware)->handle();
 
 require_once __DIR__ . "/src/routes/web.php";
 require_once __DIR__ . "/src/routes/api.php";

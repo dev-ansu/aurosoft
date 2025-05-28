@@ -5,13 +5,6 @@ use app\contracts\SessionContract;
 
 class Session implements SessionContract{
 
-    public function __construct()
-    {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-
     public function __set($name, $value)
     {
         $_SESSION[$name] = $value;
@@ -33,6 +26,7 @@ class Session implements SessionContract{
     public function unset($name){
         if($this->has($name)){
             unset($_SESSION[$name]);
+            session_write_close();
         }
     }
 
