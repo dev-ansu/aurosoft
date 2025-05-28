@@ -17,8 +17,5 @@ Router::group([
 Router::get("/", 'HomeController@index');
 // Router::get("/dashboard", 'dashboard\HomeController@index', [AuthMIddleware::class]);
 
-Router::get("/user/{id}", 'UserController@index');
-
-
 Router::post("/login", 'LoginController@index', [CSRFMiddleware::class]);
 Router::get("/logout", 'LoginController@logout');

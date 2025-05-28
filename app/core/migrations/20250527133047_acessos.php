@@ -13,8 +13,8 @@ final class Acessos extends AbstractMigration
             ->addColumn('chave', 'string', ['limit' => 250])
             ->addColumn('grupo_id', 'integer', ['signed' => false,'null' => false])
             ->addForeignKey(['grupo_id'], 'grupo_acessos', ['id'], [
-                'delete' => 'CASCADE',
-                'update' => 'CASCADE',
+                'delete' => 'RESTRICT',
+                'update' => 'RESTRICT',
                 'constraint' => 'fk_acessos_grupo_id_grupo_acessos_id'
             ])
             ->create()
@@ -22,6 +22,7 @@ final class Acessos extends AbstractMigration
     }
 
     public function down():void{
+        $this->table('acessos')->dropForeignKey('grupo_id', 'fk_acessos_grupo_id_grupo_acessos_id');
         $this->table("acessos")->drop()->save();
     }
 }

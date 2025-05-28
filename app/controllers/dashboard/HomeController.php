@@ -28,6 +28,11 @@ class HomeController extends Controller{
     }
 
     public function index(): Response{
+
+        if(!App::session()->has('config')){
+            $config = (new ConfigService())->fetch();
+            App::session()->__set('config', $config);
+        }
   
         return new Response(
             $this->load('dashboard/template', [

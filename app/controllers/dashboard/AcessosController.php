@@ -3,8 +3,7 @@
 namespace app\controllers\dashboard;
 
 use app\core\Controller;
-use app\facade\App;
-use app\services\Config\ConfigService;
+use app\services\GrupoAcessos\GrupoAcessosService;
 use app\services\Response;
 
 
@@ -22,17 +21,21 @@ class AcessosController extends Controller{
     //     ];
     // }
     
-    public function __construct()
+    public function __construct(private GrupoAcessosService $grupoAcessosService)
     {
         
     }
 
     public function index(): Response{
-  
+
+        $grupos = $this->grupoAcessosService->fetchAll()->toArray();
+       
+        
         return new Response(
             $this->load('dashboard/template', [
-                'title' => 'Dashboard',
-                'view' => 'dashboard/grupo_acessos/index'
+                'title' => 'Acessos',
+                'grupos' => $grupos['data'],
+                'view' => 'dashboard/acessos/Index'
             ])
         );
     }

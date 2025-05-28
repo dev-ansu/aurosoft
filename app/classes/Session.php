@@ -14,7 +14,6 @@ class Session implements SessionContract{
 
     public function __set($name, $value)
     {
-        session_regenerate_id(true);
         $_SESSION[$name] = $value;
     }
 

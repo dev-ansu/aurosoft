@@ -21,6 +21,14 @@ Router::group([
     $route("POST", '/config', 'api\ConfigController@index');
 
     // Rotas de grupo de acessos
-    $route("GET", '/grupoacessos', 'api\GrupoAcessosController@index', [CSRFMiddleware::class]);
+    $route("GET", '/grupoacessos', 'api\GrupoAcessosController@index');
     $route("POST", '/grupoacessos/insert', 'api\GrupoAcessosController@insert', [CSRFMiddleware::class]);
+    $route("POST", '/grupoacessos/patch', 'api\GrupoAcessosController@patch', [CSRFMiddleware::class]);
+    $route("GET", '/grupoacessos/delete/{id:\d+}', 'api\GrupoAcessosController@delete');
+
+    // Rotas de acessos
+    $route("GET", '/acessos', 'api\AcessosController@index');
+    $route("GET", '/acessos/delete/{id:\d+}', 'api\AcessosController@delete', [CSRFMiddleware::class]);
+    $route("POST", '/acessos/insert', 'api\AcessosController@insert', [CSRFMiddleware::class]);
+    $route("POST", '/acessos/patch', 'api\AcessosController@patch', [CSRFMiddleware::class]);
 });

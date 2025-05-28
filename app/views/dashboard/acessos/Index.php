@@ -2,16 +2,16 @@
 
 <script>
 
-	const inserirGrupo = ()=>{
+	const inserirAcesso = ()=>{
 		$("#mensagem").text("");
 		$("#titulo_inserir").text("Inserir registro");
-		$("#modalFormGrupo").modal("show");
+		$("#modalformAcesso").modal("show");
 }
 </script>
 
-<a onclick="inserirGrupo()" class="btn btn-primary">
+<a onclick="inserirAcesso()" class="btn btn-primary">
     <span class="fa fa-plus"></span>
-    Grupo
+    Acesso
 </a>
 
 
@@ -21,7 +21,7 @@
  
 
 <!-- Modal Form -->
-<div class="modal fade" id="modalFormGrupo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalformAcesso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -30,17 +30,41 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="<?= route('/api/grupoacessos/insert') ?>" id="formGrupo">
+			<form action="<?= route('/api/acessos/insert') ?>" id="formAcesso">
 			<div class="modal-body">
 				
 
-					<div class="row">
+					<div class="row gap-4">
 						<div class="col-md-12">							
-								<label>Nome</label>
-								<input type="text" class="form-control" id="nome_grupo" name="nome_grupo" placeholder="Nome do grupo">							
-								<input type="hidden" class="form-control" id="grupo_id" name="grupo_id" placeholder="Nome do grupo">							
+								<label>Nome do menu*</label>
+								<input type="text" class="form-control" id="nome_acesso" name="nome_acesso" placeholder="Nome do acesso">							
 						</div>
-						<input type="hidden" name="_csrf_token" value="<?= $token_csrf ?>" />
+
+						<div class="col-md-12">							
+								<label>Chave*</label>
+								<input type="text" class="form-control" id="chave" name="chave" placeholder="Chave">							
+						</div>
+
+                        <div class="col-md-12">							
+                            <label>Grupo</label>
+							<?php
+
+                            use app\facade\App;
+
+ 							if(count($grupos) >= 0): ?>
+                            <select class="form-control" name="grupo_id" id="grupo_id">
+								<option value="">Sem grupo</option>
+                                <?php foreach(@$grupos as $grupo): ?>
+                                    <option value="<?= $grupo->id ?>"><?= $grupo->nome ?></option>
+                                <?php endforeach; ?>
+                            </select>
+							<?php else: ?>
+								<?= 'Cadastre um grupo de acesso' ?>
+							<?php endif; ?>
+
+						</div>
+						<input type="hidden" name="_csrf_token" value="<?= App::_csrf() ?>" />
+						<input type="hidden" id="acesso_id" name="acesso_id" value="" />
 						
 					</div>
 
@@ -58,12 +82,12 @@
 
 
 <script>
-	const editarGrupo = ($user)=>{
+	const editarAcessos = ($user)=>{
 		$(document).ready(()=>{
 			$("#mensagem").text("");
 			$("#titulo_inserir").text("Atualizar registro");
-			$("#modalFormGrupo").modal("show");
-			$("#formGrupo").attr("action", "../api/grupoacessos/patch");
+			$("#modalformAcesso").modal("show");
+			$("#formAcesso").attr("action", "../api/acessos/patch");
 			const parseUser = JSON.parse($user);
 			for(let i in parseUser){
 				if($(`#${i}`).is("select")){
@@ -85,17 +109,19 @@
 
     const listar = ()=>{
 		$.ajax({
-			url: "<?php echo route("/api/grupoacessos") ?>",
+			url: "<?php echo route("/api/acessos") ?>",
 			method: "GET",
 			dataType: "html",
 			success: (result)=>{
+           
 				$("#listar").html(result);
 				$("#mensagem-excluir").remove();
+               
 			}
 		});
 	}
 
-	$("#formGrupo").submit((e)=>{
+	$("#formAcesso").submit((e)=>{
 		e.preventDefault();
 		
 		const formData = new FormData(e.target);

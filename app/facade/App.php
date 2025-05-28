@@ -1,6 +1,7 @@
 <?php
 namespace app\facade;
 
+use app\classes\CSRFToken;
 use app\classes\Session;
 use app\services\AuthSessionService;
 use app\services\Request;
@@ -29,6 +30,10 @@ class App{
        */
       public static function authSession(): AuthSessionService{
         return self::get(AuthSessionService::class);
+      }
+
+      public static function _csrf(): string{
+          return (new CSRFToken)->generateToken();
       }
 
       public static function request(): Request{

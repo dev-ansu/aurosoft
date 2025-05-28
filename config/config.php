@@ -10,6 +10,8 @@ ini_set('display_startup_errors', 1);
 // Em produção, adicione esta linha (com HTTPS):
 // ini_set('session.cookie_secure', 1);
 session_start();
+session_regenerate_id(true);
+
 date_default_timezone_set("America/Sao_Paulo");
 
 define("CONTROLLERS_PATH", dirname(__DIR__) . "\\app\\controllers\\");

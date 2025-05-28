@@ -50,6 +50,19 @@ class UsuariosController extends Controller{
             $titulo_link = $ativo === "Sim" ? "Inativar":"Ativar";
             $classe_ativo = $ativo === "Sim" ? "#c4c4c4":"";
             $hrefDelete = route("/api/usuarios/delete");
+            
+            if($nivel !== "Administrador"){
+                $permissoesButton = <<<HTML
+                    <big>
+                        <a href="#" onclick='definirPermissoes("{$id}", "{$nome}")' title="Definir permissões">
+                            <i class="fa fa-lock" style="color: blue; margin-left:3px"></i>
+                        </a>
+                    </big>
+                HTML;
+            }else{
+                $permissoesButton = '';
+            }
+
             $html.= <<<HTML
 
                     <tr class="{$classe_ativo}">
@@ -93,11 +106,9 @@ class UsuariosController extends Controller{
                                     <i class="fa {$icone} text-success"></i>
                                 </a>
                             </big>
-                             <big>
-                                <a href="#" onclick='permissoes("{$id}")' title="Definir permissões">
-                                    <i class="fa fa-lock" style="color: blue; margin-left:3px"></i>
-                                </a>
-                            </big>
+
+                            $permissoesButton
+                             
                         </td>
                     </tr>
                 HTML;

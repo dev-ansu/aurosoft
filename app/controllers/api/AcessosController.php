@@ -3,37 +3,19 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
-use app\requests\GrupoAcessos\GrupoAcessosRequest;
-use app\services\GrupoAcessos\GrupoAcessosService;
+use app\requests\acessos\AcessosRequest;
+use app\services\acessos\AcessosService;
 use app\services\Response;
-use DateTime;
 
-class GrupoAcessosController extends Controller{
+class AcessosController extends Controller{
 
-    // public function middlewareMap(): array
-    // {
-    //     $session = (new Session)->__get(SESSION_LOGIN);
-        
-    //     return [
-    //         'index' => [
-    //             AuthMIddleware::class,
-    //             [RoleMiddleware::class, [$session->nivel ?? null]]
-    //         ],
-    //     ];
-    // }
-    
-    public function __construct(
-        private GrupoAcessosService $grupoAcessoService, 
-        private GrupoAcessosRequest $grupoAcessosRequest
-        
-        )
+    public function __construct(private AcessosService $acessosService, private AcessosRequest $acessosRequest)
     {
         
     }
 
     public function index(): Response{
-  
-        $users = $this->grupoAcessoService->fetchAll()->data;
+        $users = $this->acessosService->fetchAll()->data;
 
   
         $html = <<<HTML
@@ -41,7 +23,8 @@ class GrupoAcessosController extends Controller{
                 <thead>
                     <tr>
                         <th>Nome</th>
-                        <th>Qtd. Acessos</th>
+                        <th>Chave</th>
+                        <th>Grupo</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -50,23 +33,26 @@ class GrupoAcessosController extends Controller{
 
         foreach($users as $user){
             // $user->created_at = (new DateTime($user->created_at))->format('d/m/Y');
-            $grupo = [
-                'grupo_id' => $user->id,
-                'nome_grupo' => $user->nome,
-
+            $acessos = [
+                'nome_acesso' => $user->nome,
+                'chave' => $user->chave,
+                'grupo_id' => $user->grupo_id,
+                'nome_grupo' => $user->nome_grupo,
+                'acesso_id' => $user->id,
             ];
-            $editUser = json_encode($grupo);
+            $editUser = json_encode($acessos);
             extract(json_decode(json_encode($user), true));
   
-            $hrefDelete = route("/api/grupoacessos/delete");
+            $hrefDelete = route("/api/acessos/delete");
             $html.= <<<HTML
 
                     <tr">
                         <td>{$nome}</td>
-                        <td>{$QtdAcessos}</td>
+                        <td>{$chave}</td>
+                        <td>{$nome_grupo}</td>
                         <td>
                             <big>
-                                <a href="#" onclick='editarGrupo(`{$editUser}`)' title="Editar dados">
+                                <a href="#" onclick='editarAcessos(`{$editUser}`)' title="Editar dados">
                                     <i class="fa fa-edit text-primary"></i>
                                 </a>
                             </big>
@@ -124,69 +110,66 @@ class GrupoAcessosController extends Controller{
     }
 
     public function insert(): Response{
-
-        $request = $this->grupoAcessosRequest->validated();
+        $request = $this->acessosRequest->validated();
 
         if(!$request){
-            
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->grupoAcessosRequest->getErrors()
+                    'issues' => $this->acessosRequest->getErrors()
                 ])
             );
-        }
+        }  
 
-        $response = $this->grupoAcessoService->insert($this->grupoAcessosRequest->data());
+        $data = $this->acessosRequest->data();
 
-
+        $response = $this->acessosService->insert($data);
         return new Response(json_encode($response));
-    }
-
-    public function delete(int $id): Response{
-        $response = $this->grupoAcessoService->trash('id', $id);
-   
-        return new Response(
-            json_encode($response)
-        );
 
     }
-
 
     public function patch(){
         
-        $this->grupoAcessosRequest->custom([
-            'grupo_id' => 'required|notNull',
+        $this->acessosRequest->custom([
+            'acesso_id' => 'required|notNull',
             'messages' => [
-                'grupo_id.required' => 'O grupo id é obrigatório.',
-                'grupo_id.notNull' => 'o grupo id não pode ser vazio.',
+                'acesso_id.required' => 'O grupo id é obrigatório.',
+                'acesso_id.notNull' => 'o grupo id não pode ser vazio.',
             ]
         ]);
 
-        $request = $this->grupoAcessosRequest->validated();
+        $request = $this->acessosRequest->validated();
 
         if(!$request){
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->grupoAcessosRequest->getErrors()
+                    'issues' => $this->acessosRequest->getErrors()
                 ])
             );
         }        
 
         
 
-        $data = $this->grupoAcessosRequest->data();
+        $data = $this->acessosRequest->data();
 
 
 
-        $response = $this->grupoAcessoService->patch($data);
+        $response = $this->acessosService->patch($data);
    
         return new Response(
             json_encode($response)
         );
     }
-    
+
+    public function delete(int $id): Response{
+        $response = $this->acessosService->trash('id', $id);
+   
+        return new Response(
+            json_encode($response)
+        );
+
+    }
 }

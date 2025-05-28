@@ -16,6 +16,7 @@ class ServiceResponse{
     public static function error(string $message, mixed $data = null, int $code = 400):self{
         return new self(true, $message, $data, $code);
     }
+
     
     public function toArray(): array{
         return [

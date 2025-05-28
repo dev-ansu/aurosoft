@@ -7,10 +7,46 @@
 </a>
 
 
+
 <section class="bs-example widget-shadow p-15" id="listar">
 
 </section>
  
+<div class="modal fade" id="permissoesModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title d-flex justify-content-between align-items-center" id="permissoesModalLabel">
+					<span id="nome_permissoes"></span>
+					<span>
+						<input class="form-check-input" type="checkbox" id="input_todos" onchange="marcarTodos()" />
+						<label for="input_todos">Marcar todos</label>
+					</span>				
+				</h4>
+				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form action="<?= route('/api/usuarios/insert') ?>" id="permissoesForm">
+			<div class="modal-body">
+
+				<div class="row" id="listar_permissoes">
+
+				</div>
+
+	
+				<input type="text" id="id_permissoes" name="id_permissoes">
+
+				<br>
+				<small><div id="mensagem" align="center"></div></small>
+			</div>
+			<div class="modal-footer">       
+				<button type="submit" class="btn btn-primary">Salvar</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
 
 
 <!-- Modal Form -->
@@ -182,6 +218,14 @@
 	</div>
 </div>
 
+
+<!-- Modal permissões -->
+
+
+
+<!-- Modal -->
+
+
 <script>
 
 	$(document).ready(()=>{
@@ -229,4 +273,14 @@
 		})
 		$("#modalDados").modal("show");
 	}
+	const definirPermissoes = (id, nome)=>{
+		
+		$(document).ready(()=>{
+			$("#nome_permissoes").text(nome)
+			$("#mensagem_permissoes").text("");
+			$("#id_permissoes").val(id)
+			$("#permissoesModal").modal("show");
+		})
+	}
+
 </script>
