@@ -11,9 +11,9 @@ final class Acessos extends AbstractMigration
         $table
             ->addColumn('nome', 'string', ['limit' => 250])
             ->addColumn('chave', 'string', ['limit' => 250])
-            ->addColumn('grupo_id', 'integer', ['signed' => false,'null' => false])
+            ->addColumn('grupo_id', 'integer', ['signed' => false,'null' => true])
             ->addForeignKey(['grupo_id'], 'grupo_acessos', ['id'], [
-                'delete' => 'RESTRICT',
+                'delete' => 'SET NULL',
                 'update' => 'RESTRICT',
                 'constraint' => 'fk_acessos_grupo_id_grupo_acessos_id'
             ])

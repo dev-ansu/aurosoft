@@ -3,7 +3,6 @@
 use app\facade\App;
 $session = App::authSession()->get();
 
-$configSession = App::session()->__get('config');
 
 ?>
 </div>
@@ -187,7 +186,7 @@ $configSession = App::session()->__get('config');
 					<div class="row">
 						<div class="col-md-12">							
 								<label>Nome do Projeto</label>
-								<input type="text" class="form-control" id="nome_sistema" name="nome" placeholder="Nome do sistema" value="<?php echo @$configSession->nome ?>" required>							
+								<input type="text" class="form-control" id="nome_sistema" name="nome" placeholder="Nome do sistema" value="<?php echo @$config->nome ?>" required>							
 					
 						</div>
 					</div>
@@ -195,23 +194,23 @@ $configSession = App::session()->__get('config');
 						
 						<div class="col-md-3">							
 								<label>Email Sistema</label>
-								<input type="email" class="form-control" id="email_sistema" name="email" placeholder="Email do Sistema" value="<?php echo @$configSession->email ?>" >							
+								<input type="email" class="form-control" id="email_sistema" name="email" placeholder="Email do Sistema" value="<?php echo @$config->email ?>" >							
 						</div>
 
 
 						<div class="col-md-3">							
 								<label>Telefone Sistema</label>
-								<input type="text" class="form-control" id="telefone_sistema" name="telefone" placeholder="Telefone do Sistema" value="<?php echo @$configSession->telefone ?>" required>							
+								<input type="text" class="form-control" id="telefone_sistema" name="telefone" placeholder="Telefone do Sistema" value="<?php echo @$config->telefone ?>" required>							
 						</div>
 
 						<div class="col-md-3">							
 								<label>WhatsApp</label>
-								<input type="text" class="form-control" id="whatsapp_sistema" name="whatsapp" placeholder="WhatsApp" value="<?php echo @$configSession->whatsapp ?>" >							
+								<input type="text" class="form-control" id="whatsapp_sistema" name="whatsapp" placeholder="WhatsApp" value="<?php echo @$config->whatsapp ?>" >							
 						</div>
 
 						<div class="col-md-3">							
 								<label>Instagram</label>
-								<input type="text" class="form-control" id="instagram_sistema" name="instagram" placeholder="Link do Instagram" value="<?php echo @$configSession->instagram ?>">							
+								<input type="text" class="form-control" id="instagram_sistema" name="instagram" placeholder="Link do Instagram" value="<?php echo @$config->instagram ?>">							
 						</div>
 					</div>
 
@@ -219,15 +218,15 @@ $configSession = App::session()->__get('config');
 					<div class="row">
 						<div class="col-md-6">							
 								<label>Rua</label>
-								<input type="text" class="form-control" id="rua_sistema" name="rua" placeholder="Rua X..." value="<?php echo @$configSession->rua ?>" >							
+								<input type="text" class="form-control" id="rua_sistema" name="rua" placeholder="Rua X..." value="<?php echo @$config->rua ?>" >							
 						</div>
 						<div class="col-md-6">							
 								<label>Número</label>
-								<input type="text" class="form-control" id="numero_sistema" name="numero" placeholder="Ex.: 10, 100" value="<?php echo @$configSession->numero ?>" >							
+								<input type="text" class="form-control" id="numero_sistema" name="numero" placeholder="Ex.: 10, 100" value="<?php echo @$config->numero ?>" >							
 						</div>
 						<div class="col-md-6">							
 								<label>Bairro</label>
-								<input type="text" class="form-control" id="bairro_sistema" name="bairro" placeholder="X..." value="<?php echo @$configSession->bairro ?>" >							
+								<input type="text" class="form-control" id="bairro_sistema" name="bairro" placeholder="X..." value="<?php echo @$config->bairro ?>" >							
 						</div>
 					</div>			
 

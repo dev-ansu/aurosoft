@@ -16,12 +16,15 @@ class Controller{
             if(strpos($viewPath, $viewsDir) !== 0 || !file_exists($viewPath)){
                 throw new Exception('View não encontrada');
             }
+
+         
             $safeData = array_map(function($item){
                 return is_string($item) ? escape($item): $item;
             }, $viewData);
             
+               
             extract($safeData);
-
+       
             include $viewPath;
 
         }catch(Exception $e){

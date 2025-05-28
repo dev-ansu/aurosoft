@@ -1,6 +1,13 @@
 
-<?php 
-    component("partials.cabecalho");
+<?php
+
+use app\services\Config\ConfigService;
+
+$config = (new ConfigService())->fetch();
+
+    component("partials.cabecalho", [
+        'config' => $config,
+        'title' => @$title]);
 ?>
 
     <div id="page-wrapper">
@@ -10,5 +17,7 @@
     </div>
 
 <?php
-    component("partials.rodape");
+    component("partials.rodape", [
+        'config' => $config,
+    ]);
 ?>

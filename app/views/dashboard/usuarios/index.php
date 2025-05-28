@@ -120,7 +120,7 @@ use app\facade\App;
 								<input type="text" class="form-control" id="bairro" name="bairro" placeholder="Nome do bairro" value="">							
 								<input type="hidden" class="form-control" id="id" name="id" placeholder="" value="">							
 						</div>
-						<input type="hidden" name="_csrf_token" value="<?= @$token ?>" />
+						<input type="hidden" name="_csrf_token" value="<?= App::_csrf() ?>" />
 					</div>		
 					
 					<div class="row">

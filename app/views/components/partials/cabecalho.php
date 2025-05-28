@@ -1,15 +1,15 @@
 <?php
 
 use app\facade\App;
+
 $session = App::authSession()->get();
-$configSession = App::session()->__get('config');
 
 
 ?>
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title><?= @$configSession->nome ?><?= @$title ? " - ".@$title:'' ?></title>
+	<title><?= @$config->nome ?><?= $title ? " - " . $title:''  ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="shortcut icon" href="" type="image/x-icon">
@@ -113,7 +113,7 @@ $configSession = App::session()->__get('config');
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<h1><a class="navbar-brand" href="<?= route("/dashboard") ?>"><span class="fa fa-cutlery"></span> Sistema<span class="dashboard_text"><?= @$configSession->nome ?></span></a></h1>
+						<h1><a class="navbar-brand" href="<?= route("/dashboard") ?>"><span class="fa fa-cutlery"></span> Sistema<span class="dashboard_text"><?= @$config->nome ?></span></a></h1>
 					</div>
 					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 						<ul class="sidebar-menu">
