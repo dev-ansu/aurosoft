@@ -49,7 +49,7 @@ class CLI{
   
         $namespace = $subPath ? strtolower(str_replace('/','\\', $folder)): strtolower(rtrim(str_replace("/", "\\", $folder), "\\"));
      
-        $classFullName = $className . "Controller";
+        $classFullName = $className . $afterTwoDot;
 
         $this->createFile($path, call_user_func_array([$this, $method], [$classFullName, $namespace]), $actionName);
 
