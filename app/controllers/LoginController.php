@@ -44,8 +44,6 @@ class LoginController extends Controller{
             }
 
             App::authSession()->init($user);
-
-            App::session()->__set('config', $this->config->fetch());
             
 
             return new Redirect('/dashboard');
