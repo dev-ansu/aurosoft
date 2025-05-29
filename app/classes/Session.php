@@ -26,7 +26,6 @@ class Session implements SessionContract{
     public function unset($name){
         if($this->has($name)){
             unset($_SESSION[$name]);
-            session_write_close();
         }
     }
 

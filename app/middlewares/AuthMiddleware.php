@@ -16,7 +16,10 @@ class AuthMiddleware implements MiddlewareContract{
 
     public function handle(mixed $data = null): ?Response{
         // Verifica se a sessão possui o índice SESSION_LOGIN
-        if(!$this->session->has(SESSION_LOGIN) || empty($this->session->__get(SESSION_LOGIN))){
+        $sessionHas = $this->session->has(SESSION_LOGIN);
+        $sessionEmpty = empty($this->session->__get(SESSION_LOGIN));
+       
+        if(!$sessionHas || $sessionEmpty){
             if($this->request->isAjax()){
                 return new Response(
                     'Não autorizado',
@@ -28,7 +31,6 @@ class AuthMiddleware implements MiddlewareContract{
             }
 
         } 
-
         return null;
     }
 

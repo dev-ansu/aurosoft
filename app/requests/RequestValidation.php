@@ -57,7 +57,6 @@ class RequestValidation extends Validate{
             $combinedRules = array_merge(Validate::$request->rules(), $this->customRules);
             
             $this->setFields(array_keys($combinedRules));
-       
             $validate = $this->validate($combinedRules);
             
             if(!$validate){
@@ -65,6 +64,7 @@ class RequestValidation extends Validate{
                 self::setFlashMessages(); // Garante que as mensagens estarão disponíveis.
                 return null;
             }
+      
 
             $this->data = $validate;
             return $this;

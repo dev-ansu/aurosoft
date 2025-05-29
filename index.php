@@ -14,8 +14,6 @@ use app\services\Request;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ );
 $dotenv->load();
 
-(new SessionMiddleware)->handle();
-
 require_once __DIR__ . "/src/routes/web.php";
 require_once __DIR__ . "/src/routes/api.php";
 
@@ -51,3 +49,6 @@ try{
 }
 
 
+
+
+// Faça o resto da sua execução PHP abaixo

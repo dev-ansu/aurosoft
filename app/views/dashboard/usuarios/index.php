@@ -24,31 +24,28 @@ use app\facade\App;
 					<span id="nome_permissoes"></span>
 					<span>
 						<input class="form-check-input" type="checkbox" id="input_todos" onchange="marcarTodos()" />
-						<label for="input_todos">Marcar todos</label>
+						<label for="input_todos" id="titulo_inputs_marcar">Marcar todos</label>
 					</span>				
 				</h4>
 				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="<?= route('/api/usuarios/insert') ?>" id="permissoesForm">
+			<form id="permissoesForm">
 			<div class="modal-body">
 
 				<div class="row" id="listar_permissoes">
 
 				</div>
 
-	
-				<input type="hidden" id="id_permissoes" name="id_permissoes">
 				<input type="hidden" id="permissoes_csrf_token" name="_csrf_token" value="<?= App::_csrf() ?>">
+				<input type="hidden" id="id_permissoes" name="" value="">
 
 				<br>
-				<small><div id="mensagem_permissao" align="center"></div></small>
 			</div>
-			<div class="modal-footer">       
-				<button type="submit" class="btn btn-primary">Salvar</button>
-			</div>
-			</form>
+			
+			<small><div id="mensagem_permissao" align="center"></div></small>
+		</form>
 		</div>
 	</div>
 </div>
@@ -282,14 +279,78 @@ use app\facade\App;
 	const listarPermissoes = (id)=>{
 		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
 
+		
 		$.ajax({
-			url: "<?php echo route("/api/permissoes") ?>",
+			url: "<?= route("/api/permissoes") ?>",
 			method: "POST",
-			data: {id, _csrf_token: _csrf_token},
+			data: {id:id, _csrf_token: _csrf_token},
 			dataType: "html",
 			success: (result)=>{
+		
+				
 				$("#listar_permissoes").html(result);
-				$("#mensagem_permissao").text(result);
+				$("#mensagem_permissao").text('');
+
+				
+			},
+			error:(xhr, status, error)=>{
+				console.log(xhr.responseText)
+			}
+		});
+	}
+
+	const marcarTodos = ()=>{
+		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
+		const usuario_id = $("#id_permissoes").val()
+		$.ajax({
+			url: "<?= route("/api/permissoes/insertAll") ?>",
+			method: "POST",
+			data: {usuario_id, _csrf_token: _csrf_token},
+			dataType: "html",
+			success: (result)=>{
+				const response = JSON.parse(result);
+	
+				if(response.error){
+					const { issues } = response;
+					$("#mensagem_permissao").text(response.message);
+                    setErrorMessages(issues);
+				}else{
+					listarPermissoes(usuario_id);
+					$("#mensagem_permissao").text(response.message);
+				}
+
+				
+			},
+			error:(xhr, status, error)=>{
+				console.log(xhr.responseText)
+			}
+		});
+	}
+
+	const adicionarPermissao = (permissao_id, usuario_id)=>{
+		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
+
+		$.ajax({
+			url: "<?= route("/api/permissoes/insert") ?>",
+			method: "POST",
+			data: {permissao_id, usuario_id, _csrf_token: _csrf_token},
+			dataType: "html",
+			success: (result)=>{
+				const response = JSON.parse(result);
+	
+				if(response.error){
+					const { issues } = response;
+					$("#mensagem_permissao").text(response.message);
+                    setErrorMessages(issues);
+				}else{
+					listarPermissoes(usuario_id);
+					$("#mensagem_permissao").text(response.message);
+				}
+
+				
+			},
+			error:(xhr, status, error)=>{
+				console.log(xhr.responseText)
 			}
 		});
 	}
@@ -298,7 +359,8 @@ use app\facade\App;
 		
 		$(document).ready(()=>{
 			$("#nome_permissoes").text(nome)
-			$("#mensagem_permissoes").text("");
+		
+			$("#mensagem_permissao").text("");
 			$("#id_permissoes").val(id)
 			$("#permissoesModal").modal("show");
 

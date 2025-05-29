@@ -9,6 +9,7 @@ use app\facade\App;
 use app\requests\LoginRequest;
 use app\services\Auth\AuthService;
 use app\services\Config\ConfigService;
+use app\services\permissoes\PermissoesService;
 use app\services\Redirect;
 use app\services\Response;
 
@@ -43,9 +44,17 @@ class LoginController extends Controller{
                 return new DeniedAcess('O seu acesso está bloqueado, pois o seu perfil não está ativo.');
             }
 
+            
+            $permissoes = (new PermissoesService())->fetchUsuarioPermissoesByUsuarioWithChave($user->id)->toArray()['data'];
+
+            // var_dump($permissoes);
+            // die;
+
+            $user->permissoes = $permissoes;
+            
             App::authSession()->init($user);
             
-
+                      
             return new Redirect('/dashboard');
         
     }

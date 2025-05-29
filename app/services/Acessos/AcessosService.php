@@ -47,6 +47,17 @@ class AcessosService extends Model{
 
     }
 
+    public function acessoByGrupo($grupo_id){
+        $find = $this->find('grupo_id', $grupo_id);
+        $sql = "SELECT * FROM acessos WHERE grupo_id = :grupo_id";
+        $prepare = $this->connection()->prepare($sql);
+        $prepare->execute([
+            'grupo_id' => $grupo_id,
+        ]);
+        $acessosByGrupo = $prepare->fetchAll();
+        return ServiceResponse::success('ok', $acessosByGrupo);
+    }
+
     public function fetchAll(): ServiceResponse
     {   
         $columns = implode(",", array_map(fn($column) => $this->table . "." . $column, $this->columns));

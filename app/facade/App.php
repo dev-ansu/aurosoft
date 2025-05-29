@@ -33,7 +33,7 @@ class App{
       }
 
       public static function _csrf(): string{
-          return (new CSRFToken)->generateToken();
+          return (new CSRFToken)->getToken();
       }
 
       public static function request(): Request{

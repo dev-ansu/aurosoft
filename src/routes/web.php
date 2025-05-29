@@ -3,10 +3,11 @@
 use app\core\Router;
 use app\middlewares\AuthMiddleware;
 use app\middlewares\CSRFMiddleware;
+use app\middlewares\RoleMiddleware;
 
 Router::group([
     'prefix' => '/dashboard',
-    'middlewares' => [AuthMiddleware::class]
+    'middlewares' => [AuthMiddleware::class, RoleMiddleware::class]
 ],function($route){
     $route('GET','', "dashboard\HomeController@index");
     $route('GET', "/usuarios", 'dashboard\UsuariosController@index');

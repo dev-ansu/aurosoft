@@ -34,6 +34,18 @@ class GrupoAcessosService extends Model{
         return ServiceResponse::success('', $grupoAcessos);
     }
 
+    public function fetchAllGrupos(){
+        $sql = "SELECT {$this->table}.* FROM {$this->table}";
+        
+        $prepare = $this->connection()->prepare($sql);
+        
+        $prepare->execute();
+
+        $grupoAcessos = $prepare->fetchAll();
+
+        return ServiceResponse::success('', $grupoAcessos);
+    }
+
     public function insert($data): ServiceResponse{
         $nome_grupo = strtolower($data['nome_grupo']);
 

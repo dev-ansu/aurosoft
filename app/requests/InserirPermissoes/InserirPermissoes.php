@@ -1,12 +1,12 @@
 <?php
 
-namespace app\requests\permissoes;
+namespace app\requests\InserirPermissoes;
 
 use app\contracts\RequestValidationContract;
 use app\requests\RequestValidation;
 
 
-class PermissoesRequest extends RequestValidation implements RequestValidationContract{
+class InserirPermissoes extends RequestValidation implements RequestValidationContract{
 
     public function __construct(){
         parent::__construct();
@@ -18,13 +18,15 @@ class PermissoesRequest extends RequestValidation implements RequestValidationCo
 
     public function rules(): array{
         return [
-            'id' => 'required|notNull',
+            'usuario_id' => 'required|notNull',
+            'permissao_id' => 'required|notNull',
         ];
     }
     
     public function messages(): array{
         return [
-            'id.notNull' => "O id do usuário é obrigatório.",
+            'usuario_id.notNull' => "O id do usuário é obrigatório.",
+            'permissao_id.notNull' => "O id da permissão é obrigatório.",
         ];
     }
 
