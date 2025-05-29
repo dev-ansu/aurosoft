@@ -1,5 +1,10 @@
 <?php
 
+use app\controllers\api\AcessosController;
+use app\controllers\api\ConfigController;
+use app\controllers\api\GrupoAcessosController;
+use app\controllers\api\PermissoesController;
+use app\controllers\api\UsuariosController;
 use app\core\Router;
 use app\middlewares\AuthMiddleware;
 use app\middlewares\CSRFMiddleware;
@@ -10,31 +15,31 @@ Router::group([
 ],function($route){
     
     // Rotas de usuário
-    $route('GET', "/usuarios", 'api\UsuariosController@index');
-    $route('GET', "/usuarios/delete/{id:\d+}", 'api\UsuariosController@delete');
-    $route('GET', "/usuarios/activate/{id:\d+}", 'api\UsuariosController@activate');
-    $route('GET', "/usuarios/deactivate/{id:\d+}", 'api\UsuariosController@deactivate');
-    $route('POST', "/usuarios/insert", 'api\UsuariosController@insert', [CSRFMiddleware::class]);
-    $route('POST', "/usuarios/patch", 'api\UsuariosController@patch', [CSRFMiddleware::class]);
+    $route('GET', "/usuarios", [UsuariosController::class, 'index']);
+    $route('GET', "/usuarios/delete/{id:\d+}",[UsuariosController::class, 'delete']);
+    $route('GET', "/usuarios/activate/{id:\d+}", [UsuariosController::class, 'activate']);
+    $route('GET', "/usuarios/deactivate/{id:\d+}", [UsuariosController::class, 'deactivate']);
+    $route('POST', "/usuarios/insert", [UsuariosController::class, 'insert'], [CSRFMiddleware::class]);
+    $route('POST', "/usuarios/patch", [UsuariosController::class, 'patch'], [CSRFMiddleware::class]);
 
     // Rotas das configurações
-    $route("POST", '/config', 'api\ConfigController@index');
+    $route("POST", '/config', [ConfigController::class,'index']);
 
     // Rotas de grupo de acessos
-    $route("GET", '/grupoacessos', 'api\GrupoAcessosController@index');
-    $route("POST", '/grupoacessos/insert', 'api\GrupoAcessosController@insert', [CSRFMiddleware::class]);
-    $route("POST", '/grupoacessos/patch', 'api\GrupoAcessosController@patch', [CSRFMiddleware::class]);
-    $route("GET", '/grupoacessos/delete/{id:\d+}', 'api\GrupoAcessosController@delete');
+    $route("GET", '/grupoacessos',[GrupoAcessosController::class, 'index']);
+    $route("POST", '/grupoacessos/insert',[GrupoAcessosController::class, 'insert'], [CSRFMiddleware::class]);
+    $route("POST", '/grupoacessos/patch',[GrupoAcessosController::class, 'patch'], [CSRFMiddleware::class]);
+    $route("GET", '/grupoacessos/delete/{id:\d+}',[GrupoAcessosController::class, 'delete']);
 
     // Rotas de acessos
-    $route("GET", '/acessos', 'api\AcessosController@index');
-    $route("GET", '/acessos/delete/{id:\d+}', 'api\AcessosController@delete', [CSRFMiddleware::class]);
-    $route("POST", '/acessos/insert', 'api\AcessosController@insert', [CSRFMiddleware::class]);
-    $route("POST", '/acessos/patch', 'api\AcessosController@patch', [CSRFMiddleware::class]);
+    $route("GET", '/acessos',[AcessosController::class, 'index']);
+    $route("GET", '/acessos/delete/{id:\d+}',[AcessosController::class, 'delete'], [CSRFMiddleware::class]);
+    $route("POST", '/acessos/insert', [AcessosController::class, 'insert'], [CSRFMiddleware::class]);
+    $route("POST", '/acessos/patch', [AcessosController::class, 'patch'], [CSRFMiddleware::class]);
 
     // Rotas de permissões
-    $route("POST", "/permissoes", "api\PermissoesController@index", [CSRFMiddleware::class]);
-    $route("POST", "/permissoes/insert", "api\PermissoesController@insert", [CSRFMiddleware::class]);
-    $route("POST", "/permissoes/insertAll", "api\PermissoesController@insertAll", [CSRFMiddleware::class]);
+    $route("POST", "/permissoes",[PermissoesController::class, 'index'], [CSRFMiddleware::class]);
+    $route("POST", "/permissoes/insert",[PermissoesController::class, 'insert'], [CSRFMiddleware::class]);
+    $route("POST", "/permissoes/insertAll", [PermissoesController::class, 'insertAll'], [CSRFMiddleware::class]);
 
 });

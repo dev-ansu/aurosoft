@@ -52,8 +52,9 @@ class LoginController extends Controller{
             $user->permissoes = $permissoes;
             
             App::authSession()->init($user);
+
+            session_regenerate_id(true);
             
-                      
             return new Redirect('/dashboard');
         
     }

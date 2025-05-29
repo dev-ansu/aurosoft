@@ -43,6 +43,15 @@ class Validate extends Model{
     }
 
     private static function validacaoUnica($validate, $field, $param){
+        
+        if ($validate === 'optional') {
+            $value = App::request()->input($field);
+            if ($value === null || (is_string($value) && trim($value) === '') || (is_array($value) && count($value) === 0)) {
+                return null;
+            }
+            return $value;
+        }
+
         if(str_contains($validate, ":")){
             [$validate, $param] = explode(":", $validate);
         }
@@ -52,6 +61,16 @@ class Validate extends Model{
     private static function validacaoMultipla($validate, $field, $param){
         $result = [];
         $explodeValidatePipe = explode("|", $validate);
+        $isOptional = in_array('optional', $explodeValidatePipe);
+
+        // Se o campo é opcional e está vazio, retorna null
+        if($isOptional){
+            $value = App::request()->input($field);
+            if($value === null || (is_string($value) && trim($value) === '') || (is_array($value) && count($value) === 0)){
+                return null;
+            }
+        }
+
         foreach($explodeValidatePipe as $validate){
    
             if(str_contains($validate, ":")){
@@ -144,6 +163,15 @@ class Validate extends Model{
         }
         return false;
     }
+
+    // private static function exist($field){
+    //     $value = App::request()->input($field);
+
+    //     $value = $value ? strip_tags($value):'';
+
+    //     if()
+        
+    // }
 
     private static function valideNumber($field){
         $valor = isset($_REQUEST[$field]) ? $_REQUEST[$field]:'';

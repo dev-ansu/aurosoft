@@ -1,20 +1,27 @@
 <?php
 namespace app\core;
 
+use Exception;
 
 class Router{
     
     private static array $routes = [];
     
     
-    public static function get(string $route, string $action, array $middlewares = []):void{
+    public static function get(string $route, array $action, array $middlewares = []):void{
+        if(count($action) > 2){
+            throw new Exception('O parâmetro action deve ter no máximo dois parâmetros, sendo o primeiro a classe e o segundo o método. Ex.: [ClassController::class, "index"]');
+        }
         self::$routes['GET'][$route] = [
          'action' =>  $action,
          'middlewares' => $middlewares
         ];
     }
 
-    public static function post(string $route, string $action, array $middlewares = []): void{
+    public static function post(string $route, array $action, array $middlewares = []): void{
+        if(count($action) > 2){
+            throw new Exception('O parâmetro action deve ter no máximo dois parâmetros, sendo o primeiro a classe e o segundo o método. Ex.: [ClassController::class, "index"]');
+        }
         self::$routes['POST'][$route] = [
             'action' =>  $action,
             'middlewares' => $middlewares
@@ -27,10 +34,12 @@ class Router{
 
         //Executa o callback (onde as rotas são definidas) com as opções do grupo
         
-        $callback(function (string $method, string $route, string $action, array $routeMiddlewares = []) use ($prefix, $middlewares){
+        $callback(function (string $method, string $route, array $action, array $routeMiddlewares = []) use ($prefix, $middlewares){
             $fullRoute = $prefix . $route;
             $combinedMiddlewares = array_merge($middlewares, $routeMiddlewares);
-
+            if(count($action) > 2){
+                throw new Exception('O parâmetro action deve ter no máximo dois parâmetros, sendo o primeiro a classe e o segundo o método. Ex.: [ClassController::class, "index"]');
+            }
             // Registra a rota com os middlewares combinados
             self::$routes[strtoupper($method)][$fullRoute] = [
                 "action" => $action,
@@ -70,11 +79,11 @@ class Router{
                         $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                         array_shift($matches);
                         
-                        [$controller, $methodName] = explode("@", $action['action']);
-                        
+                        [$controller, $methodName] = $action['action'];
+                                          
                         $response = [
                             'status' => 'FOUND',
-                            'controller' => "app\\controllers\\" . $controller,
+                            'controller' => $controller,
                             'method' => $methodName,
                             'params' => $params,
                             'request_method' => $method,

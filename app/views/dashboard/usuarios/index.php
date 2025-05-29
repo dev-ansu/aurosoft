@@ -287,9 +287,15 @@ use app\facade\App;
 			dataType: "html",
 			success: (result)=>{
 		
-				
 				$("#listar_permissoes").html(result);
 				$("#mensagem_permissao").text('');
+				$("#listar_permissoes").ready(()=>{
+					const checboxes = Array.from(document.querySelectorAll("#listar_permissoes input[type='checkbox']"))
+					const res = checboxes.some( el => el.checked )
+					
+					if(res) $("#input_todos").attr('checked', true);
+
+				})
 
 				
 			},
@@ -301,30 +307,13 @@ use app\facade\App;
 
 	const marcarTodos = ()=>{
 		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
-		const usuario_id = $("#id_permissoes").val()
-		$.ajax({
-			url: "<?= route("/api/permissoes/insertAll") ?>",
-			method: "POST",
-			data: {usuario_id, _csrf_token: _csrf_token},
-			dataType: "html",
-			success: (result)=>{
-				const response = JSON.parse(result);
-	
-				if(response.error){
-					const { issues } = response;
-					$("#mensagem_permissao").text(response.message);
-                    setErrorMessages(issues);
-				}else{
-					listarPermissoes(usuario_id);
-					$("#mensagem_permissao").text(response.message);
-				}
-
-				
-			},
-			error:(xhr, status, error)=>{
-				console.log(xhr.responseText)
+		
+		$("#listar_permissoes input[type='checkbox']").each( (i, el)=>{
+			if(el.checked == false){
+				el.click();
 			}
-		});
+		})
+
 	}
 
 	const adicionarPermissao = (permissao_id, usuario_id)=>{
@@ -346,8 +335,6 @@ use app\facade\App;
 					listarPermissoes(usuario_id);
 					$("#mensagem_permissao").text(response.message);
 				}
-
-				
 			},
 			error:(xhr, status, error)=>{
 				console.log(xhr.responseText)
@@ -365,6 +352,8 @@ use app\facade\App;
 			$("#permissoesModal").modal("show");
 
 			listarPermissoes(id);
+
+			
 
 		})
 	}
