@@ -24,10 +24,7 @@ if(!file_exists($cachePath) || $shouldRebuild){
     require_once __DIR__ . "/src/routes/api.php";
     Router::cache($cachePath);
 }else{
-    
     Router::loadFromCache($cachePath);
-
-    
 }
 $services = __DIR__ . "/app/core/services/services.php";
 // $builder = new ContainerBuilder();

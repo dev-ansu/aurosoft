@@ -9,6 +9,17 @@ class CLI{
 
         array_shift($commands);
 
+        if (isset($commands[0])) {
+            if ($commands[0] === 'routes:cache') {
+                array_shift($commands);
+                $this->routesCache($commands);
+            }
+
+            if ($commands[0] === 'routes:clear') {
+                $this->routesClear();
+            }
+        }
+
         if(count($commands) < 2){
             echo "Uso: php maker make:[controller, model, etc] Nome/do/objeto";
             exit;
@@ -132,6 +143,48 @@ class CLI{
         PHP;
 
     } 
+
+    private function routesCache(array $routeFiles){
+
+        if (empty($routeFiles)) {
+            echo "⚠️ Nenhum arquivo de rota informado. Exemplo de uso:\n";
+            echo "   php cli routes:cache src/routes/web.php src/routes/api.php\n";
+            exit;
+        }
+
+        foreach ($routeFiles as $file) {
+            $filePath = __DIR__ . '/../../' . $file;
+            if (!file_exists($filePath)) {
+                echo "❌ Arquivo de rota não encontrado: $file\n";
+                exit;
+            }
+            require_once $filePath;
+        }
+
+        $cachePath = __DIR__ . '/../../src/cache/routes.php';
+
+        \app\core\Router::cache($cachePath);
+
+        if (file_exists($cachePath)) {
+            echo "✅ Cache de rotas gerado com sucesso em: $cachePath\n";
+        } else {
+            echo "❌ Falha ao gerar o cache de rotas.\n";
+        }
+
+        exit;
+    }
+
+    private function routesClear(){
+        $cachePath = __DIR__ . '/../../src/cache/routes.php';
+        if (file_exists($cachePath)) {
+            unlink($cachePath);
+            echo "🧹 Cache de rotas removido com sucesso.\n";
+        } else {
+            echo "⚠️ Nenhum cache encontrado para remover.\n";
+        }
+
+        exit;
+    }
 
     private function makeView(){
         return <<<PHP
