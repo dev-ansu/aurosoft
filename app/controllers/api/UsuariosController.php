@@ -6,6 +6,7 @@ use app\classes\Validate;
 use app\core\Controller;
 use app\facade\App;
 use app\requests\Usuarios\UsuariosValidation;
+use app\services\Request;
 use app\services\Response;
 use app\services\usuarios\UsuariosService;
 use DateTime;
@@ -14,7 +15,6 @@ class UsuariosController extends Controller{
 
 
     public function __construct(
-        private UsuariosValidation $usuariosValidation, 
         private UsuariosService $usuariosService
     )
     {
@@ -142,9 +142,11 @@ class UsuariosController extends Controller{
         );
     }
 
-    public function insert(): Response{
+    public function insert(Request $request): Response{
 
-        $this->usuariosValidation->custom([
+   
+        $validated = $request->post()->validate(UsuariosValidation::class, function($v){
+            $v->custom([
             'senha' => 'required|notNull',
             'senha_conf' => 'required|notNull',
             'messages' => [
@@ -153,20 +155,22 @@ class UsuariosController extends Controller{
                 "senha_conf.required" => "O campo confirmar senha é obrigatório.",
                 "senha_conf.notNull" => "O campo confirmar senha não pode ser vazio.",
             ]
-        ]);
+            ]);
+        });
         
-        $request = $this->usuariosValidation->validated();
-
-        if(!$request){
+       
+        if($validated['error']){
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->usuariosValidation->getErrors()
+                    'issues' => $validated['issues']
                 ])
             );
-        }        
-        $data = $this->usuariosValidation->data();
+        }
+        
+          
+        $data = $validated['issues'];
 
         if(
             $data['senha'] !== $data['senha_conf'] && !hash_equals($data['senha'], $data['senha_conf'])
@@ -192,33 +196,34 @@ class UsuariosController extends Controller{
 
     }
 
-    public function patch(){
+    public function patch(Request $request){
+
+        $validated = $request->post()->validate(UsuariosValidation::class, function($v){
+            $v->custom([
+                'id' => 'required|notNull',
+                'senha' => 'optional',
+                'senha_conf' => 'optional',
+                'messages' => [
+                    'id.required' => 'O id do usuário é obrigatório.',
+                    'id.notNull' => 'o id do usuário não pode ser vazio.',
+                ]
+            ]);
+        });
         
-        $this->usuariosValidation->custom([
-            'id' => 'required|notNull',
-            'senha' => 'optional',
-            'senha_conf' => 'optional',
-            'messages' => [
-                'id.required' => 'O id do usuário é obrigatório.',
-                'id.notNull' => 'o id do usuário não pode ser vazio.',
-            ]
-        ]);
-
-        $request = $this->usuariosValidation->validated();
-
-        if(!$request){
+     
+        if($validated['error']){
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->usuariosValidation->getErrors()
+                    'issues' => $validated['issues']
                 ])
             );
         }        
 
         
 
-        $data = $this->usuariosValidation->data();
+        $data = $validated['issues'];
 
         if(
             (isset($data['senha']) || isset($data['senha_conf'])) &&

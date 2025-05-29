@@ -1,7 +1,9 @@
 <?php
 namespace app\services;
 
+use app\classes\InputData;
 use app\contracts\RequestContract;
+use app\requests\RequestValidation;
 
 class Request implements RequestContract{
     
@@ -24,7 +26,14 @@ class Request implements RequestContract{
         );
     }
 
+    public function get(): InputData{
+        return new InputData($this->get);
+    }
+    public function post(): InputData{
+        return new InputData($this->post);
+    }
     
+
     public function getQuery(string $key, $default = null)
     {
         return $this->get[$key] ?? $default;
@@ -54,6 +63,12 @@ class Request implements RequestContract{
     public function isAjax(): bool{
         return !empty($this->server['HTTP_X_REQUESTED_WITH']) &&
         strtolower($this->server['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+
+    public function json(): ?InputData
+    {
+        $data = $this->getJsonBody();
+        return $data ? new InputData($data) : null;
     }
 
     public function getJsonBody(): ?array{

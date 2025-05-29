@@ -15,6 +15,7 @@ Router::group([
     $route('GET', "/acessos", 'dashboard\AcessosController@index');
 });
 
+Router::get("/teste", 'TesteController@index');
 Router::get("/", 'HomeController@index');
 // Router::get("/dashboard", 'dashboard\HomeController@index', [AuthMIddleware::class]);
 

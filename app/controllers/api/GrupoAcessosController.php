@@ -5,6 +5,7 @@ namespace app\controllers\api;
 use app\core\Controller;
 use app\requests\GrupoAcessos\GrupoAcessosRequest;
 use app\services\GrupoAcessos\GrupoAcessosService;
+use app\services\Request;
 use app\services\Response;
 use DateTime;
 
@@ -123,22 +124,24 @@ class GrupoAcessosController extends Controller{
         );
     }
 
-    public function insert(): Response{
+    public function insert(Request $request): Response{
+        
+        $validated = $request->post()->validate(GrupoAcessosRequest::class);
 
-        $request = $this->grupoAcessosRequest->validated();
 
-        if(!$request){
+        if($validated['error']){
             
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->grupoAcessosRequest->getErrors()
+                    'issues' => $validated['issues']
                 ])
             );
+
         }
 
-        $response = $this->grupoAcessoService->insert($this->grupoAcessosRequest->data());
+        $response = $this->grupoAcessoService->insert($validated['issues']);
 
 
         return new Response(json_encode($response));
@@ -154,32 +157,32 @@ class GrupoAcessosController extends Controller{
     }
 
 
-    public function patch(){
-        
-        $this->grupoAcessosRequest->custom([
-            'grupo_id' => 'required|notNull',
-            'messages' => [
-                'grupo_id.required' => 'O grupo id é obrigatório.',
-                'grupo_id.notNull' => 'o grupo id não pode ser vazio.',
-            ]
-        ]);
+    public function patch(Request $request){
 
-        $request = $this->grupoAcessosRequest->validated();
+        $validated = $request->post()->validate(GrupoAcessosRequest::class, function($v){
+            $v->custom([
+                'grupo_id' => 'required|notNull',
+                'messages' => [
+                    'grupo_id.required' => 'O grupo id é obrigatório.',
+                    'grupo_id.notNull' => 'o grupo id não pode ser vazio.',
+                ]
+                ]);
+        });
+  
 
-        if(!$request){
+        if($validated['error']){
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->grupoAcessosRequest->getErrors()
+                    'issues' => $validated['issues']
                 ])
             );
         }        
 
         
 
-        $data = $this->grupoAcessosRequest->data();
-
+        $data = $validated['issues'];
 
 
         $response = $this->grupoAcessoService->patch($data);

@@ -37,7 +37,6 @@ class RequestValidation extends Validate{
             $value = App::request()->input($field);
             setOld($field, $value);
         }
-
             
     }
 
@@ -62,12 +61,19 @@ class RequestValidation extends Validate{
             if(!$validate){
                 $this->setOld();
                 self::setFlashMessages(); // Garante que as mensagens estarão disponíveis.
-                return null;
+                return [
+                    'error' => true,
+                    'issues' => Validate::getErrors(),
+                ];                
             }
       
 
             $this->data = $validate;
-            return $this;
+
+            return [
+                'error' => false,
+                'issues' => $this->data()
+            ];
         }else{
             setFlash('message', 'Você não tem autorização para esta ação.');
             redirect();

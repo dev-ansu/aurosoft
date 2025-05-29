@@ -76,8 +76,9 @@ class Core{
                     return $response->send();
                     break;
                 }
-                
-                $response = call_user_func_array([$controller, $this->method], $this->params);
+                $response = $this->container->call([$controller, $this->method], $this->params);
+               
+                // $response = call_user_func_array([$controller, $this->method], $this->params);
             
                 if(!$response || !$response instanceof Response){
                     $controllerName = $controller::class;

@@ -11,28 +11,27 @@ use app\services\Auth\AuthService;
 use app\services\Config\ConfigService;
 use app\services\permissoes\PermissoesService;
 use app\services\Redirect;
+use app\services\Request;
 use app\services\Response;
 
 class LoginController extends Controller{
 
     public function __construct(
-        protected LoginRequest $loginRequest,
         protected AuthService $auth,
         private ConfigService $config
     )
     {
     }
     
-    public function index(): Response {
-                          
-        
-            $request = $this->loginRequest->validated();
-     
-            if(!$request){
+    public function index(Request $request): Response {
+
+            $validate = $request->post()->validate(LoginRequest::class);
+                                
+            if($validate['error'] === true){
                 return new DeniedAcess('Verifique os campos e tente novamente.');
             }
             
-            $data = $request->data();
+            $data = $validate['issues'];
 
             $user = $this->auth->execute($data);
 

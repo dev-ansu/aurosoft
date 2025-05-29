@@ -8,6 +8,7 @@ use app\requests\permissoes\PermissoesRequest;
 use app\services\acessos\AcessosService;
 use app\services\GrupoAcessos\GrupoAcessosService;
 use app\services\permissoes\PermissoesService;
+use app\services\Request;
 use app\services\Response;
 
 class PermissoesController extends Controller{
@@ -118,22 +119,22 @@ class PermissoesController extends Controller{
     }
 
 
-    public function insert(): Response{
+    public function insert(Request $request): Response{
+        
+        $validated = $request->post()->validate(InserirPermissoes::class);
 
-        $request =  new InserirPermissoes;
-        $inserirPermissoes = $request->validated();
-
-        if(!$inserirPermissoes){
+    
+        if($validated['error']){
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $request->getErrors()
+                    'issues' => $validated['issues']
                 ])
             );
         }
 
-        $data = $inserirPermissoes->data();
+        $data = $validated['issues'];
         $response = $this->permissoesService->insert([
             'usuario_id' => $data['usuario_id'],
             'permissao' => $data['permissao_id']

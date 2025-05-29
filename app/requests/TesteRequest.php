@@ -6,7 +6,7 @@ use app\contracts\RequestValidationContract;
 use app\requests\RequestValidation;
 
 
-class TesteController extends RequestValidation implements RequestValidationContract{
+class TesteRequest extends RequestValidation implements RequestValidationContract{
 
     public function __construct(){
         parent::__construct();

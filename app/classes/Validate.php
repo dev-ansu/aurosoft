@@ -95,6 +95,19 @@ class Validate extends Model{
         return false;        
     }
 
+    private static function isEquals($field, $param){
+        $input = App::request()->input($field);
+        $input2= App::request()->input($param);
+        
+        if((!$input && !$input2) || ($input !== $input2) || !(hash_equals($input, $input2))){
+            setFlash($field, 'Os campos não coincidem.');
+            self::setError($field, 'isEquals','Os campos não coincidem'); 
+            return false;
+        }
+
+        return false;
+    }
+
     private static function valideISODate($field){
         $accepted = ['Y-m-d', 'Y-m-d H:i:s'];
         $date = isset($_REQUEST[$field]) ? strip_tags($_REQUEST[$field]):'';

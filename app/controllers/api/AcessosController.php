@@ -5,6 +5,7 @@ namespace app\controllers\api;
 use app\core\Controller;
 use app\requests\acessos\AcessosRequest;
 use app\services\acessos\AcessosService;
+use app\services\Request;
 use app\services\Response;
 
 class AcessosController extends Controller{
@@ -109,52 +110,52 @@ class AcessosController extends Controller{
         );
     }
 
-    public function insert(): Response{
-        $request = $this->acessosRequest->validated();
+    public function insert(Request $request): Response{
 
-        if(!$request){
+        $validated = $request->post()->validate(AcessosRequest::class);
+
+        if($validated['error']){
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->acessosRequest->getErrors()
+                    'issues' => $validated['issues']
                 ])
             );
         }  
 
-        $data = $this->acessosRequest->data();
+        $data = $validated['issues'];
 
         $response = $this->acessosService->insert($data);
         return new Response(json_encode($response));
 
     }
 
-    public function patch(){
+    public function patch(Request $request){
+
+        $validated = $request->post()->validate(AcessosRequest::class, function($v){
+            $v->custom([
+                'acesso_id' => 'required|notNull',
+                'messages' => [
+                    'acesso_id.required' => 'O grupo id é obrigatório.',
+                    'acesso_id.notNull' => 'o grupo id não pode ser vazio.',
+                ]
+            ]);
+        });
         
-        $this->acessosRequest->custom([
-            'acesso_id' => 'required|notNull',
-            'messages' => [
-                'acesso_id.required' => 'O grupo id é obrigatório.',
-                'acesso_id.notNull' => 'o grupo id não pode ser vazio.',
-            ]
-        ]);
-
-        $request = $this->acessosRequest->validated();
-
-        if(!$request){
+        if($validated['error']){
             return new Response(
                 json_encode([
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $this->acessosRequest->getErrors()
+                    'issues' => $validated['issues']
                 ])
             );
         }        
 
         
 
-        $data = $this->acessosRequest->data();
-
+        $data = $validated['issues'];
 
 
         $response = $this->acessosService->patch($data);
