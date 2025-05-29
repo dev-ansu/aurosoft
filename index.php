@@ -7,6 +7,7 @@ require_once __DIR__ . "/config/config.php";
 use app\core\Core;
 use app\classes\ErrorHandler;
 use app\core\Container;
+use app\core\Router;
 use app\facade\App;
 use app\middlewares\SessionMiddleware;
 use app\services\Request;
@@ -14,9 +15,20 @@ use app\services\Request;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ );
 $dotenv->load();
 
-require_once __DIR__ . "/src/routes/web.php";
-require_once __DIR__ . "/src/routes/api.php";
+$cachePath = __DIR__ ."/src/cache/routes.php";
+$shouldRebuild = $_ENV['APP_ENV'] === 'dev';
 
+if(!file_exists($cachePath) || $shouldRebuild){
+    // Carrega rotas do cache
+    require_once __DIR__ . "/src/routes/web.php";
+    require_once __DIR__ . "/src/routes/api.php";
+    Router::cache($cachePath);
+}else{
+    
+    Router::loadFromCache($cachePath);
+
+    
+}
 $services = __DIR__ . "/app/core/services/services.php";
 // $builder = new ContainerBuilder();
 // $builder->addDefinitions($services);

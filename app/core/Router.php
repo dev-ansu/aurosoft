@@ -108,4 +108,27 @@ class Router{
             'status' => 'NOT_FOUND'
         ];
     }
+
+    public static function cache(string $path): void{
+        self::init()->cache($path);
+    }
+
+    public static function loadFromCache(string $path): void{
+        if(!file_exists($path)){
+            throw new Exception("Arquivo de cache de rotas não encontrao: $path");
+        }
+
+        $routes = require $path;
+
+        $collection = new RouteCollection();
+
+        foreach($routes as $method => $routesByMethod){
+            foreach($routesByMethod as $route => $actionData){
+                $collection->add($method, $route, $actionData['action'], $actionData['middlewares']);
+            }
+        }
+
+        self::$collection = $collection;
+    }
+
 }

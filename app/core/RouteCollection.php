@@ -30,4 +30,17 @@ class RouteCollection{
         return $this->routes[$method];
     }
 
+    // Salva o cache das rotas em um arquivo PHP
+    public function cache(string $path): void{
+        $content = "<?php return " . var_export($this->routes, true) . ";";
+        file_put_contents($path, $content);
+    }
+
+    public function loadFromCache(string $path){
+        if(!file_exists($path)){
+            throw new Exception("Arquivo de cache de rotas não encontrado: $path");
+        }
+        $this->routes = require $path;
+    }
+
 }
