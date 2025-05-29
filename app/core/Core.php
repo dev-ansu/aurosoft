@@ -76,6 +76,7 @@ class Core{
                     return $response->send();
                     break;
                 }
+
                 $response = $this->container->call([$controller, $this->method], $this->params);
                
                 // $response = call_user_func_array([$controller, $this->method], $this->params);
@@ -92,7 +93,7 @@ class Core{
     }
 
     private function parseUrl(): array {
-        $url = $_SERVER['REQUEST_URI'];
+        $url = urldecode($_SERVER['REQUEST_URI']);
         $basePath = parse_url(BASE_URL, PHP_URL_PATH);
         
         $base = $basePath ? rtrim($basePath, '/'):''; // Adapta para subdiretórios
@@ -102,6 +103,7 @@ class Core{
             $url = preg_replace("#^{$basePattern}#", "", $url);
         }
         $url = explode("?", $url)[0];
+ 
         $url = trim($url, "/");
         return $url ? array_filter(explode("/", $url)) : [];
     }

@@ -5,55 +5,52 @@ use Exception;
 
 class Router{
     
-    private static array $routes = [];
+    private static ?RouteCollection $collection = null;
     
+    public static function init():RouteCollection
+    {
+        if(!self::$collection){
+            self::$collection = new RouteCollection();
+        }
+        return self::$collection;
+    }
     
     public static function get(string $route, array $action, array $middlewares = []):void{
-        if(count($action) > 2){
-            throw new Exception('O parâmetro action deve ter no máximo dois parâmetros, sendo o primeiro a classe e o segundo o método. Ex.: [ClassController::class, "index"]');
-        }
-        self::$routes['GET'][$route] = [
-         'action' =>  $action,
-         'middlewares' => $middlewares
-        ];
+        self::init()->add('GET', $route, $action, $middlewares);
     }
 
     public static function post(string $route, array $action, array $middlewares = []): void{
-        if(count($action) > 2){
-            throw new Exception('O parâmetro action deve ter no máximo dois parâmetros, sendo o primeiro a classe e o segundo o método. Ex.: [ClassController::class, "index"]');
-        }
-        self::$routes['POST'][$route] = [
-            'action' =>  $action,
-            'middlewares' => $middlewares
-        ];
+        self::init()->add('POST', $route, $action, $middlewares);
     }
 
+    /**
+     * Agrupa rotas com o mesmo prefixo
+     * @param array $options - deve-se definir os middlewares que serão usados em todas as rotas e o prefix das rotas
+     * @param callable $callback - a função que recebe como parâmetro um $route que definirá as rotas do grupo
+     * @return void
+     */
     public static function group(array $options, callable $callback): void{
+        /**
+         * @var array $middlewares - array de middlewares que serão usados nas rotas */
         $middlewares = $options['middlewares'] ?? [];
-        $prefix = $options['prefix'] ?? '';
+        /**
+         * @var string $prefix - prefixo que será usado em todas as rotas */
+        $prefix =  $options['prefix'] ?? '';
 
-        //Executa o callback (onde as rotas são definidas) com as opções do grupo
-        
-        $callback(function (string $method, string $route, array $action, array $routeMiddlewares = []) use ($prefix, $middlewares){
-            $fullRoute = $prefix . $route;
-            $combinedMiddlewares = array_merge($middlewares, $routeMiddlewares);
-            if(count($action) > 2){
-                throw new Exception('O parâmetro action deve ter no máximo dois parâmetros, sendo o primeiro a classe e o segundo o método. Ex.: [ClassController::class, "index"]');
-            }
-            // Registra a rota com os middlewares combinados
-            self::$routes[strtoupper($method)][$fullRoute] = [
-                "action" => $action,
-                'middlewares' => $combinedMiddlewares
-            ];
-        });
+        $builder = new RouterBuilder($prefix, $middlewares);
+
+        /** Executa o callback (onde as rotas são definidas) com as opções do grupo
+         * @param RouterBuilder $builder - método da requisição GET ou POST */
+        $callback($builder);
     }
 
     public static function resolve(string $url, string $requestMethod): ?array{
         
+        $routes = self::$collection->getAll();
         $response = [];
         $matchedUrl = false;
-
-        foreach(self::$routes as $method  => $routes){   
+        
+        foreach($routes as $method  => $routes){   
             foreach($routes as $route => $action){
                 // Converte "{id:\d+}" em "(?P<id>\d+)" e "{slug}" em "(?P<slug>[^/]+)"
                 // Converte uma rota com parâmetros nomeados (ex.: /user/{id}) em uma expressão regular.
