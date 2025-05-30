@@ -91,6 +91,7 @@ class Router{
                     }else{
                         $matchedUrl = true;
                         $response = [
+			    'method' => $route,
                             'status' => 'METHOD_NOT_ALLOWED',
                             'middlewares' => $action['middlewares']
                         ];

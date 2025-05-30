@@ -43,7 +43,7 @@ class Core{
                 $response->send();
                 break;
             case 'METHOD_NOT_ALLOWED':
-                $response = new Response("Cannot get");
+                $response = new Response("Cannot GET {$route['method']}");
                 return $response->send();
                 break;
             default:
