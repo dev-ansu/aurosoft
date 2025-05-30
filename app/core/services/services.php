@@ -1,18 +1,18 @@
 <?php
+namespace app\core\services;
+
 
 use app\classes\Session;
+use app\core\Controller;
+use function DI\autowire;
 use app\contracts\SessionContract;
+use app\contracts\ResponseContract;
+use app\services\PermissionService;
 use app\contracts\AuthSessionService;
 use app\contracts\ControllerContract;
-use app\contracts\ResponseContract;
-use app\core\Controller;
 use app\services\AuthSessionService as ServicesAuthSessionService;
-use app\services\PermissionService;
-use app\services\Request;
-use app\services\Response;
-
-use function DI\autowire;
-
+use app\core\Request;
+use app\core\Response;
 
 return [
     SessionContract::class => autowire(Session::class),

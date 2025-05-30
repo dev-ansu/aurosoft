@@ -3,16 +3,11 @@
 require_once __DIR__ . "/vendor/autoload.php";
 require_once __DIR__ . "/config/config.php";
 
-use app\core\Controller;
-use app\contracts\ControllerContract;
-use app\contracts\ResponseContract;
 use app\core\Core;
-use app\core\Container;
-use app\core\Router;
 use app\facade\App;
-use app\services\Request;
-use app\services\Response;
-use DI\Container as DIContainer;
+use app\core\Router;
+use app\core\Container;
+use app\core\Request;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();

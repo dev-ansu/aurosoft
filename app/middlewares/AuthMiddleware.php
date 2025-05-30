@@ -1,15 +1,13 @@
 <?php
 namespace app\middlewares;
 
+use app\core\Request;
+use app\core\Response;
 use app\classes\Session;
-use app\contracts\MiddlewareContract;
-use app\services\Redirect;
-use app\services\Request;
-use app\services\Response;
 
 class AuthMiddleware{
 
-    public function __construct(private Session $session, private Request $request)
+    public function __construct(private Session $session)
     {
         
     }
@@ -20,7 +18,7 @@ class AuthMiddleware{
         $sessionEmpty = empty($this->session->__get(SESSION_LOGIN));
        
         if(!$sessionHas || $sessionEmpty){
-            if($this->request->isAjax()){
+            if($req->isAjax()){
                 return $res->send('Não autorizado',[],403);
             }else{
                 setFlash('message', 'Não autorizado');

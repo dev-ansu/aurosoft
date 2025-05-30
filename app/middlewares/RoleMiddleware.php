@@ -1,23 +1,17 @@
 <?php
 namespace app\middlewares;
 
-use app\classes\Session;
-use app\contracts\MiddlewareContract;
+
 use app\facade\App;
-use app\services\acessos\AcessosService;
+use app\core\Request;
+use app\core\Response;
 use app\services\PermissionService;
-use app\services\permissoes\PermissoesService;
-use app\services\Request;
-use app\services\Response;
 
-class RoleMiddleware implements MiddlewareContract{
 
-    public function __construct(private Request $request)
-    {
-        
-    }
+class RoleMiddleware{
 
-    public function handle(?Request $req, ?Response $res){
+   
+    public function handle(Request $req, Response $res){
         $user = App::authSession()->get();
 
         // Se for administrador, permite tudo
@@ -26,7 +20,7 @@ class RoleMiddleware implements MiddlewareContract{
         }
 
         // Obter a última parte da URI
-        $uriPath = parse_url($this->request->getServer('REQUEST_URI'), PHP_URL_PATH);
+        $uriPath = parse_url($req->getServer('REQUEST_URI'), PHP_URL_PATH);
         $uriParts = array_filter(explode('/', trim($uriPath, '/')));
         $uri = implode("/", $uriParts);
        
@@ -43,7 +37,7 @@ class RoleMiddleware implements MiddlewareContract{
                 return $res->send('Você não tem permissão para realizar esta ação.', [], 403);
             }
             setFlash('message', 'Você não tem permissão para realizar esta ação.');
-            return $res->redirect($this->request->getServer('HTTP_REFERER') ?? '/');
+            return $res->redirect($req->getServer('HTTP_REFERER') ?? '/');
 
         }
 

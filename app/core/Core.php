@@ -3,9 +3,7 @@
 namespace app\core;
 
 use app\controllers\NotFoundHandler;
-use app\facade\App;
-use app\services\Request;
-use app\services\Response;
+use app\core\Response;
 use DI\Container;
 
 

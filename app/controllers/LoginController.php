@@ -2,14 +2,15 @@
 
 namespace app\controllers;
 
-use app\classes\Session;
 use app\facade\App;
+use app\core\Request;
+use app\core\Response;
+use app\classes\Session;
 use app\requests\LoginRequest;
 use app\services\Auth\AuthService;
 use app\services\Config\ConfigService;
 use app\services\permissoes\PermissoesService;
-use app\services\Request;
-use app\services\Response;
+
 
 class LoginController{
 

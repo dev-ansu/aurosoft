@@ -2,39 +2,17 @@
 
 namespace app\controllers\dashboard;
 
-use app\core\Controller;
-use app\facade\App;
-use app\services\Config\ConfigService;
-use app\services\Response;
+use app\core\Request;
+use app\core\Response;
 
+class HomeController{
 
-class HomeController extends Controller{
-
-    // public function middlewareMap(): array
-    // {
-    //     $session = (new Session)->__get(SESSION_LOGIN);
+    public function index(Request $req, Response $res){
         
-    //     return [
-    //         'index' => [
-    //             AuthMIddleware::class,
-    //             [RoleMiddleware::class, [$session->nivel ?? null]]
-    //         ],
-    //     ];
-    // }
-    
-    public function __construct()
-    {
-          
-    }
-
-    public function index(): Response{
-     
-        return new Response(
-            $this->load('dashboard/template', [
-                'title' => 'Dashboard',
-                'view' => 'dashboard/index',
-            ])
-        );
+        return $res->view('dashboard/template',[
+            'title' => 'Dashboard',
+            'view' => 'dashboard/index',
+        ]);
     }
 
 }

@@ -3,8 +3,8 @@
 namespace app\middlewares;
 
 use app\contracts\MiddlewareContract;
-use app\services\Request;
-use app\services\Response;
+use app\core\Request;
+use app\core\Response;
 
 class SessionMiddleware{
     

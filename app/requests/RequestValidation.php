@@ -5,7 +5,7 @@ namespace app\requests;
 use app\classes\Validate;
 use app\facade\App;
 
-use function DI\get;
+
 
 class RequestValidation extends Validate{
 

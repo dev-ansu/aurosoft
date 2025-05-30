@@ -1,11 +1,10 @@
 <?php
 namespace app\middlewares;
 
+use app\core\Request;
+use app\core\Response;
 use app\classes\CSRFToken;
-use app\contracts\MiddlewareContract;
-use app\facade\App;
-use app\services\Request;
-use app\services\Response;
+
 
 class CSRFMiddleware{
     

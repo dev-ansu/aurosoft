@@ -9,9 +9,9 @@ use app\requests\permissoes\PermissoesRequest;
 use app\services\acessos\AcessosService;
 use app\services\GrupoAcessos\GrupoAcessosService;
 use app\services\permissoes\PermissoesService;
-use app\services\Request;
-use app\services\Response;
-use Permissoes;
+use app\core\Request;
+use app\core\Response;
+
 
 class PermissoesController extends Controller{
 

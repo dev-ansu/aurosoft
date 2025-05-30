@@ -1,8 +1,8 @@
 <?php
-namespace app\services;
+namespace app\core;
 
 use app\contracts\ResponseContract;
-use app\core\Controller;
+
 
 
 

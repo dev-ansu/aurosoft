@@ -5,8 +5,8 @@ use app\core\Controller;
 use app\facade\App;
 use app\requests\config\ConfigRequest;
 use app\services\Config\ConfigService;
-use app\services\Request;
-use app\services\Response;
+use app\core\Request;
+use app\core\Response;
 
 class ConfigController extends Controller{
 

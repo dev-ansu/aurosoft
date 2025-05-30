@@ -4,15 +4,14 @@ namespace app\controllers\api;
 
 use app\requests\GrupoAcessos\GrupoAcessosRequest;
 use app\services\GrupoAcessos\GrupoAcessosService;
-use app\services\Request;
-use app\services\Response;
+use app\core\Request;
+use app\core\Response;
 
 class GrupoAcessosController{
 
     
     public function __construct(
         private GrupoAcessosService $grupoAcessoService, 
-        private GrupoAcessosRequest $grupoAcessosRequest
         
         )
     {

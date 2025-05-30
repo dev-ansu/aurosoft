@@ -2,9 +2,10 @@
 
 namespace app\controllers;
 
+use app\core\Request;
+use app\core\Response;
 use app\classes\CSRFToken;
-use app\services\Request;
-use app\services\Response;
+
 
 class HomeController{
     

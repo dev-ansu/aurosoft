@@ -1,11 +1,11 @@
 <?php
 namespace app\contracts;
 
-use app\services\Request;
-use app\services\Response;
+use app\core\Request;
+use app\core\Response;
 
 interface MiddlewareContract{
 
-    public function handle(?Request $req, ?Response $res);
+    public function handle(Request $req, Response $res);
 
 }

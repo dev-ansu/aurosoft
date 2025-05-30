@@ -1,14 +1,11 @@
 <?php
 namespace app\controllers\api;
 
-use app\classes\DeniedAcess;
-use app\classes\Validate;
 use app\core\Controller;
-use app\facade\App;
 use app\requests\Usuarios\UsuariosValidation;
 use app\services\PermissionService;
-use app\services\Request;
-use app\services\Response;
+use app\core\Request;
+use app\core\Response;
 use app\services\usuarios\UsuariosService;
 use DateTime;
 

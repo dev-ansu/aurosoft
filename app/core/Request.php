@@ -1,5 +1,5 @@
 <?php
-namespace app\services;
+namespace app\core;
 
 use app\classes\InputData;
 use app\contracts\RequestContract;

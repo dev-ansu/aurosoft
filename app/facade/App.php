@@ -5,7 +5,7 @@ use app\classes\CSRFToken;
 use app\classes\Session;
 use app\services\AuthSessionService;
 use app\services\PermissionService;
-use app\services\Request;
+use app\core\Request;
 use DI\Container;
 
 class App{
