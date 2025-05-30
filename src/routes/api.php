@@ -9,10 +9,11 @@ use app\core\Router;
 use app\core\RouterBuilder;
 use app\middlewares\AuthMiddleware;
 use app\middlewares\CSRFMiddleware;
+use app\middlewares\RoleMiddleware;
 
 Router::group([
     'prefix' => '/api',
-    'middlewares' => [AuthMiddleware::class]
+    'middlewares' => [AuthMiddleware::class, RoleMiddleware::class]
 ],function(RouterBuilder $route){
     
     // Rotas de usuário

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\classes\CSRFToken;
 use app\classes\DeniedAcess;
+use app\classes\Session;
 use app\core\Controller;
 use app\facade\App;
 use app\requests\LoginRequest;
@@ -43,17 +44,29 @@ class LoginController extends Controller{
                 return new DeniedAcess('O seu acesso está bloqueado, pois o seu perfil não está ativo.');
             }
 
+            session_regenerate_id(true);
+
             
             $permissoes = (new PermissoesService())->fetchUsuarioPermissoesByUsuarioWithChave($user->id)->toArray()['data'];
 
-            // var_dump($permissoes);
-            // die;
-
+            
             $user->permissoes = $permissoes;
+
+            $gruposPermissao = [];
+
+            foreach($user->permissoes as $permissao){
+                $nome_grupo = $permissao->grupo_id ? $permissao->nome_grupo:'sem_grupo';
+                $gruposPermissao[$nome_grupo][] = $permissao;
+            }
+            
+            $config = (new ConfigService())->fetch();
+            
+            App::session()->__set('config', $config);
+            
+            $user->permissoesPorGrupo = $gruposPermissao;
             
             App::authSession()->init($user);
 
-            session_regenerate_id(true);
             
             return new Redirect('/dashboard');
         
@@ -63,7 +76,9 @@ class LoginController extends Controller{
     public function logout(): Response{
 
         App::authSession()->end();
-
+        
+        Session::remove();
+        
         return new Redirect("/", 302);
 
     }

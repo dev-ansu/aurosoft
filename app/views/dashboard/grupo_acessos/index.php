@@ -90,7 +90,7 @@
 			dataType: "html",
 			success: (result)=>{
 				$("#listar").html(result);
-				$("#mensagem-excluir").remove();
+				$("#mensagem-excluir").attr("style", "display:none")
 			}
 		});
 	}

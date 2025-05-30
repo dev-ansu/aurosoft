@@ -24,12 +24,11 @@ class HomeController extends Controller{
     
     public function __construct()
     {
-        
+          
     }
 
     public function index(): Response{
      
-
         return new Response(
             $this->load('dashboard/template', [
                 'title' => 'Dashboard',

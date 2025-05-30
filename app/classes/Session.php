@@ -29,4 +29,8 @@ class Session implements SessionContract{
         }
     }
 
+    public static function remove(){
+        session_destroy();
+    }
+
 }

@@ -4,6 +4,7 @@ namespace app\facade;
 use app\classes\CSRFToken;
 use app\classes\Session;
 use app\services\AuthSessionService;
+use app\services\PermissionService;
 use app\services\Request;
 use DI\Container;
 
@@ -24,13 +25,15 @@ class App{
       public static function get(string $id):mixed{
         return self::$container->get($id);
       }
-
+      
+      
       /**
        * Atalho para o serviço da sessão
        */
       public static function authSession(): AuthSessionService{
         return self::get(AuthSessionService::class);
       }
+
 
       public static function _csrf(): string{
           return (new CSRFToken)->getToken();
@@ -43,6 +46,5 @@ class App{
       public static function session(): Session{
         return self::get(Session::class);
       }
-
       
 }

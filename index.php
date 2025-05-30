@@ -9,7 +9,6 @@ use app\classes\ErrorHandler;
 use app\core\Container;
 use app\core\Router;
 use app\facade\App;
-use app\middlewares\SessionMiddleware;
 use app\services\Request;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ );
@@ -56,7 +55,6 @@ try{
     http_response_code(500);
 
 }
-
 
 
 

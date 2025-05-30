@@ -34,7 +34,7 @@ class AcessosService extends Model{
         
 
         $body = [
-            'nome' => strtolower($data['nome_acesso']),
+            'nome' => $data['nome_acesso'],
             'chave' => strtolower($data['chave']),
             'grupo_id' => $findGrupo->id ?? $data['grupo_id']
         ];

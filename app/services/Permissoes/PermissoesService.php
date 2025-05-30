@@ -59,7 +59,7 @@ class PermissoesService extends Model{
 
     public function fetchUsuarioPermissoesByUsuarioWithChave(int $id_usuario): ServiceResponse
     {
-       $sql = 'SELECT acessos.nome, acessos.chave, acessos.grupo_id FROM permissoes 
+       $sql = 'SELECT acessos.nome, acessos.chave, acessos.grupo_id, grupo_acessos.nome as nome_grupo FROM permissoes 
        LEFT JOIN acessos ON acessos.id = permissoes.permissao
        LEFT JOIN grupo_acessos ON grupo_acessos.id = acessos.grupo_id
        WHERE usuario_id = :usuario_id ';

@@ -1,6 +1,8 @@
 <?php
 
 use app\facade\App;
+use app\services\PermissionService;
+
 $session = App::authSession()->get();
 
 
@@ -168,7 +170,7 @@ $session = App::authSession()->get();
 
 
 
-
+<?php if(PermissionService::has('config')): ?>
 <!-- Modal Config -->
 <div class="modal fade" id="modalConfig" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
@@ -241,6 +243,7 @@ $session = App::authSession()->get();
 		</div>
 	</div>
 </div>
+<?php endif; ?>
 
 
 

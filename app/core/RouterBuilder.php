@@ -11,7 +11,7 @@ class RouterBuilder{
     }
 
     public function post(string $route, array $action, array $middlewares = []){
-        Router::get($this->prefix . $route, $action, array_merge($this->groupMiddlewares, $middlewares));
+        Router::post($this->prefix . $route, $action, array_merge($this->groupMiddlewares, $middlewares));
     }
 
 }

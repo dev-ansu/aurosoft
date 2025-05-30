@@ -52,6 +52,11 @@ const onSubmit = (e, prefixMessages = '')=>{
 
 }
 
+const showMessage = (message, duration = 5000)=>{
+    $("#mensagem-excluir").attr("style", "display:block")
+    $("#mensagem-excluir").hide(duration)
+    $("#mensagem-excluir").text(message);
+}
 
 const onDelete = (url)=>{
     $.ajax({
@@ -61,12 +66,12 @@ const onDelete = (url)=>{
         contentType: false,
         cache: false,
         success: (response)=>{
-            $("#mensagem-excluir").text(response.message);
+            showMessage(response.message)
             listar()
 
         },
         error:(xhr, status, error)=>{
-            $("#mensagem-excluir").text(xhr.responseText)
+            showMessage(xhr.responseText)
         }
     })
 }
@@ -84,7 +89,7 @@ const ativar = (url)=>{
             listar()
         },
         error:(xhr, status, error)=>{
-            $("#mensagem-excluir").text(xhr.responseText)
+            showMessage(xhr.responseText)
         }
     })
 }

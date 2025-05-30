@@ -47,7 +47,7 @@ class GrupoAcessosService extends Model{
     }
 
     public function insert($data): ServiceResponse{
-        $nome_grupo = strtolower($data['nome_grupo']);
+        $nome_grupo = $data['nome_grupo'];
 
         $find = $this->find('nome', $nome_grupo);
 

@@ -69,6 +69,7 @@ class Core{
                     }
                 }
 
+
                 // $this->params = $url;
 
                 if(!method_exists($controller, $this->method)){

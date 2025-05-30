@@ -6,6 +6,7 @@ use app\classes\Validate;
 use app\core\Controller;
 use app\facade\App;
 use app\requests\Usuarios\UsuariosValidation;
+use app\services\PermissionService;
 use app\services\Request;
 use app\services\Response;
 use app\services\usuarios\UsuariosService;
@@ -52,16 +53,74 @@ class UsuariosController extends Controller{
             $hrefDelete = route("/api/usuarios/delete");
             
             if($nivel !== "Administrador"){
-                $permissoesButton = <<<HTML
+                if((PermissionService::has('permissoes') && PermissionService::has("permissoes/insert"))){
+                    $permissoesButton = <<<HTML
                     <big>
                         <a href="#" onclick='definirPermissoes("{$id}", "{$nome}")' title="Definir permissões">
                             <i class="fa fa-lock" style="color: blue; margin-left:3px"></i>
                         </a>
                     </big>
-                HTML;
+                    HTML;
+                }
             }else{
                 $permissoesButton = '';
             }
+            $botoes = null;
+
+
+            if(PermissionService::has('usuarios/patch')){
+                $botoes.= <<<HTML
+                    <big>
+                        <a href="#" onclick='editar(`{$editUser}`)' title="Editar dados">
+                            <i class="fa fa-edit text-primary"></i>
+                        </a>
+                    </big>
+                HTML;
+            }
+            if(PermissionService::has('usuarios')){
+                $botoes.= <<<HTML
+                    <big>
+                        <a href="#" onclick='mostrar(`{$editUser}`)' title="Mostrar dados">
+                            <i class="fa fa-info-circle text-primary"></i>
+                        </a>
+                    </big>
+                HTML;
+            }
+
+            if(PermissionService::has('usuarios/delete')){
+                $botoes.= <<<HTML
+                    <li class="dropdown head-dpdn2 cursor-pointer" style="display: inline-block;">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <big>
+                                <i class="fa fa-trash-o text-danger"></i>
+                            </big>
+                        </a>
+                        <ul class="dropdown-menu cursor-pointer" style="margin-left:-230px">
+                            <li>
+                                <div>
+                                    <p>
+                                        Confirmar exclusão? 
+                                        <a href="#" onclick="onDelete(`{$hrefDelete}/{$id}`)">
+                                            <span class="text-danger">Sim</span>
+                                        </a>
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                HTML;
+            }
+
+            if(PermissionService::has("usuarios/activate") || PermissionService::has("usuarios/deactivate")){
+                $botoes.=<<<HTML
+                     <big>
+                        <a href="#" onclick='ativar(`{$urlAtivar}`)' title="{$titulo_link}">
+                            <i class="fa {$icone} text-success"></i>
+                        </a>
+                    </big>
+                HTML;
+            }
+            
 
             $html.= <<<HTML
 
@@ -72,43 +131,8 @@ class UsuariosController extends Controller{
                         <td>{$nivel}</td>
                         <td>{$created_at}</td>
                         <td>
-                            <big>
-                                <a href="#" onclick='editar(`{$editUser}`)' title="Editar dados">
-                                    <i class="fa fa-edit text-primary"></i>
-                                </a>
-                            </big>
-                            <li class="dropdown head-dpdn2 cursor-pointer" style="display: inline-block;">
-                                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                    <big>
-                                        <i class="fa fa-trash-o text-danger"></i>
-                                    </big>
-                                </a>
-                                <ul class="dropdown-menu cursor-pointer" style="margin-left:-230px">
-                                    <li>
-                                        <div>
-                                            <p>
-                                                Confirmar exclusão? 
-                                                <a href="#" onclick="onDelete(`{$hrefDelete}/{$id}`)">
-                                                    <span class="text-danger">Sim</span>
-                                                </a>
-                                            </p>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                             <big>
-                                <a href="#" onclick='mostrar(`{$editUser}`)' title="Mostrar dados">
-                                    <i class="fa fa-info-circle text-primary"></i>
-                                </a>
-                            </big>
-                             <big>
-                                <a href="#" onclick='ativar(`{$urlAtivar}`)' title="{$titulo_link}">
-                                    <i class="fa {$icone} text-success"></i>
-                                </a>
-                            </big>
-
-                            $permissoesButton
-                             
+                            {$botoes}
+                            {$permissoesButton}
                         </td>
                     </tr>
                 HTML;
@@ -119,7 +143,7 @@ class UsuariosController extends Controller{
             </tbody>
                 <div id="mensagem-excluir" class="alert alert-danger d-flex justify-content-between" >
                     <span></span>
-                    <span>X</span>
+                    <span>X<php endif; ?>/span>
                 </div>
                 
             </table>

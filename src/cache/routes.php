@@ -85,6 +85,7 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/usuarios/delete/{id:\\d+}' => 
@@ -97,6 +98,7 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/usuarios/activate/{id:\\d+}' => 
@@ -109,6 +111,7 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/usuarios/deactivate/{id:\\d+}' => 
@@ -121,44 +124,7 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
-      ),
-    ),
-    '/api/usuarios/insert' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\UsuariosController',
-        1 => 'insert',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/usuarios/patch' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\UsuariosController',
-        1 => 'patch',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/config' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\ConfigController',
-        1 => 'index',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/grupoacessos' => 
@@ -171,32 +137,7 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
-      ),
-    ),
-    '/api/grupoacessos/insert' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\GrupoAcessosController',
-        1 => 'insert',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/grupoacessos/patch' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\GrupoAcessosController',
-        1 => 'patch',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/grupoacessos/delete/{id:\\d+}' => 
@@ -209,6 +150,7 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/acessos' => 
@@ -221,6 +163,7 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/acessos/delete/{id:\\d+}' => 
@@ -233,72 +176,8 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/acessos/insert' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\AcessosController',
-        1 => 'insert',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/acessos/patch' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\AcessosController',
-        1 => 'patch',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/permissoes' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\PermissoesController',
-        1 => 'index',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/permissoes/insert' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\PermissoesController',
-        1 => 'insert',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
-    '/api/permissoes/insertAll' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\PermissoesController',
-        1 => 'insertAll',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\CSRFMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
       ),
     ),
   ),
@@ -314,6 +193,145 @@
       'middlewares' => 
       array (
         0 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/usuarios/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\UsuariosController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/usuarios/patch' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\UsuariosController',
+        1 => 'patch',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/config' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\ConfigController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/api/grupoacessos/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\GrupoAcessosController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/grupoacessos/patch' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\GrupoAcessosController',
+        1 => 'patch',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/acessos/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\AcessosController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/acessos/patch' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\AcessosController',
+        1 => 'patch',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/permissoes' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\PermissoesController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/permissoes/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\PermissoesController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/permissoes/insertAll' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\PermissoesController',
+        1 => 'insertAll',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
       ),
     ),
   ),

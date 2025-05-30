@@ -1,6 +1,7 @@
 <?php
 
 use app\classes\Session;
+use app\core\Router;
 use app\facade\App;
 
 /** Carrega um recurso
@@ -22,7 +23,7 @@ function component(string $componentName, array $componentData = []): void{
     }
 
     $file = COMPONENTS_PATH . "{$name}.php";
-
+  
     if(file_exists($file)){
         extract($componentData);
         include $file;        
@@ -248,3 +249,4 @@ function route(string $route = "/"){
 function escape($value){
     return is_string($value) ? htmlspecialchars($value, ENT_QUOTES, 'UTF-8'):$value;
 }
+
