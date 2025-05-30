@@ -2,11 +2,12 @@
 namespace app\controllers;
 
 use app\core\Controller;
+use app\services\Request;
 use app\services\Response;
 
-class NotFoundHandler extends Controller{
+class NotFoundHandler{
     
-    public function handle(): Response{
+    public function handle(Request $req, Response $res){
         http_response_code(404);
         header("Content-Type: text/html"); 
 
@@ -17,10 +18,7 @@ class NotFoundHandler extends Controller{
         
         extract($viewData);
         if(file_exists(VIEWS_PATH . "/not-found.php")){
-            return new Response(
-                $this->load('not-found', $viewData),
-                404,
-            );
+            return $res->view('not-found', $viewData);
         }else{
             $html = <<<HTML
                 <style>
@@ -48,7 +46,7 @@ class NotFoundHandler extends Controller{
                 </div>
             HTML;
 
-            return new Response($html, 404);
+            return $res->send('not-found', $viewData);
         }
     }
 }

@@ -3,30 +3,20 @@
 namespace app\controllers;
 
 use app\classes\CSRFToken;
-use app\classes\Session;
-use app\core\Controller;
-use app\facade\App;
+use app\services\Request;
 use app\services\Response;
 
-class HomeController extends Controller{
+class HomeController{
     
-    public function index(): Response{
+    public function index(Request $req, Response $res){
         $csrf = new CSRFToken();
-        
         $token = $csrf->getToken();
-        return new Response(
-            $this->load('template-login', [
-                'title' => 'Projeto',
-                'token' => $token,
-                'view' => 'login'
-            ])          
-        );
-    }
-
-    public function teste():Response{
-        return new Response(
-            'Teste',
-        );
+        
+        return $res->view('template-login', [
+            'title' => 'Projeto',
+            'token' => $token,
+            'view' => 'login'
+        ]);
     }
 
 }

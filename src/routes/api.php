@@ -42,6 +42,6 @@ Router::group([
     // Rotas de permissões
     $route->post("/permissoes",[PermissoesController::class, 'index'], [CSRFMiddleware::class]);
     $route->post("/permissoes/insert",[PermissoesController::class, 'insert'], [CSRFMiddleware::class]);
-    $route->post("/permissoes/insertAll", [PermissoesController::class, 'insertAll'], [CSRFMiddleware::class]);
+
 
 });

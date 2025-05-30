@@ -1,34 +1,63 @@
 <?php
 namespace app\services;
 
+use app\contracts\ResponseContract;
+use app\core\Controller;
 
-class Response{
 
-    public function __construct(
-        private $body, 
-        private int $statusCode = 200,
-        private array $headers = [])
+
+class Response implements ResponseContract{
+
+    public function __construct(private Controller $controller)
     {
         
     }
-    
-    public function send(){
+
+
+    public function json(array $data, array $headers = [], int $status = 200): void{
         
-        http_response_code($this->statusCode);
+        http_response_code($status);
+       
+        $this->setHeaders($headers);
 
-        $this->setHeaders();
+        echo json_encode($data);
 
-        echo $this->body;
+        return;
+        
+    }
+
+    public function send($body, array $headers = [], int $status = 200): void{
+        
+        http_response_code($status);
+
+        $this->setHeaders($headers);
+
+        echo $body;
 
         return;
         
     }  
 
-    private function setHeaders(){
+    public function view($viewName, $viewData, int $status = 200): void{
+
+        http_response_code($status);
         
-        if(!empty($this->headers)){
-            foreach($this->headers as $index => $header){
-                header("$index:$header");
+        (new Controller)->load($viewName, $viewData);
+
+        return;
+    }
+
+    public function redirect(string $uri, int $status = 200):void{
+        http_response_code($status);
+        header("Location: " . $uri);
+        exit;
+    }    
+
+    public function setHeaders($headers): void{
+        
+        if(!empty($headers)){
+            foreach($headers as $index => $header){
+                header("$index: $header");
             }    
         }
 

@@ -2,7 +2,7 @@
 namespace app\contracts;
 
 
-interface Controller{
+interface ControllerContract{
     
     public function load(string $viewName, array $viewData = []);
     

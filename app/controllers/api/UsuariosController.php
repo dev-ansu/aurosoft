@@ -18,11 +18,12 @@ class UsuariosController extends Controller{
     public function __construct(
         private UsuariosService $usuariosService
     )
+
     {
         
     }
        
-    public function index(): Response{
+    public function index(Request $req, Response $res){
 
         $users = $this->usuariosService->fetchAll()->data;
 
@@ -161,12 +162,10 @@ class UsuariosController extends Controller{
             </script>
         HTML;
         
-        return new Response(
-            $html,
-        );
+        return $res->send($html);
     }
 
-    public function insert(Request $request): Response{
+    public function insert(Request $request, Response $res){
 
    
         $validated = $request->post()->validate(UsuariosValidation::class, function($v){
@@ -184,12 +183,12 @@ class UsuariosController extends Controller{
         
        
         if($validated['error']){
-            return new Response(
-                json_encode([
+            return $res->json(
+                [
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
                     'issues' => $validated['issues']
-                ])
+                ]
             );
         }
         
@@ -199,28 +198,24 @@ class UsuariosController extends Controller{
         if(
             $data['senha'] !== $data['senha_conf'] && !hash_equals($data['senha'], $data['senha_conf'])
         ){
-            return new Response(
-                json_encode([
+            return $res->json(
+                    [
                     'error' => true,
                     'message' => 'As senhas não coincidem.',
                     'issues' => [
                         'senha' => ['notEquals' => 'Senhas não coincidem.'],
                         'senha_conf' => ['notEquals' => 'Senhas não coincidem.']
-                    ],
-                ])
+                    ]]
                 );
         }
 
         $response = $this->usuariosService->insert($data);
    
-        return new Response(
-            json_encode($response)
-        );
-
+        return $res->json($response->toArray());
 
     }
 
-    public function patch(Request $request){
+    public function patch(Request $request, Response $res){
 
         $validated = $request->post()->validate(UsuariosValidation::class, function($v){
             $v->custom([
@@ -236,13 +231,11 @@ class UsuariosController extends Controller{
         
      
         if($validated['error']){
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $validated['issues']
-                ])
-            );
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validated['issues']
+            ]);
         }        
 
         
@@ -254,48 +247,39 @@ class UsuariosController extends Controller{
 
             $data['senha'] !== $data['senha_conf']
         ){
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'As senhas não coincidem.',
-                    'issues' => [
-                        'senha' => ['notEquals' => 'Senhas não coincidem.'],
-                        'senha_conf' => ['notEquals' => 'Senhas não coincidem.']
-                    ],
-                ])
-                );
+            return $res->json([
+                'error' => true,
+                'message' => 'As senhas não coincidem.',
+                'issues' => [
+                    'senha' => ['notEquals' => 'Senhas não coincidem.'],
+                    'senha_conf' => ['notEquals' => 'Senhas não coincidem.']
+                ],
+            ]);
         }
 
         $response = $this->usuariosService->patch('id', $data);
-   
-        return new Response(
-            json_encode($response)
-        );
+
+        return $res->json($response->toArray());
     }
 
-    public function delete(int $id): Response{
+    public function delete(int $id, Response $res){
+
         $response = $this->usuariosService->trash('id', $id);
    
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
 
     }
 
-    public function activate(int $id): Response{
+    public function activate(int $id, Response $res){
         $response = $this->usuariosService->activate('id', $id);
    
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
     }
 
-    public function deactivate(int $id): Response{
+    public function deactivate(int $id, Response $res){
         $response = $this->usuariosService->deactivate('id', $id);
    
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
 
     }
 

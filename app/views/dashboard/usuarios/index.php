@@ -27,7 +27,7 @@ use app\facade\App;
 						<label for="input_todos" id="titulo_inputs_marcar">Marcar todos</label>
 					</span>				
 				</h4>
-				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
+				<button onclick="$('#permissoesModal').modal('close')" type="button" class="close"  data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -57,7 +57,7 @@ use app\facade\App;
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_inserir"></span></h4>
-				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
+				<button onclick="$('#permissoesModal').modal('close')" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -150,7 +150,7 @@ use app\facade\App;
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="nomeDados"></span></h4>
-				<button id="btn-fechar" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
+				<button onclick="$('#permissoesModal').modal('close')" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -289,14 +289,7 @@ use app\facade\App;
 		
 				$("#listar_permissoes").html(result);
 				$("#mensagem_permissao").text('');
-				$("#listar_permissoes").ready(()=>{
-					const checboxes = Array.from(document.querySelectorAll("#listar_permissoes input[type='checkbox']"))
-					const res = checboxes.some( el => el.checked )
-					
-					if(res) $("#input_todos").attr('checked', true);
-
-				})
-
+		
 				
 			},
 			error:(xhr, status, error)=>{
@@ -326,7 +319,6 @@ use app\facade\App;
 			dataType: "html",
 			success: (result)=>{
 				const response = JSON.parse(result);
-	
 				if(response.error){
 					const { issues } = response;
 					$("#mensagem_permissao").text(response.message);

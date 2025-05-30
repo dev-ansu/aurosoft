@@ -6,6 +6,7 @@
 		$("#mensagem").text("");
 		$("#titulo_inserir").text("Inserir registro");
 		$("#modalFormGrupo").modal("show");
+		$("#formGrupo").attr("action", "../api/grupoacessos/insert");
 }
 </script>
 

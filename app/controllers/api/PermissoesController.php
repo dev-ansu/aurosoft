@@ -3,6 +3,7 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
+use app\facade\App;
 use app\requests\InserirPermissoes\InserirPermissoes;
 use app\requests\permissoes\PermissoesRequest;
 use app\services\acessos\AcessosService;
@@ -10,6 +11,7 @@ use app\services\GrupoAcessos\GrupoAcessosService;
 use app\services\permissoes\PermissoesService;
 use app\services\Request;
 use app\services\Response;
+use Permissoes;
 
 class PermissoesController extends Controller{
 
@@ -24,17 +26,15 @@ class PermissoesController extends Controller{
         
     }
 
-    public function index(): Response{
+    public function index(Request $req, Response $res){
 
-        $request = $this->permissoesRequest->validated();
+        $request = App::request()->post()->validate(PermissoesRequest::class);
         
-        if(!$request){
-            return new Response(
-                'Verifique os dados e tente novamente.',
-            );
+        if($request['error']){
+            return $res->send('Verifique os dados e tente novamente.');     
         }
         
-        $data = $this->permissoesRequest->data();
+        $data = $request['issues'];
         $id_usuario = $data['id'];
         $permissoes = $this->permissoesService->fetchPermissoesSemGrupo(0)->toArray();
         $permissoesData = $permissoes['data'];
@@ -48,8 +48,8 @@ class PermissoesController extends Controller{
             HTML;
             $span.= "<div class='row'>";
             foreach($permissoesData as $permissao){
-                $res = $this->permissoesService->fetchUsuarioPermissoes($id_usuario, $permissao->id)->toArray()['data'];
-                if(count($res) > 0){
+                $response = $this->permissoesService->fetchUsuarioPermissoes($id_usuario, $permissao->id)->toArray()['data'];
+                if(count($response) > 0){
                     $checked = 'checked';
                 }else{
                     $checked = '';
@@ -80,12 +80,12 @@ class PermissoesController extends Controller{
                 HTML;
                 $span.= "<div class='row'>";
 
-                $res = $this->acessosService->acessoByGrupo($grupo_id)->toArray();
-                $resData = json_decode(json_encode($res['data']), true);
+                $response = $this->acessosService->acessoByGrupo($grupo_id)->toArray();
+                $responseData = json_decode(json_encode($response['data']), true);
                 
                 
                 
-                foreach($resData as $acesso){
+                foreach($responseData as $acesso){
                     $acesso_id = $acesso['id'];
                     $acesso_nome = $acesso['nome'];
                     $permissoesChecked = $this->permissoesService->fetchUsuarioPermissoes($id_usuario, $acesso_id)->toArray()['data'];
@@ -107,31 +107,26 @@ class PermissoesController extends Controller{
                 $span.= "</div><hr>";
             }
         }
-        // echo "<pre>";
-        // var_dump($permissoesData);
-
-
-
-
-        return new Response(
-            $span
-        );
+       
+        
+        
+        return $res->send($span);
     }
 
 
-    public function insert(Request $request): Response{
+    public function insert(Request $request, Response $res){
         
         $validated = $request->post()->validate(InserirPermissoes::class);
 
     
         if($validated['error']){
-            return new Response(
-                json_encode([
+            return $res->json(
+                [
                     'error' => true,
                     'message' => 'Verifique os dados e tente novamente.',
                     'issues' => $validated['issues']
-                ])
-            );
+                ]
+                );
         }
 
         $data = $validated['issues'];
@@ -140,32 +135,8 @@ class PermissoesController extends Controller{
             'permissao' => $data['permissao_id']
         ]);
         
-        return new Response(json_encode($response));
+        return $res->json($response->toArray());
     }
 
-    public function insertAll(): Response{
-
-        $request =  new InserirPermissoes;
-        
-        $inserirPermissoes = $request->validate([
-            'usuario_id' => 'required|notNull',
-        ]);
-
-        if(!$inserirPermissoes){
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $request->getErrors()
-                ])
-            );
-        }
-
-        $data = $inserirPermissoes['usuario_id'];
-
-        $response = $this->permissoesService->insertAllPermissoes($data);
-        
-        return new Response(json_encode($response));
-    }
 
 }

@@ -2,20 +2,16 @@
 
 namespace app\controllers;
 
-use app\classes\CSRFToken;
-use app\classes\DeniedAcess;
 use app\classes\Session;
-use app\core\Controller;
 use app\facade\App;
 use app\requests\LoginRequest;
 use app\services\Auth\AuthService;
 use app\services\Config\ConfigService;
 use app\services\permissoes\PermissoesService;
-use app\services\Redirect;
 use app\services\Request;
 use app\services\Response;
 
-class LoginController extends Controller{
+class LoginController{
 
     public function __construct(
         protected AuthService $auth,
@@ -24,12 +20,13 @@ class LoginController extends Controller{
     {
     }
     
-    public function index(Request $request): Response {
+    public function index(Request $request, Response $res) {
 
             $validate = $request->post()->validate(LoginRequest::class);
                                 
             if($validate['error'] === true){
-                return new DeniedAcess('Verifique os campos e tente novamente.');
+                setFlash('message', 'Verifique os campos e tente novamente.');
+                $res->redirect("/");
             }
             
             $data = $validate['issues'];
@@ -37,11 +34,15 @@ class LoginController extends Controller{
             $user = $this->auth->execute($data);
 
             if(!$user){
-                return new DeniedAcess('E-mail ou senha incorreto.');
+                setFlash('message', 'E-mail ou senha incorreto');
+                $res->redirect('/');
+                exit;
             }
 
             if(strtolower($user->ativo) !== "sim"){
-                return new DeniedAcess('O seu acesso está bloqueado, pois o seu perfil não está ativo.');
+                setFlash('message', 'O seu acesso está bloqueado, pois o seu perfil não está ativo.');
+                $res->redirect('/');
+                exit;
             }
 
             session_regenerate_id(true);
@@ -68,18 +69,18 @@ class LoginController extends Controller{
             App::authSession()->init($user);
 
             
-            return new Redirect('/dashboard');
+            return $res->redirect("/dashboard");
         
     }
 
 
-    public function logout(): Response{
+    public function logout(Request $req, Response $res){
 
         App::authSession()->end();
         
         Session::remove();
         
-        return new Redirect("/", 302);
+        return $res->redirect("/");
 
     }
 

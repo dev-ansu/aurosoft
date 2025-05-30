@@ -3,12 +3,12 @@
 namespace app\middlewares;
 
 use app\contracts\MiddlewareContract;
-
+use app\services\Request;
 use app\services\Response;
 
-class SessionMiddleware implements MiddlewareContract{
+class SessionMiddleware{
     
-    public function handle(mixed $data = null): Response | null{
+    public function handle(){
 
         if(session_status() === PHP_SESSION_NONE) {
             session_start();

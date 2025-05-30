@@ -10,12 +10,12 @@ use app\services\Response;
 
 class AcessosController extends Controller{
 
-    public function __construct(private AcessosService $acessosService, private AcessosRequest $acessosRequest)
+    public function __construct(private AcessosService $acessosService)
     {
         
     }
 
-    public function index(): Response{
+    public function index(Request $req, Response $res){
         $users = $this->acessosService->fetchAll()->data;
 
   
@@ -105,33 +105,30 @@ class AcessosController extends Controller{
             </script>
         HTML;
         
-        return new Response(
-            $html,
-        );
+        return $res->send($html);
     }
 
-    public function insert(Request $request): Response{
+    public function insert(Request $request, Response $res){
 
         $validated = $request->post()->validate(AcessosRequest::class);
 
         if($validated['error']){
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $validated['issues']
-                ])
-            );
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validated['issues']
+            ]);
         }  
 
         $data = $validated['issues'];
 
         $response = $this->acessosService->insert($data);
-        return new Response(json_encode($response));
+
+        return $res->json($response->toArray());
 
     }
 
-    public function patch(Request $request){
+    public function patch(Request $request, Response $res){
 
         $validated = $request->post()->validate(AcessosRequest::class, function($v){
             $v->custom([
@@ -144,33 +141,27 @@ class AcessosController extends Controller{
         });
         
         if($validated['error']){
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $validated['issues']
-                ])
-            );
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validated['issues']
+            ]);
         }        
 
-        
-
+    
         $data = $validated['issues'];
 
 
         $response = $this->acessosService->patch($data);
    
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
     }
 
-    public function delete(int $id): Response{
+    public function delete(int $id, Response $res){
+        
         $response = $this->acessosService->trash('id', $id);
    
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
 
     }
 }

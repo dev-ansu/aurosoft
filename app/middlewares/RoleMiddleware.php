@@ -17,7 +17,7 @@ class RoleMiddleware implements MiddlewareContract{
         
     }
 
-    public function handle(mixed $data = null): ?Response{
+    public function handle(?Request $req, ?Response $res){
         $user = App::authSession()->get();
 
         // Se for administrador, permite tudo
@@ -40,12 +40,11 @@ class RoleMiddleware implements MiddlewareContract{
         if (!PermissionService::has($uri)) {
             
             if(App::request()->isAjax()){
-                return new Response('Você não tem permissão para realizar esta ação.', 403);
+                return $res->send('Você não tem permissão para realizar esta ação.', [], 403);
             }
+            setFlash('message', 'Você não tem permissão para realizar esta ação.');
+            return $res->redirect($this->request->getServer('HTTP_REFERER') ?? '/');
 
-            return new Response('Não autorizado', 403, [
-                'Location' => $this->request->getServer('HTTP_REFERER') ?? '/'
-            ]);
         }
 
         return null;

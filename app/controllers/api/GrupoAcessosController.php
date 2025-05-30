@@ -2,26 +2,13 @@
 
 namespace app\controllers\api;
 
-use app\core\Controller;
 use app\requests\GrupoAcessos\GrupoAcessosRequest;
 use app\services\GrupoAcessos\GrupoAcessosService;
 use app\services\Request;
 use app\services\Response;
-use DateTime;
 
-class GrupoAcessosController extends Controller{
+class GrupoAcessosController{
 
-    // public function middlewareMap(): array
-    // {
-    //     $session = (new Session)->__get(SESSION_LOGIN);
-        
-    //     return [
-    //         'index' => [
-    //             AuthMIddleware::class,
-    //             [RoleMiddleware::class, [$session->nivel ?? null]]
-    //         ],
-    //     ];
-    // }
     
     public function __construct(
         private GrupoAcessosService $grupoAcessoService, 
@@ -32,7 +19,7 @@ class GrupoAcessosController extends Controller{
         
     }
 
-    public function index(): Response{
+    public function index(Request $req, Response $res){
   
         $users = $this->grupoAcessoService->fetchAll()->data;
 
@@ -119,45 +106,37 @@ class GrupoAcessosController extends Controller{
             </script>
         HTML;
         
-        return new Response(
-            $html,
-        );
+        return $res->send($html);
     }
 
-    public function insert(Request $request): Response{
+    public function insert(Request $request, Response $res){
         
         $validated = $request->post()->validate(GrupoAcessosRequest::class);
 
 
         if($validated['error']){
-            
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $validated['issues']
-                ])
-            );
-
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validated['issues']
+            ]);
         }
 
         $response = $this->grupoAcessoService->insert($validated['issues']);
 
 
-        return new Response(json_encode($response));
+        return $res->json($response->toArray());
     }
 
-    public function delete(int $id): Response{
+    public function delete(int $id, Response $res){
         $response = $this->grupoAcessoService->trash('id', $id);
    
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
 
     }
 
 
-    public function patch(Request $request){
+    public function patch(Request $request, Response $res){
 
         $validated = $request->post()->validate(GrupoAcessosRequest::class, function($v){
             $v->custom([
@@ -171,13 +150,11 @@ class GrupoAcessosController extends Controller{
   
 
         if($validated['error']){
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $validated['issues']
-                ])
-            );
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validated['issues']
+            ]);
         }        
 
         
@@ -187,9 +164,7 @@ class GrupoAcessosController extends Controller{
 
         $response = $this->grupoAcessoService->patch($data);
    
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
     }
     
 }

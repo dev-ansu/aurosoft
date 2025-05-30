@@ -7,7 +7,7 @@ use app\facade\App;
 use app\services\Request;
 use app\services\Response;
 use DI\Container;
-use Symfony\Component\Config\Builder\Method;
+
 
 class Core{
 
@@ -29,22 +29,24 @@ class Core{
         // Middlewares definidos na ROTA (executados primeiro)
         foreach ($route['middlewares'] ?? [] as $middleware) {
             $middlewareInstance = $this->container->get($middleware);
-            $response = $middlewareInstance->handle();
+            $this->container->call([$middlewareInstance, 'handle']);
+            // $middlewareInstance->handle();
 
-            if($response instanceof Response){
-                $response->send();
-                return;
-            }
+            // if($response instanceof Response){
+            //     $response->send();
+            //     return;
+            // }
         }
      
         switch ($route['status']){
             case 'NOT_FOUND':
-                $response = (new NotFoundHandler)->handle();
-                $response->send();
+                $notFoundController = $this->container->get(NotFoundHandler::class);
+                $this->container->call([$notFoundController, 'handle']);
                 break;
             case 'METHOD_NOT_ALLOWED':
-                $response = new Response("Cannot GET {$route['method']}");
-                return $response->send();
+                $methodNotAllowed = $this->container->get(Response::class);
+                $methodNotAllowed->send("Cannot GET {$route['method']}");
+                // return $response->send();
                 break;
             default:
 
@@ -52,19 +54,18 @@ class Core{
                 $controller = $this->container->get($this->controller);
                 $this->method = $route['method'];
                 $this->params = $route['params'];
-            
-                
+                $middlewares = $route['middlewares'];
 
-                if($controller instanceof \app\contracts\MiddlewareProtected){
-                    $middlewares = $controller->middlewareMap();
-                    if(isset($middlewares[$this->method])){
-                        foreach($middlewares[$this->method] as $middleware){
-                            if(is_array($middleware)){
-                                [$middlewareClass, $params] = $middleware;
-                                $middlewareClass::handle($params);
-                            }else{
-                                $middleware::handle();
-                            }
+               
+                if(isset($middlewares[$this->method])){
+                    foreach($middlewares[$this->method] as $middleware){
+                        if(is_array($middleware)){
+                            [$middlewareClass, $params] = $middleware;
+                            $middlewareInstance = $this->container->get($middlewareClass);
+                            $this->container->call([$middlewareInstance, 'handle'], $params);
+                        }else{
+                            $middlewareInstance = $this->container->get($middleware);
+                            $this->container->call([$middlewareInstance, 'handle']);
                         }
                     }
                 }
@@ -72,22 +73,22 @@ class Core{
 
                 // $this->params = $url;
 
-                if(!method_exists($controller, $this->method)){
-                    $response = new Response("Esta rota não existe.");
-                    return $response->send();
-                    break;
-                }
+                // if(!method_exists($controller, $this->method)){
+                //     $response = new Response("Esta rota não existe.");
+                //     return $response->send();
+                //     break;
+                // }
 
                 $response = $this->container->call([$controller, $this->method], $this->params);
                
                 // $response = call_user_func_array([$controller, $this->method], $this->params);
             
-                if(!$response || !$response instanceof Response){
-                    $controllerName = $controller::class;
-                    throw new \Exception("Response not found in {$controllerName} controller and {$this->method} method.");
-                }
+                // if(!$response || !$response instanceof Response){
+                //     $controllerName = $controller::class;
+                //     throw new \Exception("Response not found in {$controllerName} controller and {$this->method} method.");
+                // }
         
-                $response->send();
+                // $response->send();
         }
 
         

@@ -15,18 +15,16 @@ class ConfigController extends Controller{
         
     }
 
-    public function index(Request $request):Response{
+    public function index(Request $request, Response $res){
         
         $validated = $request->post()->validate(ConfigRequest::class);
         
         if($validated['error']){
-            return new Response(
-                json_encode([
-                    'error' => true,
-                    'message' => 'Verifique os dados e tente novamente.',
-                    'issues' => $validated['issues']
-                ])
-            );
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validated['issues']
+            ]);
         }        
 
         $data = $validated['issues'];
@@ -38,9 +36,8 @@ class ConfigController extends Controller{
 
         App::session()->__set("config", $response->data);
 
-        return new Response(
-            json_encode($response)
-        );
+        return $res->json($response->toArray());
+
     }
 
 }

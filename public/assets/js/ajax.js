@@ -33,8 +33,10 @@ const onSubmit = (e, prefixMessages = '')=>{
                 $(`#mensagem${prefixMessages}`).text(response.message);
                 $(`#btn-fechar${prefixMessages}`).click();
                 clearErrorMessages(); 
-                listar()
-                limparCampos($("#modalForm"));
+                listar();
+                if(!url.contains("patch") || !url.contains("update") || !url.contains("put")){
+                    limparCampos($("#modalForm"));
+                }
             }else{
                 if(response.issues){
                     const { issues } = response;

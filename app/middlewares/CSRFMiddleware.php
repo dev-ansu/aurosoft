@@ -4,25 +4,29 @@ namespace app\middlewares;
 use app\classes\CSRFToken;
 use app\contracts\MiddlewareContract;
 use app\facade\App;
+use app\services\Request;
 use app\services\Response;
 
-class CSRFMiddleware implements MiddlewareContract{
+class CSRFMiddleware{
     
     public function __construct(protected CSRFToken $csrftoken)
     {
         
     }
 
-    public function handle(mixed $data = null): Response | null{
+    public function handle(Request $req, Response $res){
 
-        if(!App::request()->isPost()){
+        if(!$req->isPost()){
             return null;
         }
 
-        $token = App::request()->input($this->csrftoken->getTokenName());
+        $token = $req->input($this->csrftoken->getTokenName());
         
         if(!$token || !$this->csrftoken->validateToken($token)){
-            return new Response('CSRF token inválido.', 403);
+            if($req->isAjax()){
+                $res->send("CSRF Token inválido", [], 403);
+                return;
+            }
         }
 
         

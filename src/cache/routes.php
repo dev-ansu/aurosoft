@@ -320,19 +320,5 @@
         2 => 'app\\middlewares\\CSRFMiddleware',
       ),
     ),
-    '/api/permissoes/insertAll' => 
-    array (
-      'action' => 
-      array (
-        0 => 'app\\controllers\\api\\PermissoesController',
-        1 => 'insertAll',
-      ),
-      'middlewares' => 
-      array (
-        0 => 'app\\middlewares\\AuthMiddleware',
-        1 => 'app\\middlewares\\RoleMiddleware',
-        2 => 'app\\middlewares\\CSRFMiddleware',
-      ),
-    ),
   ),
 );
