@@ -12,6 +12,7 @@ class Controller{
             // Validação do caminho da view
             $viewPath = realpath(VIEWS_PATH . $viewName . ".php");
             $viewsDir = realpath(VIEWS_PATH);
+          
             if(strpos($viewPath, $viewsDir) !== 0 || !file_exists($viewPath)){
                 throw new Exception('View não encontrada');
             }

@@ -12,8 +12,6 @@ class HomeController extends Controller{
     
     public function index(): Response{
         $csrf = new CSRFToken();
-
-      
         
         $token = $csrf->getToken();
         return new Response(

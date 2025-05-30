@@ -10,7 +10,7 @@ RewriteRule ^(storage|logs|vendor)(/|$) - [F,L]
 # Redireciona tudo para public/index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+RewriteRule ^ public/index.php [QSA,L]
 
 # Bloqueia acesso a arquivos sensíveis
 <FilesMatch "\.(env|ini|log|yml|sql|sh|bak|htaccess)$">
