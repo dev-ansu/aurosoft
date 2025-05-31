@@ -1,6 +1,7 @@
 <?php
 
 
+use app\middlewares\SessionMiddleware;
 ini_set('session.cookie_httponly', 1);     // Impede acesso por JavaScript
 ini_set('session.use_strict_mode', 1);     // Evita aceitar IDs de sessão inválidos
 ini_set('session.use_only_cookies', 1);    // Nunca usa ID de sessão pela URL
@@ -12,6 +13,7 @@ ini_set('display_startup_errors', 1);
 // Em produção, adicione esta linha (com HTTPS):
 // ini_set('session.cookie_secure', 1);
 
+(new SessionMiddleware)->handle();
 
 date_default_timezone_set("America/Sao_Paulo");
 

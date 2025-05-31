@@ -64,6 +64,17 @@
       array (
       ),
     ),
+    '/teste' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\TesteController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+      ),
+    ),
     '/logout' => 
     array (
       'action' => 

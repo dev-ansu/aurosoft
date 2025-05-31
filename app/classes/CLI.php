@@ -73,14 +73,13 @@ class CLI{
         namespace {$namespace};
 
         use app\core\Controller;
-        use app\services\Response;
+        use app\core\Request;
+        use app\core\Response;
 
-        class $classFullName extends Controller{
+        class $classFullName{
 
-            public function index(): Response{
-                return new Response(
-                    'Hello world!'
-                );
+            public function index(Request \$req, Response \$res){
+                return \$res->send('Hello, World!');
             }
 
         }

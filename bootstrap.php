@@ -8,7 +8,6 @@ use app\facade\App;
 use app\core\Router;
 use app\core\Container;
 use app\core\Request;
-use app\middlewares\SessionMiddleware;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
@@ -36,7 +35,6 @@ $container = $container->build(['services']);
 
 App::setContainer($container);
 
-(new SessionMiddleware)->handle();
 
 $core = new Core($container);
 

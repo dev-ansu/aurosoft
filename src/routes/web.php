@@ -25,6 +25,7 @@ Router::group([
 
 
 Router::get("/", [ControllersHomeController::class, 'index']);
+Router::get("/teste", [TesteController::class, 'index']);
 
 Router::post("/login", [LoginController::class, 'index'], [CSRFMiddleware::class]);
 Router::get("/logout", [LoginController::class, 'logout']);
