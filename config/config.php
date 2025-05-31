@@ -1,11 +1,10 @@
 <?php
 
-use app\middlewares\SessionMiddleware;
 
 ini_set('session.cookie_httponly', 1);     // Impede acesso por JavaScript
 ini_set('session.use_strict_mode', 1);     // Evita aceitar IDs de sessão inválidos
 ini_set('session.use_only_cookies', 1);    // Nunca usa ID de sessão pela URL
-(new SessionMiddleware)->handle();
+
 // Reforce a segurança dos cookies de sessão
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
