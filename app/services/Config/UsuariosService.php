@@ -6,6 +6,8 @@ use app\core\DBManager;
 use app\core\Model;
 use app\core\ServiceResponse;
 use Cake\Core\ServiceConfig;
+use Exception;
+use PDOException;
 
 class UsuariosService extends Model{
     
@@ -98,11 +100,20 @@ class UsuariosService extends Model{
         if(!$find) return ServiceResponse::error("Usuário não encontrado.", null);
 
         $response = $this->delete($key, $value);
+      
+        if($response){
+            
+            if(file_exists(UPLOAD_DIR . $find->foto)){
+                unlink(UPLOAD_DIR . $find->foto);
+            }
 
-        if($response) return ServiceResponse::success("Usuário excluído com sucesso.", null);
-
+            return ServiceResponse::success("Usuário excluído com sucesso.", null);
+        } 
+     
+            
         return ServiceResponse::error("O usuário não foi excluído.", null, 500);
 
+        
     }
 
     public function activate($key, $value){

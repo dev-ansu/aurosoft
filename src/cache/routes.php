@@ -53,6 +53,32 @@
         1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
+    '/dashboard/contasareceber' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\dashboard\\ContasReceberController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/dashboard/contasapagar' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\dashboard\\ContasPagarController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
     '/' => 
     array (
       'action' => 

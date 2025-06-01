@@ -10,10 +10,11 @@ use app\services\PermissionService;
 
 	<a onclick="inserir()" class="btn btn-primary">
 		<span class="fa fa-plus"></span>
-		Usuário
+		Receber
 	</a>
 
 <?php endif; ?>
+
 
 <li id="" class="dropdown head-dpdn2" style="display: inline-block;">
 	<a href="#" data-toggle="dropdown" class="btn btn-danger dropdown toggle"
@@ -70,10 +71,10 @@ use app\services\PermissionService;
 </div>
 
 
-<?php if(PermissionService::has("api/usuarios/insert")): ?>
+
 <!-- Modal Form -->
 <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_inserir"></span></h4>
@@ -86,38 +87,49 @@ use app\services\PermissionService;
 				
 
 					<div class="row">
-						<div class="col-md-6">							
-								<label>Nome</label>
-								<input type="text" class="form-control" id="nome" name="nome" placeholder="Seu Nome">							
+						<div class="col-md-7">							
+							<label>Descrição</label>
+							<input type="text" class="form-control" id="nome" name="nome" placeholder="Seu Nome">							
 						</div>
 
-						<div class="col-md-6">							
-								<label>Email</label>
-								<input type="email" class="form-control" id="email" name="email" placeholder="Seu Email" >							
+						<div class="col-md-5">							
+							<label>Cliente</label>
+							<select name="cliente" id="cliente" class="sel2 js-states form-control" style="width: 100%;height:35px">
+								<option value="0">Nenhum</option>
+								<option value="1">Cliente 1</option>
+								<option value="2">Cliente 2</option>
+							</select>
 						</div>
-
-						
 					</div>
 
 
 					<div class="row">
 
-						<div class="col-md-6">							
-								<label>Telefone</label>
-								<input type="text" class="form-control" id="telefone" name="telefone" placeholder="Seu Telefone">							
+						<div class="col-md-3">							
+								<label>Valor</label>
+								<input type="text" class="form-control" id="valor" name="valor" placeholder="100.00">							
 						</div>
 						
 
-						<div class="col-md-6">							
-								<label>Nível</label>
-								<select class="form-control" name="nivel" id="nivel">
-								  <option>Administrador</option>
-								  <option>Comum</option>
-								</select>							
+						<div class="col-md-3">							
+							<label>Data de vencimento</label>
+						
+							<input  type="date" value="<?= date("Y-m-d") ?>" class="form-control" id="vencimento" name="vencimento" >							
 						</div>
 
+						<div class="col-md-3">							
+							<label>Pago em</label>
+							<input type="date" class="form-control" id="data_pgto" name="data_pgto" value="" placeholder="10/02/2023">							
+						</div>
+						<div class="col-md-3">							
+							<label>Forma de pagamento</label>
+							<select name="forma_pgto" id="forma_pgto" class="form-control">
+								<option value="0">Dinheiro</option>
+								<option value="1">Pix</option>
+								<option value="2">Cartão de crédito</option>
+							</select>						
+						</div>
 
-						
 					</div>
 
                     <div class="row">
@@ -164,7 +176,17 @@ use app\services\PermissionService;
 		</div>
 	</div>
 </div>
-<?php endif; ?>
+
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		$('.sel2').select2({
+			dropdownParent: $("#modalForm")
+		});
+	});
+
+</script>
 
 <?php if(PermissionService::has("dashboard/usuarios")): ?>
 <!-- Modal dados -->
@@ -345,6 +367,9 @@ use app\services\PermissionService;
 	}
 
 </script>
+
+
+
 <?php endif; ?>
 
 <?php if(PermissionService::has('api/permissoes/insert')): ?>
@@ -386,3 +411,5 @@ use app\services\PermissionService;
 	}
 </script>
 <?php endif; ?>
+
+

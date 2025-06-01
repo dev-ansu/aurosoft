@@ -1,6 +1,8 @@
 <?php
 
 use app\controllers\dashboard\AcessosController;
+use app\controllers\dashboard\ContasPagarController;
+use app\controllers\dashboard\ContasReceberController;
 use app\controllers\dashboard\GrupoAcessosController;
 use app\controllers\dashboard\HomeController;
 use app\controllers\dashboard\UsuariosController;
@@ -21,6 +23,10 @@ Router::group([
     $route->get("/usuarios", [UsuariosController::class, 'index']);
     $route->get("/grupoacessos", [GrupoAcessosController::class, 'index']);
     $route->get("/acessos", [AcessosController::class, 'index']);
+
+    //------ ROTAS FINANCEIRO --------//
+    $route->get("/contasareceber", [ContasReceberController::class, 'index']);
+    $route->get("/contasapagar", [ContasPagarController::class, 'index']);
 });
 
 

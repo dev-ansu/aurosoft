@@ -56,6 +56,25 @@ use app\services\PermissionService;
                 </ul>
             </li>
          <?php endif; ?>
+        <?php if(PermissionService::hasGroupPermission('Financeiro')): ?>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-dollar"></i>
+                    <span>Financeiro</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <?php if(PermissionService::has('dashboard/contasareceber')): ?>
+                        <li><a href="<?= route("/dashboard.contasareceber") ?>"><i class="fa fa-angle-right"></i> Contas a receber</a></li>
+                    <?php endif; ?>
+                    
+                    <?php if(PermissionService::has('dashboard/contasapagar')): ?>
+                        <li><a href="<?= route("/dashboard.contasapagar") ?>"><i class="fa fa-angle-right"></i> Contas a pagar</a></li>
+                    <?php endif; ?>
+                    
+                </ul>
+            </li>
+         <?php endif; ?>
 
     </ul>
 </div>

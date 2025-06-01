@@ -1,0 +1,7 @@
+.env
+vendor
+config/database.php
+phinx.php
+logs
+node_modules
+public/uploads

@@ -2,6 +2,7 @@
 
 namespace app\core;
 
+use PDOException;
 
 abstract class Model extends DBManager{
     
@@ -29,10 +30,18 @@ abstract class Model extends DBManager{
 
     public function delete($key, $value): bool
     {   
-        $key = $this->validateColumn($key);
-        
-        $stmt = $this->connection($this->name)->prepare("DELETE FROM {$this->table} WHERE {$key} = :{$key}");
-        return $stmt->execute(["$key" => $value]);
+        try{
+            $key = $this->validateColumn($key);
+            
+            $stmt = $this->connection($this->name)->prepare("DELETE FROM {$this->table} WHERE {$key} = :{$key}");
+            
+            return $stmt->execute(["$key" => $value]);
+            
+        }catch(PDOException $e){
+
+            return false;
+
+        }
     }
 
     public function update(mixed $key, array $data): bool

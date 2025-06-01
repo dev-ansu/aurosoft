@@ -27,7 +27,9 @@ class UsuariosController extends Controller{
   
         $html = <<<HTML
             <table class="table table-hover" id="tabela">
+                <input type="hidden" id="ids">
                 <thead>
+                 
                     <tr>
                         <th>Nome</th>
                         <th class="esc">Telefone</th>
@@ -123,7 +125,10 @@ class UsuariosController extends Controller{
             $html.= <<<HTML
 
                     <tr class="{$classe_ativo}">
-                        <td>{$nome}</td>
+                        <td>
+                        <input type="checkbox" id="seletor-{$id}" class="form-check-input" onchange="selecionar(`{$id}`)">
+                        {$nome}
+                        </td>
                         <td>{$telefone}</td>
                         <td>{$email}</td>
                         <td>{$nivel}</td>
@@ -141,7 +146,7 @@ class UsuariosController extends Controller{
             </tbody>
                 <div id="mensagem-excluir" class="alert alert-danger d-flex justify-content-between" >
                     <span></span>
-                    <span>X<php endif; ?>/span>
+                    <span>X</span>
                 </div>
                 
             </table>
@@ -156,6 +161,65 @@ class UsuariosController extends Controller{
                     })
                 
                 })
+
+                function selecionar(id){
+
+                    var ids = $('#ids').val();
+
+                    if($('#seletor-'+id).is(":checked") == true){
+                        var novo_id = ids + id + '-';
+                        $('#ids').val(novo_id);
+                    }else{
+                        var retirar = ids.replace(id + '-', '');
+                        $('#ids').val(retirar);
+                    }
+
+                    var ids_final = $('#ids').val();
+                    console.log(ids_final);
+                    if(ids_final == ""){
+                        $('#btn-deletar').hide();
+                    }else{
+                        $('#btn-deletar').show();
+                    }
+            }
+
+            function deletarSel(){
+                var ids = $('#ids').val();
+                var id = ids.split("-");
+                
+                for(i=0; i<id.length-1; i++){
+                    excluir(id[i]);			
+                }
+
+                limparCampos();
+            }
+
+
+            function excluir(id){	
+                $('#mensagem-excluir').text('Excluindo...')
+                
+                $.ajax({
+                    url: "/api/usuarios/delete/" + id,
+                    method: 'GET',
+                    dataType: "json",
+                    success:function(result){
+                        const response = JSON.parse(result);
+                        if (!response.error) {            	
+                            listar();
+                            $('#mensagem-excluir').hide()
+                        } else {
+                            $('#mensagem-excluir').addClass('text-danger')
+                            $('#mensagem-excluir').text(response.message)
+                            $('#mensagem-excluir').show()
+                        }
+                    },
+                    error(xhr, status, error){
+                        $('#mensagem-excluir').text(xhr.responseText)
+                        $('#mensagem-excluir').show()
+                    }
+                });
+            }
+
             </script>
         HTML;
         

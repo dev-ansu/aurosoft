@@ -11,7 +11,6 @@ const inserir = ()=>{
     $("#titulo_inserir").text("Inserir registro");
     $("#modalForm").modal("show");
     $("#modalForm #form").attr("action", "../api/usuarios/insert")
-    limparCampos($("#modalForm"));
 }
 
 const onSubmit = (e, prefixMessages = '')=>{
@@ -109,4 +108,4 @@ $("#form-config").submit(function(e){
 
 
 
-$("#modalForm").on("hidden.bs.modal", clearErrorMessages);
+

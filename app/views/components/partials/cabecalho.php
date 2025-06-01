@@ -13,6 +13,9 @@ $session = App::authSession()->get();
 	<title><?= @$config->nome ?><?= $title ? " - " . $title:''  ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+
+
 	<link rel="shortcut icon" href="" type="image/x-icon">
 	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 
@@ -92,13 +95,15 @@ $session = App::authSession()->get();
 		});
 
 	</script>
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 	<!-- //pie-chart --><!-- index page sales reviews visitors pie chart -->
 	<link rel="stylesheet" href="<?= asset("/css/DataTables.css") ?>">
 	<script defer src="<?= asset("/js/DataTables.min.js") ?>" type="text/javascript"></script>
 	<script defer type="text/javascript" src="<?= asset("/js/errorMessages.js") ?>"></script>
 	<script defer type="text/javascript" src="<?= asset("/js/ajax.js") ?>"></script>
 	
-	
+
 </head> 
 
 <body class="cbp-spmenu-push">
