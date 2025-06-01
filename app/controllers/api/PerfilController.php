@@ -1,0 +1,82 @@
+<?php
+
+namespace app\controllers\api;
+
+use app\classes\ImageUploader;
+use app\core\Request;
+use app\core\Response;
+use app\facade\App;
+use app\requests\perfil\FotoPerfilRequest;
+use app\requests\perfil\PerfilRequest;
+use app\services\perfil\PerfilService;
+
+
+class PerfilController{
+
+    public function __construct(private PerfilService $perfilService)
+    {
+        
+    }
+
+    public function index(Request $req, Response $res){
+
+        $validated = $req->post()->validate(PerfilRequest::class);
+        
+        $validatedImage = $req->file('foto')->validate(FotoPerfilRequest::class);
+
+
+        if($validatedImage['error']){
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validatedImage['issues']
+            ]);
+        }
+
+
+        if($validated['error']){
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $validated['issues']
+            ]);
+        }
+
+        $data = $validated['issues'];
+        
+        $uploadImage = (new ImageUploader($req->file('foto')->data(), ['jpg', 'jpeg', 'png', 'gif', 'webp'], 2048))->uploadImage();
+
+        if($uploadImage['success']){
+
+            $data['id'] = App::authSession()->get()->id;
+            $data['foto'] = $uploadImage['filename'];
+            
+            $updated = $this->perfilService->patch('id', $data);
+
+            if($updated){
+
+                $_SESSION[SESSION_LOGIN]->foto = $data['foto'];
+
+                return $res->json([
+                    'error' => false,
+                    'message' => 'Perfil atualizado com sucesso.',
+                ]);
+                
+            }else{
+                unlink(UPLOAD_DIR . $uploadImage['filename']);
+                return $res->json([
+                    'error' => true,
+                    'message' => 'O perfil não foi atualizado.',
+                ]);
+            }
+
+        }else{
+            return $res->json([
+                'error' => true,
+                'message' => 'Não foi possível realizar o upload de imagem por motivo diverso. ',
+            ]);
+        }
+        
+    }
+
+}

@@ -1,0 +1,27 @@
+{
+    "name": "servidorouro/template",
+    "autoload": {
+        "psr-4": {
+            "app\\":"app/"
+        },
+        "files":[
+            "src/helpers/functions.php"
+        ]
+    },
+    "scripts": {
+        "phinx": "vendor/bin/phinx",
+        "phinx:migrate": "vendor/bin/phinx migrate",
+        "phinx:rollback": "vendor/bin/phinx rollback"
+    },
+    "authors": [
+        {
+            "name": "Anderson Souza",
+            "email": "dev.andersondesouzafeitosa@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6",
+        "robmorgan/phinx": "^0.16.8",
+        "php-di/php-di": "^7.0"
+    }
+}
