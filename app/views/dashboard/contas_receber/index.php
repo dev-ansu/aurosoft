@@ -134,8 +134,13 @@ use app\services\PermissionService;
 
                     <div class="row">
 						<div class="col-md-4">							
-								<label>Rua</label>
-								<input type="text" class="form-control" id="rua" name="rua" placeholder="Nome da rua" value="">							
+							<label>Frequência</label>
+							<select name="frequencia" id="frequencia" class="form-control">
+								<option value="0">Nenhuma</option>
+								<option value="1">Diária</option>
+								<option value="2">Mensal</option>
+								<option value="3">Anual</option>
+							</select>							
 						</div>
 
 
