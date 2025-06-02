@@ -3,6 +3,8 @@
 use app\controllers\dashboard\AcessosController;
 use app\controllers\dashboard\ContasPagarController;
 use app\controllers\dashboard\ContasReceberController;
+use app\controllers\dashboard\FormasPagamentoController;
+use app\controllers\dashboard\FrequenciasController;
 use app\controllers\dashboard\GrupoAcessosController;
 use app\controllers\dashboard\HomeController;
 use app\controllers\dashboard\UsuariosController;
@@ -19,10 +21,16 @@ Router::group([
     'prefix' => '/dashboard',
     'middlewares' => [AuthMiddleware::class, RoleMiddleware::class]
 ],function(RouterBuilder $route){
+
+    // -------- ROTAS PESSOAS -----------//
     $route->get('', [HomeController::class, 'index']);
     $route->get("/usuarios", [UsuariosController::class, 'index']);
+
+    // --------- ROTAS CADASTROS ---------//
     $route->get("/grupoacessos", [GrupoAcessosController::class, 'index']);
     $route->get("/acessos", [AcessosController::class, 'index']);
+    $route->get("/formaspagamento", [FormasPagamentoController::class, 'index']);
+    $route->get("/frequencias", [FrequenciasController::class, 'index']);
 
     //------ ROTAS FINANCEIRO --------//
     $route->get("/contasareceber", [ContasReceberController::class, 'index']);

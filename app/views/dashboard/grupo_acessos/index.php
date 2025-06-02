@@ -1,6 +1,7 @@
 
 <?php
 
+use app\facade\App;
 use app\services\PermissionService;
 ?>
 
@@ -48,7 +49,7 @@ use app\services\PermissionService;
 								<input type="text" class="form-control" id="nome_grupo" name="nome_grupo" placeholder="Nome do grupo">							
 								<input type="hidden" class="form-control" id="grupo_id" name="grupo_id" placeholder="Nome do grupo">							
 						</div>
-						<input type="hidden" name="_csrf_token" value="<?= $token_csrf ?>" />
+						<input type="hidden" name="_csrf_token" value="<?= App::_csrf() ?>" />
 						
 					</div>
 

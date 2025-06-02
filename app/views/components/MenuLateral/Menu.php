@@ -52,6 +52,14 @@ use app\services\PermissionService;
                     <?php if(PermissionService::has('dashboard/acessos')): ?>
                         <li><a href="<?= route("/dashboard.acessos") ?>"><i class="fa fa-angle-right"></i> Acessos</a></li>
                     <?php endif; ?>
+
+                    <?php if(PermissionService::has('dashboard/formaspagamento')): ?>
+                        <li><a href="<?= route("/dashboard.formaspagamento") ?>"><i class="fa fa-angle-right"></i> Formas de pagamento</a></li>
+                    <?php endif; ?>
+                    
+                    <?php if(PermissionService::has('dashboard/frequencias')): ?>
+                        <li><a href="<?= route("/dashboard.frequencias") ?>"><i class="fa fa-angle-right"></i> Frequências</a></li>
+                    <?php endif; ?>
                     
                 </ul>
             </li>

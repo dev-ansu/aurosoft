@@ -87,12 +87,17 @@ use app\services\PermissionService;
 				
 
 					<div class="row">
-						<div class="col-md-7">							
+						<div class="col-md-6">							
 							<label>Descrição</label>
-							<input type="text" class="form-control" id="nome" name="nome" placeholder="Seu Nome">							
+							<input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição">							
 						</div>
 
-						<div class="col-md-5">							
+						<div class="col-md-3">							
+							<label>Valor</label>
+							<input type="text" class="form-control" id="valor" name="valor" placeholder="100.00">							
+						</div>
+
+						<div class="col-md-3">							
 							<label>Cliente</label>
 							<select name="cliente" id="cliente" class="sel2 js-states form-control" style="width: 100%;height:35px">
 								<option value="0">Nenhum</option>
@@ -105,10 +110,7 @@ use app\services\PermissionService;
 
 					<div class="row">
 
-						<div class="col-md-3">							
-								<label>Valor</label>
-								<input type="text" class="form-control" id="valor" name="valor" placeholder="100.00">							
-						</div>
+					
 						
 
 						<div class="col-md-3">							
@@ -130,10 +132,7 @@ use app\services\PermissionService;
 							</select>						
 						</div>
 
-					</div>
-
-                    <div class="row">
-						<div class="col-md-4">							
+						<div class="col-md-3">							
 							<label>Frequência</label>
 							<select name="frequencia" id="frequencia" class="form-control">
 								<option value="0">Nenhuma</option>
@@ -143,34 +142,28 @@ use app\services\PermissionService;
 							</select>							
 						</div>
 
-
-						<div class="col-md-4">							
-								<label>Número da casa</label>
-								<input type="text" class="form-control" id="numero" name="numero" placeholder="Número da casa" value="">							
-						</div>
-
-						<div class="col-md-4">							
-								<label>Bairro</label>
-								<input type="text" class="form-control" id="bairro" name="bairro" placeholder="Nome do bairro" value="">							
-								<input type="hidden" class="form-control" id="id" name="id" placeholder="" value="">							
-						</div>
-						<input type="hidden" name="_csrf_token" value="<?= App::_csrf() ?>" />
-					</div>		
-					
-					<div class="row">
-
-						<div class="col-md-6">							
-							<label>Senha</label>
-							<input type="password" class="form-control" id="senha" name="senha" placeholder="Senha" value="">												
-						</div>
-						
-						<div class="col-md-6">							
-							<label>Confirmar senha</label>
-							<input type="password" class="form-control" id="senha_conf" name="senha_conf" placeholder="Confirmar senha" value="">							
-						</div>
-
 					</div>
 
+                    <div class="row">
+
+						<div class="col-md-5">							
+							<label>Observação</label>
+							<input type="text" class="form-control" id="observacao" name="observacao" placeholder="Observação">							
+						</div>
+					
+						<div class="col-md-4">							
+								<label>Arquivo</label>
+								<input type="file" class="form-control" id="arquivo" name="arquivo" value="" onchange="carregarImg()">							
+						</div>
+
+						<div class="col-md-2">								
+							<img src=""  width="80px" id="target" alt="Arquivo">								
+						</div>
+
+						
+				
+						<input type="hidden" name="_csrf_token" value="<?= App::_csrf() ?>" />
+					</div>		
 				<br>
 				<small><div id="mensagem" align="center"></div></small>
 			</div>
@@ -190,6 +183,25 @@ use app\services\PermissionService;
 			dropdownParent: $("#modalForm")
 		});
 	});
+
+	function carregarImg() {
+		let target = document.getElementById('target');
+		let file = document.getElementById("arquivo").files[0];
+		
+		const arquivo = file.name;
+		const extensao = arquivo.split(".").pop().toLowerCase();
+		
+
+		if(['jpg', 'jpeg', 'png', 'webp', 'jiff'].includes(extensao)){
+			target.src = `<?= asset("/icones/") ?>image.png`;
+			return; // Não continue tentando carregar como imagem
+		}else{
+			
+			target.src = `<?= asset("/icones/") ?>${extensao}.png`;
+			return; // Não continue tentando carregar como imagem
+		}
+    
+    }
 
 </script>
 
@@ -309,47 +321,6 @@ use app\services\PermissionService;
 </script>
 <?php endif; ?>
 
-<?php if(PermissionService::has('api/permissoes')): ?>
-<script>
-
-	const listarPermissoes = (id)=>{
-		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
-
-		
-		$.ajax({
-			url: "<?= route("/api/permissoes") ?>",
-			method: "POST",
-			data: {id:id, _csrf_token: _csrf_token},
-			dataType: "html",
-			success: (result)=>{
-		
-				$("#listar_permissoes").html(result);
-				$("#mensagem_permissao").text('');
-		
-				
-			},
-			error:(xhr, status, error)=>{
-				console.log(xhr.responseText)
-			}
-		});
-	}
-
-	const definirPermissoes = (id, nome)=>{
-		
-		$(document).ready(()=>{
-			$("#nome_permissoes").text(nome)
-		
-			$("#mensagem_permissao").text("");
-			$("#id_permissoes").val(id)
-			$("#permissoesModal").modal("show");
-
-			listarPermissoes(id);
-
-		})
-	}
-
-</script>
-<?php endif; ?>
 
 <?php if(PermissionService::has('api/usuarios/patch')): ?>
 <script>
@@ -390,30 +361,7 @@ use app\services\PermissionService;
 
 	}
 
-	const adicionarPermissao = (permissao_id, usuario_id)=>{
-		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
 
-		$.ajax({
-			url: "<?= route("/api/permissoes/insert") ?>",
-			method: "POST",
-			data: {permissao_id, usuario_id, _csrf_token: _csrf_token},
-			dataType: "html",
-			success: (result)=>{
-				const response = JSON.parse(result);
-				if(response.error){
-					const { issues } = response;
-					$("#mensagem_permissao").text(response.message);
-                    setErrorMessages(issues);
-				}else{
-					listarPermissoes(usuario_id);
-					$("#mensagem_permissao").text(response.message);
-				}
-			},
-			error:(xhr, status, error)=>{
-				console.log(xhr.responseText)
-			}
-		});
-	}
 </script>
 <?php endif; ?>
 

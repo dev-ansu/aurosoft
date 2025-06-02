@@ -36,7 +36,7 @@ use app\services\PermissionService;
 </section>
  
 <div class="modal fade" id="permissoesModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title d-flex justify-content-between align-items-center" id="permissoesModalLabel">
@@ -62,8 +62,14 @@ use app\services\PermissionService;
 
 				<br>
 			</div>
-			
 			<small><div id="mensagem_permissao" align="center"></div></small>
+			<div class="modal-footer">
+				<h4 class="modal-title d-flex justify-content-between align-items-center" id="permissoesModalLabel">
+					<span>
+						<span class="btn btn-lg btn-danger" type="checkbox" id="input_todos" onclick="desmarcarTodos()">Desmarcar todos</span>
+					</span>				
+				</h4>
+			</div>
 		</form>
 		</div>
 	</div>
@@ -354,6 +360,16 @@ use app\services\PermissionService;
 		
 		$("#listar_permissoes input[type='checkbox']").each( (i, el)=>{
 			if(el.checked == false){
+				el.click();
+			}
+		})
+
+	}
+	const desmarcarTodos = ()=>{
+		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
+		
+		$("#listar_permissoes input[type='checkbox']").each( (i, el)=>{
+			if(el.checked == true){
 				el.click();
 			}
 		})

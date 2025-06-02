@@ -24,8 +24,12 @@ class CSRFMiddleware{
         if(!$token || !$this->csrftoken->validateToken($token)){
             if($req->isAjax()){
                 $res->send("CSRF Token inválido", [], 403);
-                return;
+                exit;
             }
+
+            setFlash("message", "CSRF Token inválido.");
+            $res->redirect($req->getServer('HTTP_REFERER') || '/');
+            exit;
         }
 
         

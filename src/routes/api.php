@@ -2,6 +2,8 @@
 
 use app\controllers\api\AcessosController;
 use app\controllers\api\ConfigController;
+use app\controllers\api\FormasPagamentoController;
+use app\controllers\api\FrequenciasController;
 use app\controllers\api\GrupoAcessosController;
 use app\controllers\api\PerfilController;
 use app\controllers\api\PermissoesController;
@@ -43,6 +45,17 @@ Router::group([
     $route->get('/acessos/delete/{id:\d+}',[AcessosController::class, 'delete'], [CSRFMiddleware::class]);
     $route->post('/acessos/insert', [AcessosController::class, 'insert'], [CSRFMiddleware::class]);
     $route->post('/acessos/patch', [AcessosController::class, 'patch'], [CSRFMiddleware::class]);
+
+    // Rotas de frequencias e formas de pagamento
+    $route->get("/formaspagamento", [FormasPagamentoController::class, 'index']);
+    $route->get("/formaspagamento/delete/{id:\d+}", [FormasPagamentoController::class, 'delete']);
+    $route->post("/formaspagamento/patch", [FormasPagamentoController::class, 'patch'], [CSRFMiddleware::class]);
+    $route->post("/formaspagamento/insert", [FormasPagamentoController::class, 'insert'], [CSRFMiddleware::class]);
+
+    $route->get("/frequencias", [FrequenciasController::class, 'index']);
+    $route->get("/frequencias/delete/{id:\d+}", [FrequenciasController::class, 'delete']);
+    $route->post("/frequencias/patch", [FrequenciasController::class, 'patch'], [CSRFMiddleware::class]);
+    $route->post("/frequencias/insert", [FrequenciasController::class, 'insert'],[CSRFMiddleware::class]);
 
     // Rotas de permissões
     $route->post("/permissoes",[PermissoesController::class, 'index'], [CSRFMiddleware::class]);

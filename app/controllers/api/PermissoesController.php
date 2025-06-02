@@ -63,9 +63,9 @@ class PermissoesController extends Controller{
                 }
 
                 $span.= <<<HTML
-                    <div class="form-check col-md-3">
+                    <div class="form-check col-md-4 gap-2">
                         {$inputCheckbox}
-                        <label style="font-size:13px" for="{$permissao->id}" class="labelcheck">$permissao->nome</label>
+                        <label style="font-size:14px" for="{$permissao->id}" class="labelcheck">$permissao->nome</label>
                     </div>
                 HTML;
             }
@@ -111,9 +111,9 @@ class PermissoesController extends Controller{
                         HTML;
                     }
                     $span.= <<<HTML
-                    <div class="form-check col-md-3">
+                    <div class="form-check col gap-2">
                         {$inputCheckbox}
-                        <label style="font-size:13px" for="{$acesso_id}" class="labelcheck">$acesso_nome</label>
+                        <label style="font-size:14px" for="{$acesso_id}" class="labelcheck">$acesso_nome</label>
                     </div>
                     HTML;
                 }

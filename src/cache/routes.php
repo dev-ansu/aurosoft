@@ -53,6 +53,32 @@
         1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
+    '/dashboard/formaspagamento' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\dashboard\\FormasPagamentoController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/dashboard/frequencias' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\dashboard\\FrequenciasController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
     '/dashboard/contasareceber' => 
     array (
       'action' => 
@@ -217,6 +243,58 @@
         2 => 'app\\middlewares\\CSRFMiddleware',
       ),
     ),
+    '/api/formaspagamento' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FormasPagamentoController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/api/formaspagamento/delete/{id:\\d+}' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FormasPagamentoController',
+        1 => 'delete',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/api/frequencias' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FrequenciasController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/api/frequencias/delete/{id:\\d+}' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FrequenciasController',
+        1 => 'delete',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
   ),
   'POST' => 
   array (
@@ -334,6 +412,62 @@
       array (
         0 => 'app\\controllers\\api\\AcessosController',
         1 => 'patch',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/formaspagamento/patch' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FormasPagamentoController',
+        1 => 'patch',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/formaspagamento/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FormasPagamentoController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/frequencias/patch' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FrequenciasController',
+        1 => 'patch',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/frequencias/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FrequenciasController',
+        1 => 'insert',
       ),
       'middlewares' => 
       array (

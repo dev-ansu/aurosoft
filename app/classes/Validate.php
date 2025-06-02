@@ -206,6 +206,22 @@ class Validate extends Model{
         return false;
     }
 
+    private static function decimal($field){
+        $value = App::request()->input($field);
+
+        // Remove espaços e substitui vírugla por ponto, se necessário
+        $normalized = str_replace(",", ".", trim($value));
+
+        // Verifica se é numérico e contém um ponto decimal
+        if(is_numeric($normalized)){
+            return $normalized;
+        }
+
+        setFlash($field, "O campo {$field} deve ser um número decimal.");
+        self::setError($field, 'decimal', "O campo {$field} deve ser um número decimal.");
+        return false;
+    }
+
     private static function setMessages(){
         $object = self::$request;
         if(method_exists($object, 'messages')){
@@ -278,11 +294,26 @@ class Validate extends Model{
     private static function numberInt($field){
         $number = App::request()->input($field);
         
-        if(filter_var($number, FILTER_VALIDATE_INT) !== false){
+        if(is_scalar($number) && filter_var($number, FILTER_VALIDATE_INT) !== false ){
             return (int) $number;
         }        
         // setFlash($field, "O campo {$field} deve ser um número inteiro.");
         self::setError($field, 'numberInt', "O campo {$field} deve ser um número inteiro."); 
+        return false;
+    }
+    
+    private static function isPositive($field) {
+        $number = App::request()->input($field);
+
+        // is_numeric aceita int, float e string numérica
+        if (is_scalar($number) && is_numeric($number)) {
+            // converte para float para verificar se é positivo
+            if ((float)$number > 0) {
+                return (float) $number;
+            }
+        }
+
+        self::setError($field, 'isPositive', "O campo {$field} deve ser um número positivo.");
         return false;
     }
 
