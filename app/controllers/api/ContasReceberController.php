@@ -135,7 +135,7 @@ class ContasReceberController{
                         <td>{$data_pgto}</td>
                         <td>{$data_lanc}</td>
                         <td>{$nome}</td>
-                        <td>{$nome_frequencia}</td>
+                        <td style="font-size:12px">{$nome_frequencia}</td>
                         <td>{$observacao}</td>
                         <td>
                             <a target="_blank" href="{$link}">
