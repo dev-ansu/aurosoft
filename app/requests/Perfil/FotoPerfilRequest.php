@@ -22,7 +22,8 @@ class FotoPerfilRequest extends RequestValidation implements RequestValidationCo
 
         return [
             'foto' => [
-                "image" => [
+                "archive" => [
+                    'optional' => true,
                     'allowedMimeTypes' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
                     'allowedExtensions' => ['jpg', 'jpeg', 'png', 'gif', 'webp'],
                     'maxSize' => 2048

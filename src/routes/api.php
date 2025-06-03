@@ -2,6 +2,7 @@
 
 use app\controllers\api\AcessosController;
 use app\controllers\api\ConfigController;
+use app\controllers\api\ContasReceberController;
 use app\controllers\api\FormasPagamentoController;
 use app\controllers\api\FrequenciasController;
 use app\controllers\api\GrupoAcessosController;
@@ -60,6 +61,12 @@ Router::group([
     // Rotas de permissões
     $route->post("/permissoes",[PermissoesController::class, 'index'], [CSRFMiddleware::class]);
     $route->post("/permissoes/insert",[PermissoesController::class, 'insert'], [CSRFMiddleware::class]);
+
+    // Rotas financeiro
+    $route->get("/contasreceber", [ContasReceberController::class, 'index']);
+    $route->get("/contasreceber/delete/{id:\d+}", [ContasReceberController::class, 'delete']);
+    $route->post("/contasreceber/insert", [ContasReceberController::class, 'insert'], [CSRFMiddleware::class]);
+    $route->post("/contasreceber/patch", [ContasReceberController::class, 'insert'], [CSRFMiddleware::class]);
 
 
 });

@@ -6,12 +6,13 @@ use app\services\PermissionService;
 ?>
 
 
-<?php if(PermissionService::has("api/usuarios/insert")): ?>
-
-	<a onclick="inserir()" class="btn btn-primary">
+<?php if(PermissionService::has("api/contasreceber/insert")): ?>
+	
+	<a onclick="inserirContaReceber()" class="btn btn-primary">
 		<span class="fa fa-plus"></span>
 		Receber
 	</a>
+	
 
 <?php endif; ?>
 
@@ -36,53 +37,19 @@ use app\services\PermissionService;
 
 </section>
  
-<div class="modal fade" id="permissoesModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title d-flex justify-content-between align-items-center" id="permissoesModalLabel">
-					<span id="nome_permissoes"></span>
-					<span>
-						<input class="form-check-input" type="checkbox" id="input_todos" onchange="marcarTodos()" />
-						<label for="input_todos" id="titulo_inputs_marcar">Marcar todos</label>
-					</span>				
-				</h4>
-				<button onclick="$('#permissoesModal').modal('close')" type="button" class="close"  data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<form id="permissoesForm">
-			<div class="modal-body">
-
-				<div class="row" id="listar_permissoes">
-
-				</div>
-
-				<input type="hidden" id="permissoes_csrf_token" name="_csrf_token" value="<?= App::_csrf() ?>">
-				<input type="hidden" id="id_permissoes" name="" value="">
-
-				<br>
-			</div>
-			
-			<small><div id="mensagem_permissao" align="center"></div></small>
-		</form>
-		</div>
-	</div>
-</div>
-
 
 
 <!-- Modal Form -->
-<div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalFormContasReceber" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_inserir"></span></h4>
-				<button onclick="$('#permissoesModal').modal('close')" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
+				<button id="btn-fechar-conta" onclick="$('#permissoesModal').modal('close')" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<form action="<?= route('/api/usuarios/insert') ?>" id="form">
+			<form method="POST" action="<?php echo route("/api/contasreceber/insert") ?>" id="formContasReceber">
 			<div class="modal-body">
 				
 
@@ -110,9 +77,6 @@ use app\services\PermissionService;
 
 					<div class="row">
 
-					
-						
-
 						<div class="col-md-3">							
 							<label>Data de vencimento</label>
 						
@@ -126,19 +90,20 @@ use app\services\PermissionService;
 						<div class="col-md-3">							
 							<label>Forma de pagamento</label>
 							<select name="forma_pgto" id="forma_pgto" class="form-control">
-								<option value="0">Dinheiro</option>
-								<option value="1">Pix</option>
-								<option value="2">Cartão de crédito</option>
+								<option value="">Nenhum</option>
+								<?php foreach($formasPgto as $formaPgto): ?>
+									<option value="<?= $formaPgto->id ?>"><?= $formaPgto->nome ?></option>
+								<?php endforeach; ?>
 							</select>						
 						</div>
 
 						<div class="col-md-3">							
 							<label>Frequência</label>
 							<select name="frequencia" id="frequencia" class="form-control">
-								<option value="0">Nenhuma</option>
-								<option value="1">Diária</option>
-								<option value="2">Mensal</option>
-								<option value="3">Anual</option>
+								<option value="">Nenhum</option>
+								<?php foreach($frequencias as $frequencia): ?>
+									<option value="<?= $frequencia->id ?>"><?= $frequencia->frequencia ." ($frequencia->dias dia(s))" ?></option>
+								<?php endforeach; ?>
 							</select>							
 						</div>
 
@@ -160,12 +125,10 @@ use app\services\PermissionService;
 							<img src=""  width="80px" id="target" alt="Arquivo">								
 						</div>
 
-						
-				
 						<input type="hidden" name="_csrf_token" value="<?= App::_csrf() ?>" />
 					</div>		
 				<br>
-				<small><div id="mensagem" align="center"></div></small>
+				<small><div id="mensagem_conta" align="center"></div></small>
 			</div>
 			<div class="modal-footer">       
 				<button type="submit" class="btn btn-primary">Salvar</button>
@@ -180,7 +143,7 @@ use app\services\PermissionService;
 
 	$(document).ready(function() {
 		$('.sel2').select2({
-			dropdownParent: $("#modalForm")
+			dropdownParent: $("#modalFormContasReceber")
 		});
 	});
 
@@ -205,7 +168,7 @@ use app\services\PermissionService;
 
 </script>
 
-<?php if(PermissionService::has("dashboard/usuarios")): ?>
+<?php if(PermissionService::has("dashboard/contasreceber")): ?>
 <!-- Modal dados -->
 <div class="modal fade" id="modalDados" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -287,7 +250,7 @@ use app\services\PermissionService;
 
 
 <!-- Modal -->
-<?php if(PermissionService::has('dashboard/usuarios')): ?>
+<?php if(PermissionService::has('dashboard/contasreceber')): ?>
 <script>
 	$(document).ready(()=>{
 		listar();
@@ -295,7 +258,7 @@ use app\services\PermissionService;
 
 	const listar = ()=>{
 		$.ajax({
-			url: "<?php echo route("/api/usuarios") ?>",
+			url: "<?php echo route("/api/contasreceber") ?>",
 			method: "GET",
 			dataType: "html",
 			success: (result)=>{
@@ -310,7 +273,7 @@ use app\services\PermissionService;
 		$(document).ready(()=>{
 			$("#mensagem").text("");
 			$("#titulo_inserir").text("Atualizar registro");
-			$("#form").attr("action", "../api/usuarios/patch");
+			$("#formContasReceber").attr("action", "../api/contasreceber/patch");
 			const parseUser = JSON.parse($user);
 			for(let i in parseUser){
 				$(`#${i}Dados`).text(parseUser[i]);				
@@ -322,17 +285,32 @@ use app\services\PermissionService;
 <?php endif; ?>
 
 
-<?php if(PermissionService::has('api/usuarios/patch')): ?>
+<?php if(PermissionService::has('api/contasreceber/patch')): ?>
 <script>
 
-	const editar = ($user)=>{
+	const editarContaReceber = ($user)=>{
 		$(document).ready(()=>{
 			$("#mensagem").text("");
 			$("#titulo_inserir").text("Atualizar registro");
-			$("#modalForm").modal("show");
-			$("#form").attr("action", "../api/usuarios/patch");
+			$("#modalFormContasReceber").modal("show");
+			$("#formContasReceber").attr("action", "../api/contasreceber/patch");
 			const parseUser = JSON.parse($user);
 			for(let i in parseUser){
+				if(i == "arquivo"){
+					if(parseUser[i]){
+
+						const arquivo = parseUser[i];
+						const extensao = arquivo.split(".").pop().toLowerCase();
+						if(['jpg', 'jpeg', 'png', 'webp', 'jiff'].includes(extensao)){
+							target.src = `<?= asset("/icones/") ?>image.png`;
+							return; // Não continue tentando carregar como imagem
+						}else{
+							target.src = `<?= asset("/icones/") ?>${extensao}.png`;
+							return; // Não continue tentando carregar como imagem
+						}
+						$("#arquivo").val($arquivo);
+					}
+				}
 				if($(`#${i}`).is("select")){
 					$(`#${i}`).val(parseUser[i]).change();
 				}else{
@@ -348,21 +326,66 @@ use app\services\PermissionService;
 
 <?php endif; ?>
 
-<?php if(PermissionService::has('api/permissoes/insert')): ?>
 <script>
-	const marcarTodos = ()=>{
-		const _csrf_token = document.getElementById("permissoes_csrf_token").value;
+
+	const inserirContaReceber = ()=>{
+		$("#mensagem_conta").text("");
+		$("#titulo_inserir").text("Nova forma de pagamento");
+		$("#modalFormContasReceber").modal("show");
+		$("#formContasReceber").attr("action", "/api/contasreceber/insert");
+}
+
+$("#formContasReceber").submit((e)=>{
+		e.preventDefault();
+		const button = 	e.target.querySelector("button")
+		const formData = new FormData(e.target);
+
+		button.textContent = "Carregando...";
+		button.disabled = true;
+
+		$.ajax({
+			url: e.target.action,
+			type: "POST",
+			processData: false,
+			data: formData,
+			contentType: false,
+			cache: false,
+
+			success: (data)=>{
+				try{
+
+					const response = JSON.parse(data);
 		
-		$("#listar_permissoes input[type='checkbox']").each( (i, el)=>{
-			if(el.checked == false){
-				el.click();
+					if(response.error == false){
+						$(`#mensagem_conta`).text(response.message);
+						$(`#btn-fechar-conta`).click();
+						clearErrorMessages(); 
+						listar();
+						limparCampos("#formContasReceber");
+					}else{
+						if(response.issues){
+							const { issues } = response;
+							setErrorMessages(issues);
+						}
+						$(`#mensagem_conta`).addClass("text-danger");
+						$(`#mensagem_conta`).text(response.message);
+					}
+					button.disabled = false;
+					button.textContent = "SALVAR";
+				}catch(err){
+					button.disabled = false;
+					button.textContent = "SALVAR";
+					$(`#mensagem_conta`).text(data);
+				}
+			},
+			error:(xhr, status, error)=>{
+				$(`#mensagem_conta`).text(xhr.responseText);
+				button.disabled = false;
+				button.textContent = "SALVAR";
 			}
 		})
-
-	}
-
+	})
 
 </script>
-<?php endif; ?>
 
 

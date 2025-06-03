@@ -295,6 +295,32 @@
         1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
+    '/api/contasreceber' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\ContasReceberController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/api/contasreceber/delete/{id:\\d+}' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\ContasReceberController',
+        1 => 'delete',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
   ),
   'POST' => 
   array (
@@ -495,6 +521,34 @@
       'action' => 
       array (
         0 => 'app\\controllers\\api\\PermissoesController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/contasreceber/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\ContasReceberController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/contasreceber/patch' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\ContasReceberController',
         1 => 'insert',
       ),
       'middlewares' => 

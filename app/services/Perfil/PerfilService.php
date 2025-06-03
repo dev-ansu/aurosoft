@@ -61,20 +61,30 @@ class PerfilService extends Model{
                 if(!$passwordVerify){
                     $data['senha'] = password_hash($data['senha'], PASSWORD_DEFAULT);
                 }else{
-                    $this->columns = ['id', 'nome', 'email', 'telefone', 'foto', 'rua', 'bairro', 'numero'];
+                    if(isset($data['foto'])){
+                        $this->columns = ['id', 'nome', 'email', 'telefone', 'foto', 'rua', 'bairro', 'numero'];
+                    }else{
+                        $this->columns = ['id', 'nome', 'email', 'telefone', 'rua', 'bairro', 'numero'];
+                    }
                 }
                 
             }else{
                 $data['senha'] = password_hash($data['senha'], PASSWORD_DEFAULT);
             }
         }else{
-            $this->columns = ['id', 'nome', 'email', 'telefone','foto', 'rua', 'bairro', 'numero'];
+            if(isset($data['foto'])){
+                $this->columns = ['id', 'nome', 'email', 'telefone', 'foto', 'rua', 'bairro', 'numero'];
+            }else{
+                $this->columns = ['id', 'nome', 'email', 'telefone', 'rua', 'bairro', 'numero'];
+            }
         }
 
         unset($data['senha_conf']);
         
-        if(file_exists(UPLOAD_DIR . $user->foto)){
-            unlink(UPLOAD_DIR . $user->foto);
+        if(isset($data['foto'])){
+            if(file_exists(UPLOAD_DIR . $user->foto)){
+                unlink(UPLOAD_DIR . $user->foto);
+            }
         }
         
         $response = $this->update($key, $data);

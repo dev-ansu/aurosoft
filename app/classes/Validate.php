@@ -161,6 +161,8 @@ class Validate extends Model{
             }
         }
 
+        setFlash($field, "O campo {$field} não é uma data válida.");
+        self::setError($field, 'valideISODate',"O campo {$field} não é uma data válida."); 
         return false;
     }
 
@@ -206,6 +208,38 @@ class Validate extends Model{
         return false;
     }
 
+    /**
+     * Verifica se determinado item existe no banco de dados
+     * @param string $field - o campo name a ser validado
+     * @param string $param - o Model da tabela em que o item deve ser procurado juntamento com a chave, ex.: tabela>chave_primaria
+     */
+    private static function existe($field, $param){
+        
+        $value = App::request()->input($field);
+
+        if(str_contains($param, ">")){
+
+            $value = strip_tags($value);
+            [$model, $primary_key] = explode(">", $param);
+            $find = (new $model)->find($primary_key, $value);
+            
+            if(!$find) {
+                
+                setFlash($field, "{$field} não foi encontrado.");
+                self::setError($field, 'existe', "{$field} não foi encontrado."); 
+                
+                return false;
+            } 
+
+            return strip_tags($value);
+        }
+        
+        setFlash($field, 'A chave primária não foi definida.');
+        self::setError($field, 'existe','A chave primária não foi definida'); 
+
+        return false;
+    }
+
     private static function decimal($field){
         $value = App::request()->input($field);
 
@@ -219,6 +253,7 @@ class Validate extends Model{
 
         setFlash($field, "O campo {$field} deve ser um número decimal.");
         self::setError($field, 'decimal', "O campo {$field} deve ser um número decimal.");
+        
         return false;
     }
 
@@ -372,26 +407,35 @@ class Validate extends Model{
      * [
      *       '$field' => [
      *           "image" => [
+     *               'optional' => true ou false,
      *               'allowedMimeTypes' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
      *               'allowedExtensions' => ['jpg', 'jpeg', 'png', 'gif', 'webp'],
      *               'maxSize' => 2048
      *       ]],
      *   ];
      */
-    private static function image($field, $param){
+    private static function archive($field, $param){
 
+        
+        $optional = isset($param['optional']) && $param['optional'] ? $param['optional']:false;        
         
 
         if(!App::request()->file($field) || App::request()->file($field)->get('error') !== UPLOAD_ERR_OK){
-            self::setError($field, 'image', 'Erro ao fazer upload de imagem.');
+            
+            if($optional && $optional == true){
+                return null;    
+            }
+
+            self::setError($field, 'archive', 'Erro ao fazer upload do arquivo.');
             return false;
         }
 
-     
         $maxSize = $params['maxSize'] ?? null;
         $file = App::request()->file($field);
         $allowedMimeTypes = (array) $param['allowedMimeTypes'];
         $allowedExtensions = (array) $param['allowedExtensions'];
+
+        
         
         // Verifica o tipo MIME
         $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -399,7 +443,7 @@ class Validate extends Model{
         finfo_close($fileInfo);
 
         if(!in_array($mimeType, $allowedMimeTypes)){
-            self::setError($field, 'image', 'O arquivo precisa ser uma imagem válida ' . implode(", ", $allowedMimeTypes));
+            self::setError($field, 'archive', 'O arquivo precisa ser dos tipos suportados:  ' . implode(", ", $allowedMimeTypes));
             return false;
         }
 
@@ -407,7 +451,7 @@ class Validate extends Model{
         $extension = strtolower(pathinfo($file->get('name'), PATHINFO_EXTENSION));
 
         if(!in_array($extension, $allowedExtensions)){
-            self::setError($field, 'image', 'Extensão de imagem não permitida. Extensões permitidas: ' . implode(", ", $allowedMimeTypes));
+            self::setError($field, 'archive', 'Extensão do arquivo não permitida. Extensões permitidas: ' . implode(", ", $allowedMimeTypes));
             return false;
         }
 
@@ -416,7 +460,7 @@ class Validate extends Model{
         if($maxSize !== null){
             $maxSize = intval($maxSize) * 1024; // converte para bytes
             if($file->get('size') > $maxSize){
-                self::setError($field, 'image', "O tamanho do máximo do arquivo é de {$maxSize}KB.");
+                self::setError($field, 'archive', "O tamanho do máximo do arquivo é de {$maxSize}KB.");
                 return false;
             }
         }
