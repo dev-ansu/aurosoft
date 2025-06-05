@@ -1,6 +1,6 @@
 <?php
 
-namespace app\requests\frequencias;
+namespace app\requests\Frequencias;
 
 use app\contracts\RequestValidationContract;
 use app\requests\RequestValidation;

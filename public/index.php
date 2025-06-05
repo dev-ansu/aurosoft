@@ -22,5 +22,5 @@ try{
     ErrorHandler::log($e);
     ErrorHandler::handleException($e);
     http_response_code(500);
-
+    
 }

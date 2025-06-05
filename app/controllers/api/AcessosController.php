@@ -3,8 +3,8 @@
 namespace app\controllers\api;
 
 use app\core\Controller;
-use app\requests\acessos\AcessosRequest;
-use app\services\acessos\AcessosService;
+use app\requests\Acessos\AcessosRequest;
+use app\services\Acessos\AcessosService;
 use app\core\Request;
 use app\core\Response;
 

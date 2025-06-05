@@ -2,11 +2,10 @@
 
 namespace app\controllers\api;
 
-use app\core\Controller;
 use app\core\Request;
 use app\core\Response;
-use app\requests\formaspagamento\FormasPagamentoRequest;
-use app\services\formaspagamento\FormasPagamentoService;
+use app\requests\FormasPagamento\FormasPagamentoRequest;
+use app\services\FormasPagamento\FormasPagamentoService;
 use app\services\PermissionService;
 
 class FormasPagamentoController{

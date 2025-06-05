@@ -1,6 +1,6 @@
 <?php
 
-namespace app\services\recuperarsenha;
+namespace app\services\RecuperarSenha;
 
 use app\core\ServiceResponse;
 use app\core\Model;

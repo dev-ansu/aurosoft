@@ -1,6 +1,6 @@
 <?php
 
-namespace app\requests\permissoes;
+namespace app\requests\Permissoes;
 
 use app\contracts\RequestValidationContract;
 use app\requests\RequestValidation;

@@ -5,8 +5,8 @@ namespace app\controllers\api;
 use app\core\Controller;
 use app\core\Request;
 use app\core\Response;
-use app\requests\frequencias\FrequenciasRequest;
-use app\services\frequencias\FrequenciasService;
+use app\requests\Frequencias\FrequenciasRequest;
+use app\services\Frequencias\FrequenciasService;
 use app\services\PermissionService;
 
 class FrequenciasController{

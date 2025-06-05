@@ -9,6 +9,7 @@ $config = (new ConfigService())->fetch();
         'config' => $config,
         'title' => @$title]);
 ?>
+    
 
     <div id="page-wrapper">
 

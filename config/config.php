@@ -17,11 +17,11 @@ ini_set('display_startup_errors', 1);
 
 date_default_timezone_set("America/Sao_Paulo");
 
-define("CONTROLLERS_PATH", dirname(__DIR__) . "\\app\\controllers\\");
+define("CONTROLLERS_PATH", dirname(__DIR__) . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "controllers" . DIRECTORY_SEPARATOR);
+define("VIEWS_PATH", dirname(__DIR__, ) . "/app/views/");
 
-define("VIEWS_PATH", __DIR__ . "/../app/views/");
+define("COMPONENTS_PATH", dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "components" . DIRECTORY_SEPARATOR);
 
-define("COMPONENTS_PATH",  __DIR__ . "/../app/views/components/");
 define("UPLOAD_DIR",  __DIR__ . "/../public/uploads/");
 
 define("BASE_URL", 
@@ -31,7 +31,8 @@ define("BASE_URL",
 );
 
 
-define("ASSETS_PATH", BASE_URL . "/assets");
+define("ASSETS_PATH", BASE_URL .  "/assets");
+
 define("UPLOADS_PATH", BASE_URL . "/uploads");
 define("SESSION_LOGIN", "logado");
 

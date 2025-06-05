@@ -1,6 +1,6 @@
 <?php
 
-namespace app\services\contasreceber;
+namespace app\services\ContasReceber;
 
 use app\core\ServiceResponse;
 use app\core\Model;

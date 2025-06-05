@@ -23,7 +23,7 @@ $session = App::authSession()->get();
 	<link href="<?= asset("/css/bootstrap.css") ?>" rel='stylesheet' type='text/css' />
 
 	<!-- Custom CSS -->
-	<link href="<?= asset("/css/style.css") ?>" rel='stylesheet' type='text/css' />
+	<link href="<?= asset("css/style.css") ?>" rel='stylesheet' type='text/css' />
 
 	<!-- font-awesome icons CSS -->
 	<link href="<?= asset("/css/font-awesome.css") ?>" rel="stylesheet"> 

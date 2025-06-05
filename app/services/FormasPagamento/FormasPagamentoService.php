@@ -1,6 +1,6 @@
 <?php
 
-namespace app\services\formaspagamento;
+namespace app\services\FormasPagamento;
 
 use app\core\ServiceResponse;
 use app\core\Model;

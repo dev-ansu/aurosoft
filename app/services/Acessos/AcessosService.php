@@ -1,6 +1,6 @@
 <?php
 
-namespace app\services\acessos;
+namespace app\services\Acessos;
 
 use app\core\ServiceResponse;
 use app\core\Model;

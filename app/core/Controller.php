@@ -31,7 +31,7 @@ class Controller{
             
              // Log do erro em produção
             error_log($e->getMessage());
-            
+            echo $e->getMessage();
             // Mensagem genérica em produção
             echo "Ocorreu um erro ao carregar a página.";
 

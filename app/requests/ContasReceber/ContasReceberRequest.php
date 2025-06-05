@@ -1,6 +1,6 @@
 <?php
 
-namespace app\requests\contasreceber;
+namespace app\requests\ContasReceber;
 
 use app\contracts\RequestValidationContract;
 use app\requests\RequestValidation;

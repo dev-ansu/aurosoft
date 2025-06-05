@@ -23,7 +23,7 @@ class AcessosController{
         return $res->view('dashboard/template', [
             'title' => 'Acessos',
             'grupos' => $grupos['data'],
-            'view' => 'dashboard/acessos/Index'
+            'view' => 'dashboard/acessos/index'
         ]);
 
     }

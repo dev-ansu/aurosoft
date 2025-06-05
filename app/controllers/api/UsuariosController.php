@@ -6,7 +6,7 @@ use app\requests\Usuarios\UsuariosValidation;
 use app\services\PermissionService;
 use app\core\Request;
 use app\core\Response;
-use app\services\usuarios\UsuariosService;
+use app\services\Usuarios\UsuariosService;
 use DateTime;
 
 class UsuariosController extends Controller{

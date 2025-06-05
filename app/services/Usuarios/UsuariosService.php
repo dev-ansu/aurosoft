@@ -1,6 +1,6 @@
 <?php
+namespace app\services\Usuarios;
 
-namespace app\services\usuarios;
 
 use app\core\Model;
 use app\core\ServiceResponse;

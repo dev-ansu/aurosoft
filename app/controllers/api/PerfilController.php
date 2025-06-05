@@ -6,9 +6,9 @@ use app\classes\ImageUploader;
 use app\core\Request;
 use app\core\Response;
 use app\facade\App;
-use app\requests\perfil\FotoPerfilRequest;
-use app\requests\perfil\PerfilRequest;
-use app\services\perfil\PerfilService;
+use app\requests\Perfil\FotoPerfilRequest;
+use app\requests\Perfil\PerfilRequest;
+use app\services\Perfil\PerfilService;
 
 
 class PerfilController{

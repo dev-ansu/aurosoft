@@ -41,7 +41,7 @@ class Container{
     public function load(array $services = []) {
         if (!empty($services)) {
             foreach ($services as $service) {
-                $path = dirname(__DIR__) . "/core/services/$service.php";
+                $path = dirname(__DIR__) .DIRECTORY_SEPARATOR. "core" . DIRECTORY_SEPARATOR . "services" . DIRECTORY_SEPARATOR .  "$service.php";
                 if (file_exists($path)) {
                     $this->services[] = $path;
                 }

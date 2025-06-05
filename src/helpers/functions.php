@@ -18,8 +18,9 @@ function asset(string $resource): string {
  */
 function component(string $componentName, array $componentData = []): void{
     $name = escape($componentName);
+
     if(str_contains($name, ".")){
-        $name = str_replace(".", "\\", $name);
+        $name = str_replace(".", DIRECTORY_SEPARATOR, $name);
     }
 
     $file = COMPONENTS_PATH . "{$name}.php";

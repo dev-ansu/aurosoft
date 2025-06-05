@@ -2,13 +2,9 @@
 
 namespace app\services\GrupoAcessos;
 
-use app\core\DBManager;
 use app\core\Model;
 use app\core\ServiceResponse;
-use Cake\Core\ServiceConfig;
-use Exception;
 use PDOException;
-use Throwable;
 
 class GrupoAcessosService extends Model{
     

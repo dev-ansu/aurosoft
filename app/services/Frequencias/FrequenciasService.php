@@ -1,6 +1,6 @@
 <?php
 
-namespace app\services\frequencias;
+namespace app\services\Frequencias;
 
 use app\core\ServiceResponse;
 use app\core\Model;

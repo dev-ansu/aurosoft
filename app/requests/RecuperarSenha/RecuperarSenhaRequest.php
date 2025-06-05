@@ -1,6 +1,6 @@
 <?php
 
-namespace app\requests\recuperarsenha;
+namespace app\requests\RecuperarSenha;
 
 use app\contracts\RequestValidationContract;
 use app\requests\RequestValidation;

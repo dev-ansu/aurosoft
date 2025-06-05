@@ -1,6 +1,5 @@
 <?php
-
-namespace app\services\permissoes;
+namespace app\services\Permissoes;
 
 use app\core\ServiceResponse;
 use app\core\Model;

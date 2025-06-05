@@ -9,14 +9,14 @@ use app\classes\Session;
 use app\requests\LoginRequest;
 use app\services\Auth\AuthService;
 use app\services\Config\ConfigService;
-use app\services\permissoes\PermissoesService;
-
+use app\services\Permissoes\PermissoesService;
 
 class LoginController{
 
     public function __construct(
         protected AuthService $auth,
-        private ConfigService $config
+        private ConfigService $config,
+        private PermissoesService $permissoesService
     )
     {
     }
@@ -49,7 +49,7 @@ class LoginController{
             session_regenerate_id(true);
 
             
-            $permissoes = (new PermissoesService())->fetchUsuarioPermissoesByUsuarioWithChave($user->id)->toArray()['data'];
+            $permissoes = $this->permissoesService->fetchUsuarioPermissoesByUsuarioWithChave($user->id)->toArray()['data'];
 
             
             $user->permissoes = $permissoes;

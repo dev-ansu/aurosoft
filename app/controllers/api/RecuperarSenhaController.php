@@ -5,8 +5,8 @@ namespace app\controllers\api;
 use app\core\Controller;
 use app\core\Request;
 use app\core\Response;
-use app\requests\recuperarsenha\RecuperarSenhaRequest;
-use app\services\recuperarsenha\RecuperarSenhaService;
+use app\requests\RecuperarSenha\RecuperarSenhaRequest;
+use app\services\RecuperarSenha\RecuperarSenhaService;
 
 class RecuperarSenhaController{
 

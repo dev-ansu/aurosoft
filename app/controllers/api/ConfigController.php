@@ -3,7 +3,7 @@ namespace app\controllers\api;
 
 use app\core\Controller;
 use app\facade\App;
-use app\requests\config\ConfigRequest;
+use app\requests\Config\ConfigRequest;
 use app\services\Config\ConfigService;
 use app\core\Request;
 use app\core\Response;

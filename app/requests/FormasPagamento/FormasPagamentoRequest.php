@@ -1,6 +1,6 @@
 <?php
 
-namespace app\requests\formaspagamento;
+namespace app\requests\FormasPagamento;
 
 use app\contracts\RequestValidationContract;
 use app\requests\RequestValidation;

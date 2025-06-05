@@ -5,8 +5,8 @@ namespace app\controllers\dashboard;
 use app\core\Controller;
 use app\core\Request;
 use app\core\Response;
-use app\services\formaspagamento\FormasPagamentoService;
-use app\services\frequencias\FrequenciasService;
+use app\services\FormasPagamento\FormasPagamentoService;
+use app\services\Frequencias\FrequenciasService;
 
 class ContasReceberController{
 
