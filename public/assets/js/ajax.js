@@ -1,5 +1,5 @@
 
-
+const notyf = new Notyf();
 
 const limparCampos = (form)=>{
     $(form).find("input, textarea, select").not('[name="_csrf_token"]').val("") // Limpa os valores
@@ -26,23 +26,27 @@ const onSubmit = (e, prefixMessages = '')=>{
         contentType: false,
         cache: false,
         success: (data)=>{
-            const response = JSON.parse(data);
- 
-            if(response.error == false){
-                $(`#mensagem${prefixMessages}`).text(response.message);
-                $(`#btn-fechar${prefixMessages}`).click();
-                clearErrorMessages(); 
-                listar();
-                if(!url.contains("patch") || !url.contains("update") || !url.contains("put")){
-                    limparCampos($("#modalForm"));
+
+            try{
+                const json = JSON.parse(data);
+                if(json.error == false){
+                    notyf.success(json.message)
+                    clearErrorMessages(); 
+                    listar();
+                    if(!url.contains("patch") || !url.contains("update") || !url.contains("put")){
+                        limparCampos($("#modalForm"));
+                    }
+                }else{
+                    notyf.error(json.message)
+                    if(json.issues){
+                    const { issues } = json;
+                        setErrorMessages(issues, prefixMessages);
+                    }
+                    $(`#mensagem${prefixMessages}`).addClass("text-danger");
+                    $(`#mensagem${prefixMessages}`).text(json.message);
                 }
-            }else{
-                if(response.issues){
-                    const { issues } = response;
-                    setErrorMessages(issues, prefixMessages);
-                }
-                $(`#mensagem${prefixMessages}`).addClass("text-danger");
-                $(`#mensagem${prefixMessages}`).text(response.message);
+            }catch(err){
+                notyf.error(err.responseText)
             }
         },
         error:(xhr, status, error)=>{
@@ -52,6 +56,7 @@ const onSubmit = (e, prefixMessages = '')=>{
     })
 
 }
+
 
 const showMessage = (message, duration = 5000)=>{
     $("#mensagem-excluir").attr("style", "display:block")
@@ -67,9 +72,18 @@ const onDelete = (url)=>{
         contentType: false,
         cache: false,
         success: (response)=>{
+            try{
+                const json = JSON.parse(response);
+                if(json.error == false){
+                    notyf.success(json.message)
+                }else{
+                    notyf.error(json.message)
+                }
+            }catch(err){
+                notyf.error(err.responseText)
+            }
             showMessage(response.message)
             listar()
-
         },
         error:(xhr, status, error)=>{
             showMessage(xhr.responseText)
@@ -86,11 +100,19 @@ const ativar = (url)=>{
         contentType: false,
         cache: false,
         success: (response)=>{
-            $("#mensagem-excluir").text(response.message);
-            listar()
+            try{
+                const json = JSON.parse(response);
+                if(json.error == false){
+                    notyf.success(json.message)
+                }else{
+                    notyf.error(json.message)
+                }
+            }catch(err){
+                notyf.error(err.responseText)
+            }
         },
         error:(xhr, status, error)=>{
-            showMessage(xhr.responseText)
+            notyf.error(err.responseText)
         }
     })
 }
@@ -107,5 +129,8 @@ $("#form-config").submit(function(e){
 })
 
 
+$("#modalForm").on("hidden.bs.modal", ()=>{
+    clearErrorMessages()
+});
 
 

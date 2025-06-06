@@ -63,17 +63,14 @@ class ContasReceberController{
             if($data_pgto){
                     $data_pgto = (new DateTime($data_pgto))->format('d/m/Y');
                 }
+            
+            $data_atual = (new DateTime())->format('Y-m-d');
+            $pago = $pago ? strtolower($pago):null;
+            $situacao = $pago ? "Confirmado":(!$pago & $data_atual > $vencimento ? 'Vencido':'Em aberto');
 
-            $situacao = "Em aberto";
-
-            if(!is_null($data_pgto) || !$data_pgto == null){
-                $situacao = "Confirmado";
-            }elseif((new DateTime())->format('Y-m-d') > date("Y-m-d", strtotime($vencimento)) && (is_null($data_pgto) || $data_pgto == null)){
-                $situacao = "Vencido";
-            }
-
+            $classSituacao = $situacao == "Confirmado" ? "bg-success":($situacao == "Vencido" ? "bg-danger":"bg-info"  );
             $vencimento = (new DateTime($vencimento))->format('d/m/Y');
-           
+            
      
             $link = UPLOADS_PATH . "/".$arquivo;
             
@@ -134,7 +131,7 @@ class ContasReceberController{
                         <td>{$vencimento}</td>
                         <td>{$data_pgto}</td>
                         <td>{$data_lanc}</td>
-                        <td>{$nome}</td>
+                        <td>{$forma_pagamento}</td>
                         <td style="font-size:12px">{$nome_frequencia}</td>
                         <td>{$observacao}</td>
                         <td>
@@ -147,8 +144,10 @@ class ContasReceberController{
                                 />
                             </a>
                         </td>
-                        <td style="font-size:12px">
-                            {$situacao}
+                        <td style="font-size:14px">
+                            <div class="rounded w-100 {$classSituacao}" style="padding: 0px 4px 0px 4px;">
+                                {$situacao}
+                            </div>
                         </td>
                         <td>
                             {$botoes}
@@ -255,6 +254,10 @@ class ContasReceberController{
     }
 
     public function delete(int $id, Response $res){
+
+        $response = $this->contasReceberService->trash($id);
+   
+        return $res->json($response->toArray());
 
     }
 

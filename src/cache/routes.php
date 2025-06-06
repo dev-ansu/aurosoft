@@ -549,7 +549,7 @@
       'action' => 
       array (
         0 => 'app\\controllers\\api\\ContasReceberController',
-        1 => 'insert',
+        1 => 'patch',
       ),
       'middlewares' => 
       array (

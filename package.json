@@ -19,6 +19,7 @@
   "homepage": "https://github.com/dev-ansu/aurosoft#readme",
   "dependencies": {
     "@tailwindcss/cli": "^4.1.8",
+    "notyf": "^3.10.0",
     "tailwindcss": "^4.1.8"
   }
 }

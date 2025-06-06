@@ -29,6 +29,8 @@ class ContasReceberService extends Model{
         'subtotal',
         'usuario_lanc',
         'usuario_pgto',
+        'pago',
+        'taxa'
     ];
 
     public function __construct(string | null $env = '')
@@ -38,7 +40,7 @@ class ContasReceberService extends Model{
 
     public function fetchAll(): ServiceResponse
     {
-        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.* FROM {$this->table} 
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
             LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
         ";
@@ -76,6 +78,24 @@ class ContasReceberService extends Model{
 
         return ServiceResponse::error("A conta não foi cadastrada.", $data);
         
+    }
+
+    public function trash(int $id){
+        
+        $find = $this->find('id', $id);
+
+        if(!$find) return ServiceResponse::error("Conta não encontrada.", null);
+
+        if($find && $find->pago != null) return ServiceResponse::error("Não é possível excluir um recebimento já confirmado.", null);
+
+        $this->columns = ['id'];
+
+        $delete = $this->delete('id', $id);
+
+        if($delete) return ServiceResponse::success("O recebimento foi excluído com sucesso.", null);
+
+        return ServiceResponse::error("Não foi possível excluir o recebimento.", null);
+
     }
 
 }

@@ -22,7 +22,7 @@ define("VIEWS_PATH", dirname(__DIR__, ) . "/app/views/");
 
 define("COMPONENTS_PATH", dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . "app" . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "components" . DIRECTORY_SEPARATOR);
 
-define("UPLOAD_DIR",  __DIR__ . "/../public/uploads/");
+define("UPLOAD_DIR", dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . "public" . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR);
 
 define("BASE_URL", 
     (isset($_SERVER['HTTPS']) && $_SERVER["HTTPS"] === 'on' ? "https://":"http://")

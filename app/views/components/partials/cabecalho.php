@@ -101,8 +101,9 @@ $session = App::authSession()->get();
 	<link rel="stylesheet" href="<?= asset("/css/DataTables.css") ?>">
 	<script defer src="<?= asset("/js/DataTables.min.js") ?>" type="text/javascript"></script>
 	<script defer type="text/javascript" src="<?= asset("/js/errorMessages.js") ?>"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 	<script defer type="text/javascript" src="<?= asset("/js/ajax.js") ?>"></script>
-	
 
 </head> 
 

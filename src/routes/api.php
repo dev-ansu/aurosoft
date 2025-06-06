@@ -66,7 +66,7 @@ Router::group([
     $route->get("/contasreceber", [ContasReceberController::class, 'index']);
     $route->get("/contasreceber/delete/{id:\d+}", [ContasReceberController::class, 'delete']);
     $route->post("/contasreceber/insert", [ContasReceberController::class, 'insert'], [CSRFMiddleware::class]);
-    $route->post("/contasreceber/patch", [ContasReceberController::class, 'insert'], [CSRFMiddleware::class]);
+    $route->post("/contasreceber/patch", [ContasReceberController::class, 'patch'], [CSRFMiddleware::class]);
 
 
 });

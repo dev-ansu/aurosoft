@@ -88,13 +88,16 @@ abstract class FileUploader{
      * Realiza o upload do arquivo enviado
      */
     protected function upload(){
-        if(defined('UPLOAD_DIR') && !empty(UPLOAD_DIR)){
+        if(defined('UPLOAD_DIR') && !empty(UPLOAD_DIR) && is_dir(UPLOAD_DIR)){
             if(move_uploaded_file($this->file['tmp_name'],  UPLOAD_DIR . $this->fileName . "." . $this->ext)){
                 return $this->successResponse('Sucesso no upload!');
             }else{
                 return $this->errorResponse('Falha no upload!');
             }
         }else{
+            $path = rtrim(UPLOAD_DIR);
+            mkdir($public/assets/icones/word.png, 777);
+            $this->upload();
             return $this->errorResponse('A pasta padrão de upload não está definida');
         }
     }

@@ -33,7 +33,7 @@ use app\services\PermissionService;
 	</ul>
 </li>
 
-<section class="bs-example widget-shadow p-15" id="listar">
+<section style="overflow: auto;" class="bs-example widget-shadow p-15" id="listar">
 
 </section>
  
