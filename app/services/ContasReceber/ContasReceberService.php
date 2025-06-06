@@ -98,4 +98,31 @@ class ContasReceberService extends Model{
 
     }
 
+    public function patch($data){
+        $find = $this->find('id', $data['id']);
+
+        if(!$find) return ServiceResponse::error("Conta não encontrada.", null);
+
+        if($find && $find->pago != null) return ServiceResponse::error("Não é possível atualizar um recebimento já confirmado.", null);
+
+         $this->columns = [
+            'descricao',
+            'cliente',
+            'valor',
+            'vencimento',
+            'data_pgto',
+            'data_lanc',
+            'forma_pgto',
+            'forma_pgto',
+            'frequencia',
+            'arquivo',
+            'observacao',
+            'referencia',
+            'subtotal',
+            'usuario_lanc',
+        ];
+
+        return ServiceResponse::success('Olá', $data);
+    }
+
 }

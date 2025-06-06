@@ -53,7 +53,7 @@ class ContasReceberController{
             // $conta_receber->created_at = (new DateTime($conta_receber->created_at))->format('d/m/Y');
             $editUser = json_encode($conta_receber);
             extract(json_decode(json_encode($conta_receber), true));
-
+            
             $botoes = null;
             $hrefDelete = route("/api/contasreceber/delete");
             $valor = "R$ " . number_format($valor, 2, ',', '.');
@@ -79,14 +79,22 @@ class ContasReceberController{
                 $extensao = array_pop($exploded);
 
                 if(in_array($extensao, ['jpg', 'jpeg', 'png', 'webp', 'jiff'])){
-                    $arquivo = asset("/icones/image.png");
+                    $arquivo = uploaded("/$arquivo");
                 }else{
                     $arquivo = asset("/icones/{$extensao}.png");
                 }
                 
             }
 
-           
+           if(PermissionService::has('dashboard/contasreceber')){
+                $botoes.= <<<HTML
+                    <big>
+                        <a href="#" onclick='mostrar(`{$editUser}`)' title="Mostrar dados">
+                            <i class="fa fa-info-circle text-primary"></i>
+                        </a>
+                    </big>
+                HTML;
+            }
 
             if(PermissionService::has('api/contasreceber/patch')){
                 $botoes.= <<<HTML
@@ -250,6 +258,76 @@ class ContasReceberController{
     }
 
     public function patch(Request $req, Response $res){
+
+        $validatedArquivo = $req->post()->validate(ContasReceberArquivoRequest::class);
+        
+       
+
+        if($validatedArquivo['error']){
+            return $res->json([
+                'error' => true,
+                'message' => "Não foi possível fazer upload do arquivo.",
+                'issues' => $validatedArquivo['issues'],
+            ]);
+        }
+        
+        $validated = $req->post()->validate(ContasReceberRequest::class, function($v){
+            $v->custom([
+            'id' => 'required|notNull|numberInt',
+            'messages' => [
+                "id.required" => "O campo id é obrigatório.",
+                "id.notNull" => "O campo id não pode ser vazio.",
+                "id.numberInt" => "O id deve ser um número interio."
+            ]
+            ]);
+        });
+
+        if($validated['error']){
+            return $res->json([
+                'error' => true,
+                'message' => "Verifique os dados e tente novamente.",
+                'issues' => $validated['issues'],
+            ]);
+        }
+
+        $data = $validated['issues'];
+        $upload = ['success' => false];
+        if($validatedArquivo['error'] == false && $validatedArquivo['issues']['arquivo'] != null){
+            $upload = (new ImageUploader($validatedArquivo['issues']['arquivo'], ['jpg', 'jpeg', 'png', 'gif', 'webp','xls',
+                        'xlsx',
+                        'doc',
+                        'docx',
+                        'pdf',
+                        'rar',
+                        'zip',
+                        'xml'], 2048))->uploadImage();
+                if($upload['success']){
+                    $data['arquivo'] = $upload['filename'];
+                }else{
+                    return $res->json([
+                    'error' => true,
+                    'message' => "Não foi possível fazer upload do arquivo.",
+                    'issues' => $validatedArquivo['issues'],
+                ]);
+            }
+        }else{
+            $data['arquivo'] = null;
+        }
+
+        try{
+            $data['usuario_lanc'] = App::authSession()->get()->id;
+            $response = $this->contasReceberService->patch($data);
+            return $res->json($response->toArray());
+        }catch(Throwable $e){
+            if($upload['success']){
+                unlink(UPLOAD_DIR . $upload['filename']);
+            }
+            return $res->json([
+                'error' => true,
+                'message' => 'Ocorreu um erro ao salvar os dados. Por favor, contate o administrador.',
+                'issues' => [],
+            ]);
+        }
 
     }
 
