@@ -6,7 +6,7 @@ use Phinx\Migration\AbstractMigration;
 
 final class AlterColumnFromContasReceber extends AbstractMigration
 {
-      public function up(): void{
+    public function up(): void{
         $table = $this->table("contas_receber");
             $table
                 ->changeColumn('pago', 'smallinteger', ['null' => true,'default' => 0])

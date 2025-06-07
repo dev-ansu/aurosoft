@@ -4,6 +4,9 @@ namespace app\services\ContasReceber;
 
 use app\core\ServiceResponse;
 use app\core\Model;
+use app\facade\App;
+use app\services\Usuarios\UsuariosService;
+use DateTime;
 
 class ContasReceberService extends Model{
 
@@ -42,7 +45,7 @@ class ContasReceberService extends Model{
     {
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
-            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia ORDER BY vencimento
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia WHERE deleted_at IS NULL ORDER BY vencimento
         ";
         $query = $this->connection()->prepare($sql);
         $query->execute();
@@ -75,7 +78,7 @@ class ContasReceberService extends Model{
     {
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
-            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia WHERE (pago = 1 AND pago IS NOT NULL) ORDER BY vencimento
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia WHERE deleted_at IS NULL AND (pago = 1 AND pago IS NOT NULL) ORDER BY vencimento
         ";
         $query = $this->connection()->prepare($sql);
         $query->execute();
@@ -88,7 +91,7 @@ class ContasReceberService extends Model{
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
             LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
-            WHERE vencimento BETWEEN :data_ini AND :data_fim ORDER BY vencimento
+            WHERE deleted_at IS NULL AND vencimento BETWEEN :data_ini AND :data_fim ORDER BY vencimento
         ";
         $query = $this->connection()->prepare($sql);
         $query->execute([
@@ -103,7 +106,7 @@ class ContasReceberService extends Model{
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
             LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
-            WHERE (vencimento BETWEEN :data_ini AND :data_fim AND vencimento < :today) AND (pago IS NULL || pago = 0) ORDER BY vencimento
+            WHERE deleted_at IS NULL AND (vencimento BETWEEN :data_ini AND :data_fim AND vencimento < :today) AND (pago IS NULL || pago = 0) ORDER BY vencimento
         ";
         $query = $this->connection()->prepare($sql);
         $query->execute([
@@ -119,7 +122,7 @@ class ContasReceberService extends Model{
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
             LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
-            WHERE (vencimento BETWEEN :data_ini AND :data_fim AND vencimento >= :today) AND (pago IS NULL || pago = 0) ORDER BY vencimento
+            WHERE deleted_at IS NULL AND (vencimento BETWEEN :data_ini AND :data_fim AND vencimento >= :today) AND (pago IS NULL || pago = 0) ORDER BY vencimento
         ";
         $query = $this->connection()->prepare($sql);
         $query->execute([
@@ -135,7 +138,7 @@ class ContasReceberService extends Model{
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
             LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
-            WHERE (vencimento BETWEEN :data_ini AND :data_fim) AND pago = 1 ORDER BY vencimento
+            WHERE deleted_at IS NULL AND (vencimento BETWEEN :data_ini AND :data_fim) AND pago = 1 ORDER BY vencimento
         ";
         $query = $this->connection()->prepare($sql);
         $query->execute([
@@ -184,13 +187,18 @@ class ContasReceberService extends Model{
 
         if($find && $find->pago != null) return ServiceResponse::error("Não é possível excluir um recebimento já confirmado.", null);
 
-        $this->columns = ['id'];
+        $this->columns = ['id', 'deleted_at', 'user_deleted'];
 
-        if($find->arquivo && file_exists(UPLOAD_DIR . $find->arquivo)){
-            unlink(UPLOAD_DIR . $find->arquivo);
-        }
+        // if($find->arquivo && file_exists(UPLOAD_DIR . $find->arquivo)){
+        //     unlink(UPLOAD_DIR . $find->arquivo);
+        // }
+        $user = App::authSession()->get()->id;
+        
+        $find = (new UsuariosService())->find('id', $user);
 
-        $delete = $this->delete('id', $id);
+        if(!$find) return ServiceResponse::error("Não foi possível excluir a parcela.", null);
+
+        $delete = $this->update('id', ['deleted_at' => (new DateTime())->format('Y-m-d H:i:s'), 'id' => $id, 'user_deleted' => $find->id]);
 
         if($delete) return ServiceResponse::success("O recebimento foi excluído com sucesso.", null);
 
