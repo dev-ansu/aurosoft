@@ -4,7 +4,12 @@ use app\facade\App;
 use app\services\PermissionService;
 
 ?>
+<script>
+	let data_ini = '';
+	let data_fim = '';
+	let situacao = '';
 
+</script>
 
 
 <div class="d-flex gap-2">
@@ -88,12 +93,12 @@ use app\services\PermissionService;
 			</div>
 		</div>
 		<div class="d-flex gap-1">
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $today->format('Y-m-d') ?>`,`<?= $today->format('Y-m-d') ?>`)">Hoje</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $inicioSemana ?>`,`<?= $fimSemana ?>`)">Esta semana</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_passado ?>`,`<?= $data_fim_mes_passado ?>`)">Mês passado</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_proximo ?>`,`<?= $data_fim_mes_proximo ?>`)">Pŕoixmo mês</span>
-			<span class="btn btn-link" onclick="listarContasReceber(``,``)">Todo o período</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`)">Limpar</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $today->format('Y-m-d') ?>`,`<?= $today->format('Y-m-d') ?>`, `${situacao}`)">Hoje</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $inicioSemana ?>`,`<?= $fimSemana ?>`, `${situacao}`)">Esta semana</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_passado ?>`,`<?= $data_fim_mes_passado ?>`, `${situacao}`)">Mês passado</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_proximo ?>`,`<?= $data_fim_mes_proximo ?>`, `${situacao}`)">Pŕoixmo mês</span>
+			<span class="btn btn-link" onclick="listarContasReceber(``,``, `${situacao}`)">Todo o período</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`, '')">Limpar</span>
 		</div>
 </div>
 
@@ -150,6 +155,8 @@ use app\services\PermissionService;
 <!-- Modal -->
 <?php if(PermissionService::has('dashboard/contasreceber')): ?>
 <script>
+
+
 	$(document).ready(()=>{
 		listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`);
 	})
@@ -166,14 +173,19 @@ use app\services\PermissionService;
 		});
 	}
 
+
+
 	$(document).on("change", "#data_fim, #data_ini, #filtrar_situacao", (e)=>{
+		data_ini = $("#data_ini").val();
+		data_fim = $("#data_fim").val();
+		situacao = $("#filtrar_situacao").val();
+
 		e.preventDefault();
-		const data_ini = $("#data_ini").val();
-		const data_fim = $("#data_fim").val();
-		const situacao = $("#filtrar_situacao").val();
-		if(data_ini !== '' && data_fim != ''){
-			listarContasReceber(data_ini, data_fim, situacao)
-		}
+
+		
+		listarContasReceber(data_ini, data_fim, situacao)
+		
+
 	})
 
 

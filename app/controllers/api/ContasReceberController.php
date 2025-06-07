@@ -180,6 +180,7 @@ class ContasReceberController{
                             <a target="_blank" href="{$link}">
                                 <img
                                     style="
+                                width:100px;
                                 max-width:100%;
                                 "
                                 src="{$arquivo}"

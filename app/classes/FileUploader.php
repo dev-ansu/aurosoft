@@ -96,7 +96,7 @@ abstract class FileUploader{
             }
         }else{
             $path = rtrim(UPLOAD_DIR);
-            mkdir($public/assets/icones/word.png, 777);
+            mkdir($path, 777);
             $this->upload();
             return $this->errorResponse('A pasta padrão de upload não está definida');
         }
