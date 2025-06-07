@@ -12,6 +12,7 @@ use app\core\Controller;
 
 use app\classes\FileUploader;
 use app\classes\ImageUploader;
+use app\classes\Validate;
 use app\services\PermissionService;
 use app\requests\ContasReceber\ContasReceberRequest;
 use app\services\ContasReceber\ContasReceberService;
@@ -29,16 +30,18 @@ class ContasReceberController{
     public function index(Request $req, Response $res){
 
         $dados = $req->get()->validate(ContasReceberFiltroRequest::class);
-        
 
+   
         $contas_receber = $this->contasReceberService->fetchAll()->data;
-        var_dump($dados);
+
+        
         
         if($dados['error'] == false){
             $issues = $dados['issues'];
             $contas_receber = $this->contasReceberService->fetchBetween($issues['data_ini'], $issues['data_fim'])->data;
-            if($issues['situacao']){
-                $situacao = $issues['situacao'];
+            $situacao = $issues['situacao'];
+
+            if($situacao){
                 switch ($situacao){
                     case 'at':
                         $contas_receber = $this->contasReceberService->fetchAtrasadas($issues['data_ini'], $issues['data_fim'], (new DateTime())->format('Y-m-d'))->data;
@@ -52,6 +55,26 @@ class ContasReceberController{
                 }
             }
         }
+
+        $situacao = (new Validate)->validate([
+            'situacao' => 'optional|patternValues:[ab,at,pg]',
+        ]);
+
+        if($situacao && $dados['error'] == true){
+            switch ($situacao['situacao']){
+                case 'at':
+                    $contas_receber = $this->contasReceberService->fetchAllAtrasadas()->data;
+                    break;  
+                case 'ab':
+                    $contas_receber = $this->contasReceberService->fetchAllAbertas()->data;
+                    break;                                      
+                case 'pg':
+                    $contas_receber = $this->contasReceberService->fetchAllConfirmadas()->data;
+                    break;                                      
+                }
+        }
+
+
   
         $html = <<<HTML
                 <input type="hidden" id="ids">

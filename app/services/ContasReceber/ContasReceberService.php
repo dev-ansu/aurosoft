@@ -49,6 +49,40 @@ class ContasReceberService extends Model{
 
         return ServiceResponse::success('ok', $query->fetchAll());
     }
+    public function fetchAllAbertas(): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia WHERE vencimento >= DATE(NOW()) AND (pago = 0 OR pago IS NULL) ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute();
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+    public function fetchAllAtrasadas(): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia WHERE vencimento < DATE(NOW()) AND (pago = 0 OR pago IS NULL) ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute();
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+    public function fetchAllConfirmadas(): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia WHERE (pago = 1 AND pago IS NOT NULL) ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute();
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+
     public function fetchBetween($data_ini, $data_fim): ServiceResponse
     {
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 

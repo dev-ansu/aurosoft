@@ -93,12 +93,13 @@ use app\services\PermissionService;
 			</div>
 		</div>
 		<div class="d-flex gap-1">
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $today->format('Y-m-d') ?>`,`<?= $today->format('Y-m-d') ?>`, `${situacao}`)">Hoje</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $inicioSemana ?>`,`<?= $fimSemana ?>`, `${situacao}`)">Esta semana</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_passado ?>`,`<?= $data_fim_mes_passado ?>`, `${situacao}`)">Mês passado</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_proximo ?>`,`<?= $data_fim_mes_proximo ?>`, `${situacao}`)">Pŕoixmo mês</span>
-			<span class="btn btn-link" onclick="listarContasReceber(``,``, `${situacao}`)">Todo o período</span>
-			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`, '')">Limpar</span>
+			<button data-date-ini="<?= $today->format('Y-m-d') ?>" data-date-fim="<?= $today->format('Y-m-d') ?>" class="btn btn-link btn-filtrar">Hoje</button>
+			<button data-date-ini="<?= $inicioSemana ?>" data-date-fim="<?= $fimSemana ?>" class="btn btn-link btn-filtrar">Esta semana</button>
+			<button data-date-ini="<?= $data_ini_mes ?>" data-date-fim="<?= $data_fim_mes ?>" class="btn btn-link btn-filtrar">Este mês</button>
+			<button data-date-ini="<?= $data_ini_mes ?>" data-date-fim="<?= $data_fim_mes ?>" class="btn btn-link btn-filtrar">Mês passado</button>
+			<button data-date-ini="<?= $data_ini_mes_proximo ?>" data-date-fim="<?= $data_fim_mes_proximo ?>" class="btn btn-link btn-filtrar">Pŕoixmo mês</button>
+			<button data-date-ini="" data-date-fim="" class="btn btn-link btn-filtrar">Todo o período</button>
+			<button data-date-ini="<?= $data_ini_mes ?>" data-date-fim="<?= $data_fim_mes ?>" class="btn btn-link btn-limpar">Limpar</button>
 		</div>
 </div>
 
@@ -173,12 +174,34 @@ use app\services\PermissionService;
 		});
 	}
 
-
+	$(document).on("click", ".btn-filtrar", (e)=>{
+		e.preventDefault();
+		const {dateIni, dateFim} = e.target.dataset;
+		data_ini = dateIni;
+		data_fim = dateFim;
+		situacao = $("#filtrar_situacao").val();
+		$("#data_ini").val(data_ini)
+		$("#data_fim").val(data_fim)
+		listarContasReceber(data_ini, data_fim, situacao)
+	})
+	$(document).on("click", ".btn-limpar", (e)=>{
+		e.preventDefault();
+		const {dateIni, dateFim} = e.target.dataset;
+		data_ini = dateIni;
+		data_fim = dateFim;
+		situacao = ''
+		$("#filtrar_situacao").val('');
+		$("#data_ini").val(data_ini)
+		$("#data_fim").val(data_fim)
+		listarContasReceber(data_ini, data_fim, situacao)
+	})
 
 	$(document).on("change", "#data_fim, #data_ini, #filtrar_situacao", (e)=>{
+
 		data_ini = $("#data_ini").val();
 		data_fim = $("#data_fim").val();
 		situacao = $("#filtrar_situacao").val();
+	
 
 		e.preventDefault();
 
@@ -308,7 +331,7 @@ $("#formContasReceber").submit((e)=>{
 						$(`#mensagem_conta`).text(response.message);
 						$(`#btn-fechar-conta`).click();
 						clearErrorMessages(); 
-						listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`);
+						listarContasReceber(data_ini, data_fim, situacao);
 						limparCampos("#formContasReceber");
 					}else{
 						if(response.issues){

@@ -20,7 +20,7 @@ class ContasReceberFiltroRequest extends RequestValidation implements RequestVal
         return [
             'data_ini' => 'required|valideISODate',
             'data_fim' => 'required|valideISODate',
-            'situacao' => 'optional|patternValues:[ab,at,pg]'
+            'situacao' => 'optional|patternValues:[ab,at,pg]',
         ];
     }
     
