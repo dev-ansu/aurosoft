@@ -272,6 +272,7 @@ class ContasReceberController{
                 }
 
                 limparCampos();
+                $("#btn-deletar").hide();
             }
 
             function excluir(id){	
