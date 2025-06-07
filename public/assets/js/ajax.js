@@ -82,7 +82,6 @@ const onDelete = (url)=>{
             }catch(err){
                 notyf.error(err.responseText)
             }
-            showMessage(response.message)
             listar()
         },
         error:(xhr, status, error)=>{

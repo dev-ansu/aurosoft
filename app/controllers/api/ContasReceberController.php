@@ -2,19 +2,21 @@
 
 namespace app\controllers\api;
 
-use app\classes\FileUploader;
-use app\classes\ImageUploader;
-use app\core\Controller;
-use app\core\Request;
-use app\core\Response;
-use app\facade\App;
-use app\requests\ContasReceber\ContasReceberArquivoRequest;
-use app\requests\ContasReceber\ContasReceberRequest;
-use app\services\ContasReceber\ContasReceberService;
-use app\services\PermissionService;
 use DateTime;
 use Exception;
 use Throwable;
+use app\facade\App;
+use app\core\Request;
+use app\core\Response;
+use app\core\Controller;
+
+use app\classes\FileUploader;
+use app\classes\ImageUploader;
+use app\services\PermissionService;
+use app\requests\ContasReceber\ContasReceberRequest;
+use app\services\ContasReceber\ContasReceberService;
+use app\requests\ContasReceber\ContasReceberFiltroRequest;
+use app\requests\ContasReceber\ContasReceberArquivoRequest;
 
 class ContasReceberController{
 
@@ -25,10 +27,34 @@ class ContasReceberController{
     }
 
     public function index(Request $req, Response $res){
-        $contas_receber = $this->contasReceberService->fetchAll()->data;
 
+        $dados = $req->get()->validate(ContasReceberFiltroRequest::class);
+        
+
+        $contas_receber = $this->contasReceberService->fetchAll()->data;
+        var_dump($dados);
+        
+        if($dados['error'] == false){
+            $issues = $dados['issues'];
+            $contas_receber = $this->contasReceberService->fetchBetween($issues['data_ini'], $issues['data_fim'])->data;
+            if($issues['situacao']){
+                $situacao = $issues['situacao'];
+                switch ($situacao){
+                    case 'at':
+                        $contas_receber = $this->contasReceberService->fetchAtrasadas($issues['data_ini'], $issues['data_fim'], (new DateTime())->format('Y-m-d'))->data;
+                        break;  
+                    case 'ab':
+                        $contas_receber = $this->contasReceberService->fetchAbertas($issues['data_ini'], $issues['data_fim'], (new DateTime())->format('Y-m-d'))->data;
+                        break;                                      
+                    case 'pg':
+                        $contas_receber = $this->contasReceberService->fetchConfirmadas($issues['data_ini'], $issues['data_fim'])->data;
+                        break;                                      
+                }
+            }
+        }
   
         $html = <<<HTML
+                <input type="hidden" id="ids">
             <table class="table table-hover" id="tabela">
                 <thead>
                     <tr>
@@ -49,9 +75,11 @@ class ContasReceberController{
                 <tbody>
         HTML;
 
+        $data_ini_mes = (new DateTime('first day of this month'))->format('Y-m-d');
+        $data_fim_mes = (new DateTime('last day of this month'))->format('Y-m-d');
+
         foreach($contas_receber as $conta_receber){
             // $conta_receber->created_at = (new DateTime($conta_receber->created_at))->format('d/m/Y');
-            $editUser = json_encode($conta_receber);
             extract(json_decode(json_encode($conta_receber), true));
             
             $botoes = null;
@@ -65,9 +93,10 @@ class ContasReceberController{
                 }
             
             $data_atual = (new DateTime())->format('Y-m-d');
-            $pago = $pago ? strtolower($pago):null;
-            $situacao = $pago ? "Confirmado":(!$pago & $data_atual > $vencimento ? 'Vencido':'Em aberto');
-
+            $situacao = $pago == 1 ? "Confirmado":($pago == 0 & $data_atual > $vencimento ? 'Vencido':'Em aberto');
+            $conta_receber->situacao = $situacao;
+            $editUser = json_encode($conta_receber);
+            
             $classSituacao = $situacao == "Confirmado" ? "bg-success":($situacao == "Vencido" ? "bg-danger":"bg-info"  );
             $vencimento = (new DateTime($vencimento))->format('d/m/Y');
             
@@ -132,8 +161,13 @@ class ContasReceberController{
   
             $html.= <<<HTML
 
-                    <tr">
-                        <td>{$descricao}</td>
+                    <tr>
+                        <td>
+                            <label class="cursor-pointer" for="seletor-{$id}">
+                                <input type="checkbox" id="seletor-{$id}" class="form-check-input" onchange="selecionar(`{$id}`)">
+                                {$descricao}
+                            </label>
+                        </td>
                         <td>{$valor}</td>
                         <td>{$cliente}</td>
                         <td>{$vencimento}</td>
@@ -153,7 +187,7 @@ class ContasReceberController{
                             </a>
                         </td>
                         <td style="font-size:14px">
-                            <div class="rounded w-100 {$classSituacao}" style="padding: 0px 4px 0px 4px;">
+                            <div class="rounded text-center w-100 {$classSituacao}" style="padding: 0px 4px 0px 4px;">
                                 {$situacao}
                             </div>
                         </td>
@@ -184,6 +218,64 @@ class ContasReceberController{
                     })
                 
                 })
+
+                function selecionar(id){
+
+                    var ids = $('#ids').val();
+
+                    if($('#seletor-'+id).is(":checked") == true){
+                        var novo_id = ids + id + '-';
+                        $('#ids').val(novo_id);
+                    }else{
+                        var retirar = ids.replace(id + '-', '');
+                        $('#ids').val(retirar);
+                    }
+
+                    var ids_final = $('#ids').val();
+                    if(ids_final == ""){
+                        $('#btn-deletar').hide();
+                    }else{
+                        $('#btn-deletar').show();
+                    }
+            }
+
+            function deletarSel(){
+                var ids = $('#ids').val();
+                var id = ids.split("-");
+                
+                for(i=0; i<id.length-1; i++){
+                    excluir(id[i]);			
+                }
+
+                limparCampos();
+            }
+
+            function excluir(id){	
+                $('#mensagem-excluir').text('Excluindo...')
+                
+                $.ajax({
+                    url: "/api/contasreceber/delete/" + id,
+                    method: 'GET',
+                    success:function(result){
+                        console.log(result);
+                        try{
+                            const response = JSON.parse(result);
+                            if (!response.error) {            	
+                                listarContasReceber(`{$data_ini_mes}`, `{$data_fim_mes}`);
+                                notyf.success(response.message);
+                            } else {
+                                notyf.error(response.message);
+                            }
+                        }catch(err){
+                            notyf.error(result);
+                        }
+                    },
+                    error(xhr, status, error){
+                        notyf.error(xhr.responseText)
+                    }
+                });
+            }
+
             </script>
         HTML;
         

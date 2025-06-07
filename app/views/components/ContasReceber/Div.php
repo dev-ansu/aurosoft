@@ -1,12 +1,17 @@
 <!-- Modal Form -->
-<div class="modal fade" id="divContasReceber" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div 	style="
+		backdrop-filter: blur(2px);
+	"
+	class="modal fade" id="divContasReceber" tabindex="-1" aria-labelledby="contasReceberLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="exampleModalLabel"><span id="titulo_inserir"></span></h4>
-				<button id="btn-fechar-conta" onclick="$('#permissoesModal').modal('close')" type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px">
-					<span aria-hidden="true">&times;</span>
-				</button>
+				<h4 class="modal-title" id="contasReceberLabel">
+					<span id="situacaoDados"></span>
+					<button id="btn-fechar-conta" onclick="$('#divContasReceber').modal('close')" type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</h4>
 			</div>
 			<div id="">
 			<div class="modal-body">
@@ -89,12 +94,14 @@
 							<span class="form-control" id="observacaoDados">							
                             </span>
 						</div>
-
-						<div class="col-md-2">								
-							<img src="" id="arquivoDados"  width="80px" alt="Arquivo">								
-						</div>
-
 					</div>		
+					<div class="row">
+						<div class="col-md-2">		
+							<a href="#" class="btn btn-link" id="arquivoDadosLink" target="_blank">
+								<img src="" id="arquivoDados"  width="80px" alt="Arquivo">								
+							</a>						
+						</div>
+					</div>
 				<br>
 				<small><div id="mensagem_conta" align="center"></div></small>
 			</div>

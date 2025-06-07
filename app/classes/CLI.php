@@ -58,7 +58,7 @@ class CLI{
             $path = "{$folder}/{$className}.php";
         }
   
-        $namespace = $subPath ? strtolower(str_replace('/','\\', $folder)): strtolower(rtrim(str_replace("/", "\\", $folder), "\\"));
+        $namespace = $subPath ? str_replace('/','\\', $folder): rtrim(str_replace("/", "\\", $folder), "\\");
      
         $classFullName = $className . $afterTwoDot;
 

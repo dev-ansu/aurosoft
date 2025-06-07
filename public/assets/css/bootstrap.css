@@ -1353,6 +1353,9 @@ a.text-primary:hover {
 a.text-success:hover {
   color: #2b542c;
 }
+.text-dark{
+  color: #000;
+}
 .text-info {
   color: #31708f;
 }
@@ -1375,6 +1378,88 @@ a.text-danger:hover {
   color: #fff;
   background-color: #337ab7;
 }
+.d-flex{
+  display: flex;
+}
+.d-flex.flex-column{
+  flex-direction: column;
+}
+.d-flex.flex-row{
+  flex-direction: row;
+}
+.d-flex.justify-content-center{
+  justify-content: center;
+}
+d.flex.justify-content-start{
+  justify-content: flex-start;
+}
+d.flex.justify-content-end{
+  justify-content: flex-end;
+}
+d.flex.justify-content-between{
+  justify-content: space-between;
+}
+.d-flex.align-items-center{
+  align-items: center;
+}
+.d-flex.align-items-end{
+  align-items: flex-end;
+}
+.d-flex.align-items-start{
+  align-items: flex-start;
+}
+
+/* Gaps personalizados inspirados no Bootstrap */
+
+.gap-0 {
+  gap: 0 !important;
+}
+
+.gap-1 {
+  gap: 0.25rem !important; /* 4px */
+}
+
+.gap-2 {
+  gap: 0.5rem !important; /* 8px */
+}
+
+.gap-3 {
+  gap: 1rem !important; /* 16px */
+}
+
+.gap-4 {
+  gap: 1.5rem !important; /* 24px */
+}
+
+.gap-5 {
+  gap: 3rem !important; /* 48px */
+}
+
+/* Direções específicas */
+.row-gap-1 {
+  row-gap: 0.25rem !important;
+}
+
+.column-gap-1 {
+  column-gap: 0.25rem !important;
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+
+/* Repetindo para outros tamanhos */
+.row-gap-2 { row-gap: 0.5rem !important; }
+.column-gap-2 { column-gap: 0.5rem !important; }
+
+.row-gap-3 { row-gap: 1rem !important; }
+.column-gap-3 { column-gap: 1rem !important; }
+
+.row-gap-4 { row-gap: 1.5rem !important; }
+.column-gap-4 { column-gap: 1.5rem !important; }
+
+.row-gap-5 { row-gap: 3rem !important; }
+.column-gap-5 { column-gap: 3rem !important; }
+
 a.bg-primary:hover {
   background-color: #286090;
 }

@@ -6,34 +6,100 @@ use app\services\PermissionService;
 ?>
 
 
+
+<div class="d-flex gap-2">
 <?php if(PermissionService::has("api/contasreceber/insert")): ?>
-	
-	<a onclick="inserirContaReceber()" class="btn btn-primary">
-		<span class="fa fa-plus"></span>
-		Receber
-	</a>
-	
+
+		<div class="">
+			<a onclick="inserirContaReceber()" class="btn btn-primary">
+				<span class="fa fa-plus"></span>
+				Receber
+			</a>
+		</div>
 
 <?php endif; ?>
 
 
-<li id="" class="dropdown head-dpdn2" style="display: inline-block;">
-	<a href="#" data-toggle="dropdown" class="btn btn-danger dropdown toggle"
-	id="btn-deletar" style="display: none;"
-	><span class="fa fa-trash-o"></span>Deletar</a>
+		<div class="">
+			<li id="" class="dropdown head-dpdn2" style="display: inline-block;">
+				<a href="#" data-toggle="dropdown" class="btn btn-danger dropdown toggle"
+				id="btn-deletar" style="display: none;"
+				><span class="fa fa-trash-o"></span>Deletar</a>
 
-	<ul class="dropdown-menu">
-		<li>
-			<div class="notification_desc2">
-				<p>Excluir selecionados? <a href="#" onclick="deletarSel()">
-					<span class="text-danger">Sim</span>
-				</a></p>
+				<ul class="dropdown-menu">
+					<li>
+						<div class="notification_desc2">
+							<p>Excluir selecionados? <a href="#" onclick="deletarSel()">
+								<span class="text-danger">Sim</span>
+							</a></p>
+						</div>
+					</li>
+				</ul>
+			</li>
+		</div>		
+</div>	
+
+		
+<div class="row d-flex flex-column gap-2 justify-content-start align-items-start">
+		<?php 
+			$today = new DateTime();
+
+			$data_ini_mes = (new DateTime('first day of this month'))->format('Y-m-d');
+			$data_fim_mes = (new DateTime('last day of this month'))->format('Y-m-d');
+			
+			$data_ini_mes_passado = (new DateTime('first day of last month'))->format('Y-m-d');
+			$data_fim_mes_passado = (new DateTime('last day of last month'))->format('Y-m-d');
+
+			$data_ini_mes_proximo = (new DateTime('first day of next month'))->format('Y-m-d');
+			$data_fim_mes_proximo = (new DateTime('last day of next month'))->format('Y-m-d');
+
+			$inicioSemana = clone $today;
+			$inicioSemana = $inicioSemana->modify('monday this week')->format('Y-m-d');
+
+			$fimSemana = clone $today;
+			$fimSemana = $fimSemana->modify('sunday this week')->format('Y-m-d');
+			
+			
+		?>
+		<div class="d-flex gap-2">
+			<div class="d-flex flex-column gap-2">
+				<p>Vencimento</p>
+				<div class="d-flex gap-2">
+					<div class="d-flex gap-1 align-items-center">
+						<label for="">De</label>
+						<input id="data_ini" value="<?= $data_ini_mes ?>" type="date" class="form-control">
+					</div>
+					<div class="d-flex gap-1 align-items-center">
+						<label for="">a</label>
+						<input id="data_fim" value="<?= $data_fim_mes ?>" type="date" class="form-control">
+					</div>
+				</div>
 			</div>
-		</li>
-	</ul>
-</li>
+			<div class="d-flex flex-column gap-2">
+				<p>Situação</p>
+				<div class="d-flex gap-2">
+					<select name="filtrar_situacao" class="form-control" id="filtrar_situacao">
+						<option value="">Todas</option>
+						<option value="ab">Em aberto</option>
+						<option value="at">Em atraso</option>
+						<option value="pg">Confirmado</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="d-flex gap-1">
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $today->format('Y-m-d') ?>`,`<?= $today->format('Y-m-d') ?>`)">Hoje</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $inicioSemana ?>`,`<?= $fimSemana ?>`)">Esta semana</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_passado ?>`,`<?= $data_fim_mes_passado ?>`)">Mês passado</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes_proximo ?>`,`<?= $data_fim_mes_proximo ?>`)">Pŕoixmo mês</span>
+			<span class="btn btn-link" onclick="listarContasReceber(``,``)">Todo o período</span>
+			<span class="btn btn-link" onclick="listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`)">Limpar</span>
+		</div>
+</div>
 
-<section style="overflow: auto;" class="bs-example widget-shadow p-15" id="listar">
+
+
+<section style="overflow: auto;" class="" id="listar">
 
 </section>
  
@@ -85,12 +151,12 @@ use app\services\PermissionService;
 <?php if(PermissionService::has('dashboard/contasreceber')): ?>
 <script>
 	$(document).ready(()=>{
-		listar();
+		listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`);
 	})
 
-	const listar = ()=>{
+	const listarContasReceber = (data_ini='', data_fim ='', situacao = '')=>{
 		$.ajax({
-			url: "<?php echo route("/api/contasreceber") ?>",
+			url: `<?php echo route("/api/contasreceber") ?>?data_ini=${data_ini}&data_fim=${data_fim}&situacao=${situacao}`,
 			method: "GET",
 			dataType: "html",
 			success: (result)=>{
@@ -99,6 +165,17 @@ use app\services\PermissionService;
 			}
 		});
 	}
+
+	$(document).on("change", "#data_fim, #data_ini, #filtrar_situacao", (e)=>{
+		e.preventDefault();
+		const data_ini = $("#data_ini").val();
+		const data_fim = $("#data_fim").val();
+		const situacao = $("#filtrar_situacao").val();
+		if(data_ini !== '' && data_fim != ''){
+			listarContasReceber(data_ini, data_fim, situacao)
+		}
+	})
+
 
 	const mostrar = ($user, action = '')=>{
 		
@@ -117,14 +194,22 @@ use app\services\PermissionService;
 						if(['jpg', 'jpeg', 'png', 'webp', 'jiff'].includes(extensao)){
 							let file = `<?= BASE_URL ?>/uploads/${parseUser[i]}`;
 							$(`#${i}Dados`).attr("src", file);	
+							$(`#${i}DadosLink`).attr("href", file);
 						}else{
 							let file = `<?= asset("/icones/") ?>${extensao}.png`;
+							let file2 = `<?= BASE_URL ?>/uploads/${parseUser[i]}`;
 							$(`#${i}Dados`).attr("src", file);	
+							$(`#${i}DadosLink`).attr("href", file2);
 						}
 					}
 									
 				}else{
-					$(`#${i}Dados`).text(parseUser[i] ?? '');				
+					if(i == 'vencimento' || i == 'data_pgto'){
+						const date = parseUser[i] ? parseUser[i].split("-").reverse().join("/"):'';
+						$(`#${i}Dados`).text(date);				
+					}else{
+						$(`#${i}Dados`).text(parseUser[i] ?? '');				
+					}
 				}
 			}
 		})
@@ -211,7 +296,7 @@ $("#formContasReceber").submit((e)=>{
 						$(`#mensagem_conta`).text(response.message);
 						$(`#btn-fechar-conta`).click();
 						clearErrorMessages(); 
-						listar();
+						listarContasReceber(`<?= $data_ini_mes ?>`,`<?= $data_fim_mes ?>`);
 						limparCampos("#formContasReceber");
 					}else{
 						if(response.issues){

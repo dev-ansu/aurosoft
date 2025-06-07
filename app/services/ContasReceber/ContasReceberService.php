@@ -42,10 +42,72 @@ class ContasReceberService extends Model{
     {
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
             LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
-            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia ORDER BY vencimento
         ";
         $query = $this->connection()->prepare($sql);
         $query->execute();
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+    public function fetchBetween($data_ini, $data_fim): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
+            WHERE vencimento BETWEEN :data_ini AND :data_fim ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute([
+            'data_ini' => $data_ini,
+            'data_fim' => $data_fim
+        ]);
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+    public function fetchAtrasadas($data_ini, $data_fim, $today): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
+            WHERE (vencimento BETWEEN :data_ini AND :data_fim AND vencimento < :today) AND (pago IS NULL || pago = 0) ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute([
+            'today' => $today,
+            'data_ini' => $data_ini,
+            'data_fim' => $data_fim
+        ]);
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+    public function fetchAbertas($data_ini, $data_fim, $today): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
+            WHERE (vencimento BETWEEN :data_ini AND :data_fim AND vencimento >= :today) AND (pago IS NULL || pago = 0) ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute([
+            'today' => $today,
+            'data_ini' => $data_ini,
+            'data_fim' => $data_fim
+        ]);
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+    public function fetchConfirmadas($data_ini, $data_fim): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia
+            WHERE (vencimento BETWEEN :data_ini AND :data_fim) AND pago = 1 ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute([
+            'data_ini' => $data_ini,
+            'data_fim' => $data_fim
+        ]);
 
         return ServiceResponse::success('ok', $query->fetchAll());
     }
@@ -89,6 +151,10 @@ class ContasReceberService extends Model{
         if($find && $find->pago != null) return ServiceResponse::error("Não é possível excluir um recebimento já confirmado.", null);
 
         $this->columns = ['id'];
+
+        if($find->arquivo && file_exists(UPLOAD_DIR . $find->arquivo)){
+            unlink(UPLOAD_DIR . $find->arquivo);
+        }
 
         $delete = $this->delete('id', $id);
 
