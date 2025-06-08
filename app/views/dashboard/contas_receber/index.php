@@ -96,7 +96,7 @@ use app\services\PermissionService;
 			<button data-date-ini="<?= $today->format('Y-m-d') ?>" data-date-fim="<?= $today->format('Y-m-d') ?>" class="btn btn-link btn-filtrar">Hoje</button>
 			<button data-date-ini="<?= $inicioSemana ?>" data-date-fim="<?= $fimSemana ?>" class="btn btn-link btn-filtrar">Esta semana</button>
 			<button data-date-ini="<?= $data_ini_mes ?>" data-date-fim="<?= $data_fim_mes ?>" class="btn btn-link btn-filtrar">Este mês</button>
-			<button data-date-ini="<?= $data_ini_mes ?>" data-date-fim="<?= $data_fim_mes ?>" class="btn btn-link btn-filtrar">Mês passado</button>
+			<button data-date-ini="<?= $data_ini_mes_passado ?>" data-date-fim="<?= $data_fim_mes_passado ?>" class="btn btn-link btn-filtrar">Mês passado</button>
 			<button data-date-ini="<?= $data_ini_mes_proximo ?>" data-date-fim="<?= $data_fim_mes_proximo ?>" class="btn btn-link btn-filtrar">Pŕoixmo mês</button>
 			<button data-date-ini="" data-date-fim="" class="btn btn-link btn-filtrar">Todo o período</button>
 			<button data-date-ini="<?= $data_ini_mes ?>" data-date-fim="<?= $data_fim_mes ?>" class="btn btn-link btn-limpar">Limpar</button>
