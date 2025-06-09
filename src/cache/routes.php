@@ -269,6 +269,19 @@
         1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
+    '/api/formaspagamento/select/{id:\\d+}' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\FormasPagamentoController',
+        1 => 'select',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
     '/api/frequencias' => 
     array (
       'action' => 
@@ -550,6 +563,20 @@
       array (
         0 => 'app\\controllers\\api\\ContasReceberController',
         1 => 'patch',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/contasreceber/baixar' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\ContasReceberController',
+        1 => 'baixar',
       ),
       'middlewares' => 
       array (

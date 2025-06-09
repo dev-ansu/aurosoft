@@ -50,6 +50,7 @@ Router::group([
     // Rotas de frequencias e formas de pagamento
     $route->get("/formaspagamento", [FormasPagamentoController::class, 'index']);
     $route->get("/formaspagamento/delete/{id:\d+}", [FormasPagamentoController::class, 'delete']);
+    $route->get("/formaspagamento/select/{id:\d+}", [FormasPagamentoController::class, 'select']);
     $route->post("/formaspagamento/patch", [FormasPagamentoController::class, 'patch'], [CSRFMiddleware::class]);
     $route->post("/formaspagamento/insert", [FormasPagamentoController::class, 'insert'], [CSRFMiddleware::class]);
 
@@ -67,6 +68,7 @@ Router::group([
     $route->get("/contasreceber/delete/{id:\d+}", [ContasReceberController::class, 'delete']);
     $route->post("/contasreceber/insert", [ContasReceberController::class, 'insert'], [CSRFMiddleware::class]);
     $route->post("/contasreceber/patch", [ContasReceberController::class, 'patch'], [CSRFMiddleware::class]);
+    $route->post("/contasreceber/baixar", [ContasReceberController::class, 'baixar'], [CSRFMiddleware::class]);
 
 
 });

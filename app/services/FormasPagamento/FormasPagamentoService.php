@@ -41,6 +41,14 @@ class FormasPagamentoService extends Model{
 
     }
 
+    public function select(int $id){
+        $find = $this->find('id', $id);
+
+        if(!$find) return ServiceResponse::error("Esta forma de pagamento já existe.", null, 401);
+
+        return ServiceResponse::success("Forma de pagamento encontrada.", $find, 200);
+    }
+
     public function trash($key, $value): ServiceResponse{
 
         try{

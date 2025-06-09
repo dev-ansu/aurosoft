@@ -177,4 +177,12 @@ class FormasPagamentoController{
         return $res->json($response->toArray());
     }
 
+    public function select(int $id, Response $res){
+
+        $response = $this->formasPagamentoService->select($id);
+   
+        return $res->json($response->toArray());
+
+    }
+
 }

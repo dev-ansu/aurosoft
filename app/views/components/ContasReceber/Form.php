@@ -88,7 +88,7 @@ use app\facade\App;
 							<img src=""  width="80px" id="target" alt="Arquivo">								
 						</div>
 
-						<input type="hidden" name="_csrf_token" value="<?= App::_csrf() ?>" />
+						<input type="hidden" name="_csrf_token" value="<?= $csrf ?>" />
 						<input type="hidden" name="id" value="" id="id" />
 					</div>		
 				<br>

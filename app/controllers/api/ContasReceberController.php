@@ -13,6 +13,7 @@ use app\core\Controller;
 use app\classes\FileUploader;
 use app\classes\ImageUploader;
 use app\classes\Validate;
+use app\requests\ContasReceber\BaixarContaRequest;
 use app\services\PermissionService;
 use app\requests\ContasReceber\ContasReceberRequest;
 use app\services\ContasReceber\ContasReceberService;
@@ -82,14 +83,13 @@ class ContasReceberController{
                 <thead>
                     <tr>
                         <th>Descrição</th>
-                        <th>Valor</th>
+                        <th>Valor total</th>
                         <th>Cliente</th>
-                        <th>Vencimento</th>
-                        <th>Pagamento</th>
-                        <th>Data de lançamento</th>
-                        <th>Forma de pagamento</th>
+                        <th>Dt. vencimento</th>
+                        <th>Dt. pagamento</th>
+                        <th>Dt. lançamento</th>
+                        <th>Forma pgto.</th>
                         <th>Frequência</th>
-                        <th>Observação</th>
                         <th>Arquivo</th>
                         <th>Situação</th>
                         <th>Ações</th>
@@ -181,7 +181,33 @@ class ContasReceberController{
                     </li>
                 HTML;
             }
-  
+
+            
+            if($pago == 0){
+                
+                $botoes.=<<<HTML
+                    <big>
+                        <a href="#" onclick='parcelar(`{$editUser}`)' title="Parcelar conta">
+                            <i class="fa fa-calendar-o" style="color:#7f7f7f"></i>
+                        </a>
+                    </big>
+                HTML;
+                
+                $botoes.=<<<HTML
+                <big>
+                    <a href="#" onclick='baixar(`{$editUser}`)' title="Baixar conta">
+                        <i class="fa fa-check-square" style="color:#079934"></i>
+                    </a>
+                </big>
+                HTML;
+            }
+
+            
+
+            $valorTotal = $subtotal ?? $valor;
+            
+            $valorTotal = "R$ " . number_format($valorTotal, 2, ',','.');
+            
             $html.= <<<HTML
 
                     <tr>
@@ -191,14 +217,13 @@ class ContasReceberController{
                                 {$descricao}
                             </label>
                         </td>
-                        <td>{$valor}</td>
+                        <td>{$valorTotal}</td>
                         <td>{$cliente}</td>
                         <td>{$vencimento}</td>
                         <td>{$data_pgto}</td>
                         <td>{$data_lanc}</td>
                         <td>{$forma_pagamento}</td>
                         <td style="font-size:12px">{$nome_frequencia}</td>
-                        <td>{$observacao}</td>
                         <td>
                             <a target="_blank" href="{$link}">
                                 <img
@@ -447,6 +472,27 @@ class ContasReceberController{
         }
 
     }
+
+    public function baixar(Request $req, Response $res){
+
+        $request = $req->post()->validate(BaixarContaRequest::class);
+
+        if($request['error'] == true){
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $request['issues'],
+            ]);
+        }
+
+        $data = $request['issues'];
+
+        $response = $this->contasReceberService->baixar($data);
+        
+        return $res->json($response->toArray());
+    }
+
+
 
     public function delete(int $id, Response $res){
 

@@ -5,8 +5,10 @@ namespace app\services\ContasReceber;
 use app\core\ServiceResponse;
 use app\core\Model;
 use app\facade\App;
+use app\services\Frequencias\FrequenciasService;
 use app\services\Usuarios\UsuariosService;
 use DateTime;
+use Frequencias;
 
 class ContasReceberService extends Model{
 
@@ -149,6 +151,172 @@ class ContasReceberService extends Model{
         return ServiceResponse::success('ok', $query->fetchAll());
     }
 
+    public function baixar($data){
+        $find = $this->find('id', $data['id']);
+
+        if(!$find) return ServiceResponse::error("Conta não encontrada.", null);
+
+        $valorConta = $find->valor;
+
+        if($data['valor'] <= 0) return ServiceResponse::error("O valor da conta precisa ser maior que zero.", null);
+        if($data['valor'] > $valorConta) return ServiceResponse::error("O valor a ser pago não pode ser superior ao valor da conta. O valor da conta é: R$ {$find->valor}.", null);
+        
+        $subtotal = ($valorConta - $data['desconto']) + ($data['multa'] + $data['juros'] + $data['taxa']);
+      
+
+        $data['subtotal'] = $subtotal;
+        $data['usuario_pgto'] = App::authSession()->get()->id;
+        $data['pago'] = 1;
+  
+
+        if($data['valor'] < $valorConta){
+
+            $subtotal = ($data['valor'] - $data['desconto']) + ($data['multa'] + $data['juros'] + $data['taxa']);
+            
+            $data['subtotal'] = $subtotal;
+
+            try{
+
+                $this->connection()->beginTransaction();
+
+                $this->columns = [
+                    'id',
+                    'subtotal',
+                    'juros',
+                    'multa',
+                    'taxa',
+                    'data_pgto',
+                    'forma_pgto',
+                    'desconto',
+                    'usuario_pgto',
+                    'pago',
+                ];
+
+                $update = $this->update('id', $data);
+
+                if (!$update) {
+                    $this->connection()->rollBack();
+                    return ServiceResponse::error("Erro ao atualizar a conta.", $data);
+                }
+
+                $this->columns = [...$this->columns, 'id_ref'];
+
+                $desc = null;
+                
+                $referencia = $this->find('id_ref', $find->id);
+                
+                if($find->id_ref){
+                    $referencia = $this->find('id_ref', $find->id_ref);
+                }
+                
+                $valor = floatval($find->valor) - floatval($data['valor']);
+
+                if($referencia){
+                    $valor = floatval($referencia->valor) - floatval($data['valor']);
+                    $desc = $referencia->descricao;
+                }else{
+                    $desc = "(Resíduo) " . $find->descricao;
+                }
+               
+                $insert = $this->insert([
+                    'descricao' => $desc,
+                    'cliente' => $find->cliente,
+                    'valor' => $valor,
+                    'vencimento' => $find->vencimento,
+                    'data_pgto' => null,
+                    'data_lanc' => (new DateTime())->format('Y-m-d H:i:s'),
+                    'forma_pgto' => null,
+                    'frequencia' => $find->frequencia,
+                    'arquivo' => $find->arquivo,
+                    'observacao' => $find->observacao,
+                    'id_ref' => $find->id,
+                    'subtotal' => 0.00,
+                    'usuario_lanc' => App::authSession()->get()->id,
+                ]);
+                
+                if (!$insert) {
+                    $this->connection()->rollBack();
+                    return ServiceResponse::error("Erro ao inserir valor residual da conta.", $data);
+                }
+            
+
+            $this->connection()->commit();
+
+            if($update) return ServiceResponse::success('Conta baixada com sucesso!', $data);
+
+            
+            }catch(\Exception $e){
+                $this->connection()->rollBack();
+                return ServiceResponse::error("Erro na transação: " . $e->getMessage(), $data);
+            }
+            
+        }
+        
+        
+        
+        try{
+
+            $this->connection()->beginTransaction();
+
+            $this->columns = [
+                'id',
+                'subtotal',
+                'juros',
+                'multa',
+                'taxa',
+                'data_pgto',
+                'forma_pgto',
+                'desconto',
+                'usuario_pgto',
+                'pago',
+            ];
+            
+            $update = $this->update('id', $data);
+
+            if (!$update) {
+                $this->connection()->rollBack();
+                return ServiceResponse::error("Erro ao atualizar a conta.", $data);
+            }
+
+            if($find->frequencia){
+                $frequencia = (new FrequenciasService())->find('id', $find->frequencia);
+
+                $vencimento = date('Y-m-d', strtotime("{$frequencia->dias} days", strtotime($find->vencimento)));
+
+                $insert = $this->insert([
+                'descricao' => $find->descricao,
+                'cliente' => $find->cliente,
+                'valor' => $find->valor,
+                'vencimento' => $vencimento,
+                'data_pgto' => null,
+                'data_lanc' => (new DateTime())->format('Y-m-d H:i:s'),
+                'forma_pgto' => null,
+                'frequencia' => $find->frequencia,
+                'arquivo' => $find->arquivo,
+                'observacao' => $find->observacao,
+                'referencia' => $find->referencia,
+                'subtotal' => $find->subtotal,
+                'usuario_lanc' => App::authSession()->get()->id,
+            ]);
+        
+            if (!$insert) {
+                $this->connection()->rollBack();
+                return ServiceResponse::error("Erro ao gerar nova conta.", $data);
+            }
+        }
+
+        $this->connection()->commit();
+
+        if($update) return ServiceResponse::success('Conta baixada com sucesso!', $data);
+
+        
+        }catch(\Exception $e){
+            $this->connection()->rollBack();
+            return ServiceResponse::error("Erro na transação: " . $e->getMessage(), $data);
+        }
+                
+    }
+
     public function insert($data): ServiceResponse{
         $this->columns = [
             'descricao',
@@ -158,11 +326,11 @@ class ContasReceberService extends Model{
             'data_pgto',
             'data_lanc',
             'forma_pgto',
-            'forma_pgto',
             'frequencia',
             'arquivo',
             'observacao',
             'referencia',
+            'id_ref',
             'subtotal',
             'usuario_lanc',
         ];

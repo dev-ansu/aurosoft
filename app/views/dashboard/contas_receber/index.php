@@ -3,6 +3,7 @@
 use app\facade\App;
 use app\services\PermissionService;
 
+$csrf = App::_csrf();
 ?>
 <script>
 	let data_ini = '';
@@ -113,10 +114,19 @@ use app\services\PermissionService;
 <?php component("/ContasReceber/Form", [
 	'frequencias' => $frequencias,
 	'formasPgto' => $formasPgto,
+	'csrf' => $csrf,
+]) ?>
+<?php component("/ContasReceber/Baixar", [
+	'formasPgto' => $formasPgto,
+	'today' => $today,
+	'csrf' => $csrf,
 ]) ?>
 
 
+
+
 <script type="text/javascript">
+	
 
 	$(document).ready(function() {
 		$('.sel2').select2({
@@ -209,7 +219,19 @@ use app\services\PermissionService;
 		listarContasReceber(data_ini, data_fim, situacao)
 		
 
-	})
+	});
+
+	const baixar = (conta)=>{
+		const json = JSON.parse(conta);
+
+		for(let i in json){
+			if(i !== 'data_pgto'){
+				$(`#${i}_baixar`).val(json[i]);				
+			}
+		}
+		
+		$("#baixarParcelaModal").modal("show");
+	}
 
 
 	const mostrar = ($user, action = '')=>{
@@ -219,7 +241,7 @@ use app\services\PermissionService;
 			$("#titulo_inserir").text("Atualizar registro");
 			$("#formContasReceber").attr("action", "../api/contasreceber/patch");
 			const parseUser = JSON.parse($user);
-			console.log(parseUser);
+	
 			for(let i in parseUser){
 				if(i === "arquivo"){
 					const arquivo = parseUser[i];
@@ -326,11 +348,12 @@ $("#formContasReceber").submit((e)=>{
 				try{
 
 					const response = JSON.parse(data);
-					notyf.success(response.message)
+				
 					if(response.error == false){
 						$(`#mensagem_conta`).text(response.message);
 						$(`#btn-fechar-conta`).click();
 						clearErrorMessages(); 
+							notyf.success(response.message)
 						listarContasReceber(data_ini, data_fim, situacao);
 						limparCampos("#formContasReceber");
 					}else{
@@ -338,6 +361,7 @@ $("#formContasReceber").submit((e)=>{
 							const { issues } = response;
 							setErrorMessages(issues);
 						}
+							notyf.error(response.message)
 						$(`#mensagem_conta`).addClass("text-danger");
 						$(`#mensagem_conta`).text(response.message);
 					}
