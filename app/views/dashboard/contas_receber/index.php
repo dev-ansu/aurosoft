@@ -121,6 +121,12 @@ $csrf = App::_csrf();
 	'today' => $today,
 	'csrf' => $csrf,
 ]) ?>
+<?php component("/ContasReceber/Parcelar", [
+	'formasPgto' => $formasPgto,
+	'frequencias' => $frequencias,
+	'today' => $today,
+	'csrf' => $csrf,
+]) ?>
 
 
 
@@ -231,6 +237,17 @@ $csrf = App::_csrf();
 		}
 		
 		$("#baixarParcelaModal").modal("show");
+	}
+	const parcelar = (conta)=>{
+		const json = JSON.parse(conta);
+
+		for(let i in json){
+			if(i !== 'data_pgto'){
+				$(`#${i}_parcelar`).val(json[i]);				
+			}
+		}
+		
+		$("#parcelarModal").modal("show");
 	}
 
 

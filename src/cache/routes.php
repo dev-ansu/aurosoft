@@ -585,6 +585,20 @@
         2 => 'app\\middlewares\\CSRFMiddleware',
       ),
     ),
+    '/api/contasreceber/parcelar' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\ContasReceberController',
+        1 => 'parcelar',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+        2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
     '/api/recuperarsenha' => 
     array (
       'action' => 

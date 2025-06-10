@@ -19,6 +19,7 @@ use app\requests\ContasReceber\ContasReceberRequest;
 use app\services\ContasReceber\ContasReceberService;
 use app\requests\ContasReceber\ContasReceberFiltroRequest;
 use app\requests\ContasReceber\ContasReceberArquivoRequest;
+use app\requests\ContasReceber\ParcelarContaRequest;
 
 class ContasReceberController{
 
@@ -104,7 +105,8 @@ class ContasReceberController{
         foreach($contas_receber as $conta_receber){
             // $conta_receber->created_at = (new DateTime($conta_receber->created_at))->format('d/m/Y');
             extract(json_decode(json_encode($conta_receber), true));
-            
+            // $residuos = $this->contasReceberService->fetchAllByKey('id_ref', $conta_receber->id)->toArray();
+            // $residuosData = json_encode($residuos['data']);
             $botoes = null;
             $hrefDelete = route("/api/contasreceber/delete");
             $valor = "R$ " . number_format($valor, 2, ',', '.');
@@ -205,7 +207,7 @@ class ContasReceberController{
             
 
             $valorTotal = $subtotal ?? $valor;
-            
+            $referenciaString = $referencia ? " ($referencia)":"";
             $valorTotal = "R$ " . number_format($valorTotal, 2, ',','.');
             
             $html.= <<<HTML
@@ -214,7 +216,7 @@ class ContasReceberController{
                         <td>
                             <label class="cursor-pointer" for="seletor-{$id}">
                                 <input type="checkbox" id="seletor-{$id}" class="form-check-input" onchange="selecionar(`{$id}`)">
-                                {$descricao}
+                                {$descricao}{$referenciaString}
                             </label>
                         </td>
                         <td>{$valorTotal}</td>
@@ -466,7 +468,7 @@ class ContasReceberController{
             }
             return $res->json([
                 'error' => true,
-                'message' => 'Ocorreu um erro ao salvar os dados. Por favor, contate o administrador.',
+                'message' => 'Ocorreu um erro ao salvar os dados. Por favor, contate o administrador.' . $e->getMessage(),
                 'issues' => [],
             ]);
         }
@@ -492,6 +494,26 @@ class ContasReceberController{
         return $res->json($response->toArray());
     }
 
+
+    public function parcelar(Request $req, Response $res){
+        $request = $req->post()->validate(ParcelarContaRequest::class);
+
+        
+        if($request['error'] == true){
+            return $res->json([
+                'error' => true,
+                'message' => 'Verifique os dados e tente novamente.',
+                'issues' => $request['issues'],
+            ]);
+        }
+
+        $data = $request['issues'];
+
+        $response = $this->contasReceberService->parcelar($data);
+
+        return $res->json($response->toArray());
+
+    }
 
 
     public function delete(int $id, Response $res){

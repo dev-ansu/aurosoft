@@ -7,7 +7,9 @@ use app\core\Model;
 use app\facade\App;
 use app\services\Frequencias\FrequenciasService;
 use app\services\Usuarios\UsuariosService;
+use DateInterval;
 use DateTime;
+use DateTimeZone;
 use Frequencias;
 
 class ContasReceberService extends Model{
@@ -54,6 +56,19 @@ class ContasReceberService extends Model{
 
         return ServiceResponse::success('ok', $query->fetchAll());
     }
+    
+    public function fetchAllByKey($key, $value): ServiceResponse
+    {
+        $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
+            LEFT JOIN formas_pagamento fp ON fp.id = {$this->table}.forma_pgto
+            LEFT JOIN frequencias f ON f.id = {$this->table}.frequencia WHERE {$key} = :{$key} AND deleted_at IS NULL ORDER BY vencimento
+        ";
+        $query = $this->connection()->prepare($sql);
+        $query->execute([$key => $value]);
+
+        return ServiceResponse::success('ok', $query->fetchAll());
+    }
+
     public function fetchAllAbertas(): ServiceResponse
     {
         $sql = "SELECT {$this->table}.*, f.frequencia as nome_frequencia, fp.nome as forma_pagamento, fp.taxa as taxa_forma_pgto FROM {$this->table} 
@@ -151,26 +166,8 @@ class ContasReceberService extends Model{
         return ServiceResponse::success('ok', $query->fetchAll());
     }
 
-    public function baixar($data){
-        $find = $this->find('id', $data['id']);
-
-        if(!$find) return ServiceResponse::error("Conta não encontrada.", null);
-
-        $valorConta = $find->valor;
-
-        if($data['valor'] <= 0) return ServiceResponse::error("O valor da conta precisa ser maior que zero.", null);
-        if($data['valor'] > $valorConta) return ServiceResponse::error("O valor a ser pago não pode ser superior ao valor da conta. O valor da conta é: R$ {$find->valor}.", null);
+    private function baixarContaAMenor($data, $find){
         
-        $subtotal = ($valorConta - $data['desconto']) + ($data['multa'] + $data['juros'] + $data['taxa']);
-      
-
-        $data['subtotal'] = $subtotal;
-        $data['usuario_pgto'] = App::authSession()->get()->id;
-        $data['pago'] = 1;
-  
-
-        if($data['valor'] < $valorConta){
-
             $subtotal = ($data['valor'] - $data['desconto']) + ($data['multa'] + $data['juros'] + $data['taxa']);
             
             $data['subtotal'] = $subtotal;
@@ -201,35 +198,38 @@ class ContasReceberService extends Model{
 
                 $this->columns = [...$this->columns, 'id_ref'];
 
-                $desc = null;
-                
-                $referencia = $this->find('id_ref', $find->id);
-                
-                if($find->id_ref){
-                    $referencia = $this->find('id_ref', $find->id_ref);
-                }
-                
+                $referencia = $this->find('id_ref', $find->id_ref);
+                                
                 $valor = floatval($find->valor) - floatval($data['valor']);
 
                 if($referencia){
                     $valor = floatval($referencia->valor) - floatval($data['valor']);
-                    $desc = $referencia->descricao;
-                }else{
-                    $desc = "(Resíduo) " . $find->descricao;
+                 }
+
+                 $frequencia = $find->frequencia;
+                $id_ref = $find->id;
+                
+                if($referencia && property_exists($referencia, 'id_ref')) {
+                    $id_ref = $referencia->id_ref;
                 }
+                if($referencia && property_exists($referencia, 'frequencia')) {
+                    $id_ref = $referencia->frequencia;
+                }
+
                
                 $insert = $this->insert([
-                    'descricao' => $desc,
+                    'descricao' => $find->descricao,
                     'cliente' => $find->cliente,
                     'valor' => $valor,
                     'vencimento' => $find->vencimento,
                     'data_pgto' => null,
                     'data_lanc' => (new DateTime())->format('Y-m-d H:i:s'),
                     'forma_pgto' => null,
-                    'frequencia' => $find->frequencia,
+                    'frequencia' => $frequencia,
                     'arquivo' => $find->arquivo,
+                    'referencia' => 'Resíduo',
                     'observacao' => $find->observacao,
-                    'id_ref' => $find->id,
+                    'id_ref' => $id_ref,
                     'subtotal' => 0.00,
                     'usuario_lanc' => App::authSession()->get()->id,
                 ]);
@@ -245,15 +245,100 @@ class ContasReceberService extends Model{
             if($update) return ServiceResponse::success('Conta baixada com sucesso!', $data);
 
             
-            }catch(\Exception $e){
-                $this->connection()->rollBack();
-                return ServiceResponse::error("Erro na transação: " . $e->getMessage(), $data);
+        }catch(\Exception $e){
+            $this->connection()->rollBack();
+            return ServiceResponse::error("Erro na transação: " . $e->getMessage(), $data);
+        }
+    }
+
+    public function parcelar($data){
+        $find = $this->find('id', $data['id']);
+
+
+        if(!$find) return ServiceResponse::error("Conta não encontrada.", null);
+
+        $frequencia = (new FrequenciasService())->find('id', $data['frequencia']);
+
+        if(!$frequencia) return ServiceResponse::error("Frequência não encontrada.", null);
+
+        $trash = $this->delete('id', $data['id']);
+
+        $dias = $frequencia->dias;
+        $qtdParcelas = $data['qtd_parcelas'];
+        $valor = $find->valor / $qtdParcelas;
+        $i = 1;
+        
+        $vencimentoBase = new DateTime($find->vencimento);
+
+        while($i <= $qtdParcelas){
+            $vencimento = clone $vencimentoBase;
+
+                // Se for frequência mensal (30 dias), tratamos de forma especial
+            if($dias == 30 || $dias == 31) {
+                $vencimento->add(new DateInterval('P' . $i . 'M')); // Adiciona meses
+            }elseif($dias == 180){
+                $vencimento->add(new DateInterval('P' . ($i * 6) . 'M')); // Adiciona anos
             }
-            
+            elseif($dias == 360) {
+                $vencimento->add(new DateInterval('P' . ($i * 12) . 'M')); // Adiciona anos
+            }
+            // Para outras frequências (diária, semanal, quinzenal, bimestral, etc.)
+            else {
+                $vencimento->add(new DateInterval('P' . ($i * $dias) . 'D')); // Adiciona dias exatos
+            }
+             
+             $this->insert([
+                'descricao' => $find->descricao,
+                'cliente' => $find->cliente,
+                'valor' => $valor,
+                'vencimento' => $vencimento->format('Y-m-d'),
+                'data_pgto' => null,
+                'data_lanc' => (new DateTime())->format('Y-m-d H:i:s'),
+                'forma_pgto' => null,
+                'frequencia' => null,
+                'arquivo' => $find->arquivo,
+                'observacao' => $find->observacao,
+                'referencia' => null,
+                'id_ref' => $find->id_ref,
+                'subtotal' => $find->subtotal,
+                'usuario_lanc' => App::authSession()->get()->id,
+            ]);
+
+            $i++;
+        }
+
+
+        if($trash){
+            return ServiceResponse::success('Conta parcelada com sucesso.', $data);
+        }
+
+        return ServiceResponse::error("A conta não foi parcelada.", null);
+
+    }
+
+    public function baixar($data){
+        $find = $this->find('id', $data['id']);
+
+        if(!$find) return ServiceResponse::error("Conta não encontrada.", null);
+
+        $valorConta = $find->valor;
+
+        if($data['valor'] <= 0) return ServiceResponse::error("O valor da conta precisa ser maior que zero.", null);
+        if($data['valor'] > $valorConta) return ServiceResponse::error("O valor a ser pago não pode ser superior ao valor da conta. O valor da conta é: R$ {$find->valor}.", null);
+        
+        $subtotal = ($valorConta - $data['desconto']) + ($data['multa'] + $data['juros'] + $data['taxa']);
+      
+
+        $data['subtotal'] = $subtotal;
+        $data['usuario_pgto'] = App::authSession()->get()->id;
+        $data['pago'] = 1;
+  
+
+        if($data['valor'] < $valorConta){
+            return $this->baixarContaAMenor($data, $find);          
         }
         
-        
-        
+            
         try{
 
             $this->connection()->beginTransaction();
@@ -277,32 +362,96 @@ class ContasReceberService extends Model{
                 $this->connection()->rollBack();
                 return ServiceResponse::error("Erro ao atualizar a conta.", $data);
             }
-
+            
             if($find->frequencia){
+           
+                $vencimentoBase = new DateTime($find->vencimento);
+           
                 $frequencia = (new FrequenciasService())->find('id', $find->frequencia);
 
-                $vencimento = date('Y-m-d', strtotime("{$frequencia->dias} days", strtotime($find->vencimento)));
+                $dias = $frequencia->dias;
 
-                $insert = $this->insert([
-                'descricao' => $find->descricao,
-                'cliente' => $find->cliente,
-                'valor' => $find->valor,
-                'vencimento' => $vencimento,
-                'data_pgto' => null,
-                'data_lanc' => (new DateTime())->format('Y-m-d H:i:s'),
-                'forma_pgto' => null,
-                'frequencia' => $find->frequencia,
-                'arquivo' => $find->arquivo,
-                'observacao' => $find->observacao,
-                'referencia' => $find->referencia,
-                'subtotal' => $find->subtotal,
-                'usuario_lanc' => App::authSession()->get()->id,
-            ]);
+                $vencimento = clone $vencimentoBase;
+
+                // Se for frequência mensal (30 dias), tratamos de forma especial
+                if($dias == 30 || $dias == 31) {
+                    $vencimento->add(new DateInterval('P' . 1 . 'M')); // Adiciona meses
+                }elseif($dias == 180){
+                    $vencimento->add(new DateInterval('P' . 6 . 'M')); // Adiciona anos
+                }
+                elseif($dias == 360) {
+                    $vencimento->add(new DateInterval('P' . 12 . 'M')); // Adiciona anos
+                }
+                // Para outras frequências (diária, semanal, quinzenal, bimestral, etc.)
+                else {
+                    $vencimento->add(new DateInterval('P' . $dias . 'D')); // Adiciona dias exatos
+                }
+
+                $this->columns = [...$this->columns, 'id_ref'];
+
+                $referencia = $this->find('id_ref', $find->id_ref);
+                
+
+                $id_ref = $find->id;
+                
+                if($referencia && property_exists($referencia, 'id_ref')) {
+                    $id_ref = $referencia->id_ref;
+                    $find = $this->find('id', $id_ref);
+
+                    $vencimentoBase = new DateTime($find->vencimento);
+
+                    $vencimento = clone $vencimentoBase;
+
+                    $vencimento->add(new DateInterval('P' . 1 . 'M')); // Adiciona meses
+
+                    $insert = $this->insert([
+                        'descricao' => $find->descricao,
+                        'cliente' => $find->cliente,
+                        'valor' => $find->valor,
+                        'vencimento' => $vencimento->format('Y-m-d'),
+                        'data_pgto' => null,
+                        'data_lanc' => (new DateTime())->format('Y-m-d H:i:s'),
+                        'forma_pgto' => null,
+                        'frequencia' => $find->frequencia,
+                        'arquivo' => $find->arquivo,
+                        'observacao' => $find->observacao,
+                        'referencia' => $find->referencia,
+                        'id_ref' => null,
+                        'subtotal' => null,
+                        'usuario_lanc' => App::authSession()->get()->id,
+                    ]);
+            
+                if (!$insert) {
+                    $this->connection()->rollBack();
+                    return ServiceResponse::error("Erro ao gerar nova conta.", $data);
+                }
+                }else{
+
+                    $insert = $this->insert([
+                        'descricao' => $find->descricao,
+                        'cliente' => $find->cliente,
+                        'valor' => $find->valor,
+                        'vencimento' => $vencimento->format('Y-m-d'),
+                        'data_pgto' => null,
+                        'data_lanc' => (new DateTime())->format('Y-m-d H:i:s'),
+                        'forma_pgto' => null,
+                        'frequencia' => $find->frequencia,
+                        'arquivo' => $find->arquivo,
+                        'observacao' => $find->observacao,
+                        'referencia' => $find->referencia,
+                        'id_ref' => $find->id_ref,
+                        'subtotal' => $find->subtotal,
+                        'usuario_lanc' => App::authSession()->get()->id,
+                    ]);
+
         
-            if (!$insert) {
-                $this->connection()->rollBack();
-                return ServiceResponse::error("Erro ao gerar nova conta.", $data);
-            }
+                    if (!$insert) {
+                        $this->connection()->rollBack();
+                        return ServiceResponse::error("Erro ao gerar nova conta.", $data);
+                    }
+
+                }
+
         }
 
         $this->connection()->commit();
@@ -382,23 +531,36 @@ class ContasReceberService extends Model{
         if($find && $find->pago != null) return ServiceResponse::error("Não é possível atualizar um recebimento já confirmado.", null);
 
          $this->columns = [
-            'descricao',
-            'cliente',
-            'valor',
+            'id',
+            "descricao",
+            "valor",
+            "cliente",
             'vencimento',
-            'data_pgto',
-            'data_lanc',
-            'forma_pgto',
-            'forma_pgto',
-            'frequencia',
-            'arquivo',
-            'observacao',
-            'referencia',
-            'subtotal',
+            "data_pgto",
+            "forma_pgto",
+            "frequencia",
+            "observacao",
+            "arquivo",
             'usuario_lanc',
         ];
+        
+        $data['subtotal'] = $data['valor'];
 
-        return ServiceResponse::success('Olá', $data);
+        if($data['arquivo'] && $find->arquivo){
+            unlink(UPLOAD_DIR . $find->arquivo);
+        }else{
+            $data['arquivo'] = $find->arquivo;
+        }
+        
+        $update = $this->update('id', $data);
+
+        if($update){
+           
+            return ServiceResponse::success('Conta atualizada com sucesso.', $data);
+        }
+
+        return ServiceResponse::error("A conta não foi atualizada.", $data);
+
     }
 
 }

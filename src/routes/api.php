@@ -69,6 +69,7 @@ Router::group([
     $route->post("/contasreceber/insert", [ContasReceberController::class, 'insert'], [CSRFMiddleware::class]);
     $route->post("/contasreceber/patch", [ContasReceberController::class, 'patch'], [CSRFMiddleware::class]);
     $route->post("/contasreceber/baixar", [ContasReceberController::class, 'baixar'], [CSRFMiddleware::class]);
+    $route->post("/contasreceber/parcelar", [ContasReceberController::class, 'parcelar'], [CSRFMiddleware::class]);
 
 
 });
