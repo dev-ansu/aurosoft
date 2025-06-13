@@ -14,7 +14,9 @@ class AuthService extends DBManager{
      */
     public function execute(array $data){
         extract($data);
-        $sql = "SELECT * FROM {$this->table} WHERE email = :email";
+        $sql = "SELECT {$this->table}.*, c.id as cargo_id, c.nome as cargo_nome FROM {$this->table} 
+         LEFT JOIN cargos c ON c.id = {$this->table}.nivel
+         WHERE email = :email";
         $db = $this->connection();
         $prepare = $db->prepare($sql);
         

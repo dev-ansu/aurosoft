@@ -1,6 +1,7 @@
 <?php
 
 use app\controllers\api\AcessosController;
+use app\controllers\api\CargosController;
 use app\controllers\api\ConfigController;
 use app\controllers\api\ContasReceberController;
 use app\controllers\api\FormasPagamentoController;
@@ -70,6 +71,12 @@ Router::group([
     $route->post("/contasreceber/patch", [ContasReceberController::class, 'patch'], [CSRFMiddleware::class]);
     $route->post("/contasreceber/baixar", [ContasReceberController::class, 'baixar'], [CSRFMiddleware::class]);
     $route->post("/contasreceber/parcelar", [ContasReceberController::class, 'parcelar'], [CSRFMiddleware::class]);
+
+    // Rotas de cargos
+    $route->get("/cargos", [CargosController::class, 'index']);
+    $route->get("/cargos/delete/{id:\d+}", [CargosController::class, 'delete']);
+    
+    $route->post("/cargos/insert", [CargosController::class, 'insert']);
 
 
 });

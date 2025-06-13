@@ -1,6 +1,7 @@
 <?php
 
 use app\controllers\dashboard\AcessosController;
+use app\controllers\dashboard\CargosController;
 use app\controllers\dashboard\ContasPagarController;
 use app\controllers\dashboard\ContasReceberController;
 use app\controllers\dashboard\FormasPagamentoController;
@@ -37,7 +38,7 @@ Router::group([
     $route->get("/contasapagar", [ContasPagarController::class, 'index']);
 
     //------ ROTAS DE CARGOS -----//
-    $route->get("/cargos", []);
+    $route->get("/cargos", [CargosController::class, 'index']);
 
     //------ ROTAS DE FUNCIONÁRIOS -------//
     $route->get('/funcionarios', []);

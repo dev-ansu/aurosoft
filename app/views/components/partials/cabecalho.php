@@ -190,7 +190,7 @@ $session = App::authSession()->get();
 									<span class="prfil-img"><img src="<?= @$session->foto ? uploaded(@$session->foto):asset("/images/sem-foto.jpg") ?>" alt="" width="50px" height="50px"> </span> 
 									<div class="user-name esc">
 										<p><?= @$session->nome ?></p>
-										<span><?= @$session->nivel ?></span>
+										<span><?= @$session->cargo_nome ?></span>
 									</div>
 									<i class="fa fa-angle-down lnr"></i>
 									<i class="fa fa-angle-up lnr"></i>

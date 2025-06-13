@@ -115,11 +115,12 @@ use app\services\PermissionService;
 						
 
 						<div class="col-md-6">							
-								<label>Nível</label>
-								<select class="form-control" name="nivel" id="nivel">
-								  <option>Administrador</option>
-								  <option>Comum</option>
-								</select>							
+							<label>Nível</label>
+							<select class="form-control" name="nivel" id="nivel">
+								<?php foreach($cargos as $cargo): ?>
+									<option value="<?= $cargo->id ?>"><?= $cargo->nome ?></option>
+								<?php endforeach; ?>
+							</select>							
 						</div>
 
 

@@ -83,10 +83,15 @@ class UsuariosService extends Model{
         $columns = array_filter($this->columns, function($item){
             return $item !== 'senha';
         });
- 
-        $columns = array_values($columns);
- 
-        $users = $this->all($columns);
+        
+        $columns = "{$this->table}." . implode(",{$this->table}.", array_values($columns));
+   
+
+        $sql = "SELECT {$columns}, c.id as cargo_id, c.nome as cargo_nome FROM {$this->table} LEFT JOIN cargos c ON c.id = {$this->table}.nivel";
+        
+        $stmt = $this->connection()->prepare($sql);
+        $stmt->execute();
+        $users = $stmt->fetchAll();
 
         return ServiceResponse::success('', $users);
     }

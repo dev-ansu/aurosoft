@@ -8,7 +8,7 @@ class PermissionService{
     public static function has(string $permission): bool{
         $user = App::authSession()->get();
          
-        if($user->nivel == "Administrador"){
+        if($user->cargo_id == 1){
             return true;
         }
 
@@ -23,7 +23,7 @@ class PermissionService{
         
         $user = App::authSession()->get();
 
-        if($user->nivel == "Administrador"){
+        if($user->cargo_id == 1){
             return true;
         }
             

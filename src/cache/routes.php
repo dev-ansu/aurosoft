@@ -105,6 +105,41 @@
         1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
+    '/dashboard/cargos' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\dashboard\\CargosController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/dashboard/funcionarios' => 
+    array (
+      'action' => 
+      array (
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/dashboard/fornecedores' => 
+    array (
+      'action' => 
+      array (
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
     '/' => 
     array (
       'action' => 
@@ -326,6 +361,32 @@
       'action' => 
       array (
         0 => 'app\\controllers\\api\\ContasReceberController',
+        1 => 'delete',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/api/cargos' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\CargosController',
+        1 => 'index',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
+      ),
+    ),
+    '/api/cargos/delete/{id:\\d+}' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\CargosController',
         1 => 'delete',
       ),
       'middlewares' => 
@@ -597,6 +658,19 @@
         0 => 'app\\middlewares\\AuthMiddleware',
         1 => 'app\\middlewares\\RoleMiddleware',
         2 => 'app\\middlewares\\CSRFMiddleware',
+      ),
+    ),
+    '/api/cargos/insert' => 
+    array (
+      'action' => 
+      array (
+        0 => 'app\\controllers\\api\\CargosController',
+        1 => 'insert',
+      ),
+      'middlewares' => 
+      array (
+        0 => 'app\\middlewares\\AuthMiddleware',
+        1 => 'app\\middlewares\\RoleMiddleware',
       ),
     ),
     '/api/recuperarsenha' => 
