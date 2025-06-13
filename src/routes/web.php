@@ -35,6 +35,15 @@ Router::group([
     //------ ROTAS FINANCEIRO --------//
     $route->get("/contasareceber", [ContasReceberController::class, 'index']);
     $route->get("/contasapagar", [ContasPagarController::class, 'index']);
+
+    //------ ROTAS DE CARGOS -----//
+    $route->get("/cargos", []);
+
+    //------ ROTAS DE FUNCIONÁRIOS -------//
+    $route->get('/funcionarios', []);
+
+    //----- ROTAS DE FORNECEDORES -------//
+    $route->get("/fornecedores", []);
 });
 
 

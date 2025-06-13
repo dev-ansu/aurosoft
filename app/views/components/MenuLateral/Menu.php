@@ -33,6 +33,8 @@ use app\services\PermissionService;
                 <ul class="treeview-menu">
                     <?php if(PermissionService::has('dashboard/usuarios')): ?>
                         <li><a href="<?= route("/dashboard.usuarios") ?>"><i class="fa fa-angle-right"></i> Usuários</a></li>
+                        <li><a href="<?= route("/dashboard.funcionarios") ?>"><i class="fa fa-angle-right"></i> Funcionários</a></li>
+                        <li><a href="<?= route("/dashboard.fornecedores") ?>"><i class="fa fa-angle-right"></i> Fornecedores</a></li>
                     <?php endif; ?>
                 </ul>
             </li>
@@ -59,6 +61,9 @@ use app\services\PermissionService;
                     
                     <?php if(PermissionService::has('dashboard/frequencias')): ?>
                         <li><a href="<?= route("/dashboard.frequencias") ?>"><i class="fa fa-angle-right"></i> Frequências</a></li>
+                    <?php endif; ?>
+                    <?php if(PermissionService::has('dashboard/frequencias')): ?>
+                        <li><a href="<?= route("/dashboard.cargos") ?>"><i class="fa fa-angle-right"></i> Cargos</a></li>
                     <?php endif; ?>
                     
                 </ul>

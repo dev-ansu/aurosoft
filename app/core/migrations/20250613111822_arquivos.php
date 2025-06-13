@@ -6,7 +6,7 @@ use Phinx\Migration\AbstractMigration;
 
 final class Arquivos extends AbstractMigration
 {
-    public function run(): void{
+   public function up(): void{
         $table = $this->table("arquivos");
 
         $table

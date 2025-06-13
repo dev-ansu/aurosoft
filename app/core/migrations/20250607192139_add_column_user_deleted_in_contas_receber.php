@@ -12,12 +12,15 @@ final class AddColumnUserDeletedInContasReceber extends AbstractMigration
                 ->addColumn('user_deleted', 'integer', ['null' => true, 'signed' => false])
                 ->addForeignKey('user_deleted', 'usuarios', 'id', [
                     'delete' => 'RESTRICT',
-                    'update' => 'RESTRICT'
+                    'update' => 'RESTRICT',
+                    'constraint' => 'fk_user_deleted_contas_receber'
                 ])
         ->save();
     }
 
     public function down(): void{
-        $this->table('contas_receber')->removeColumn("user_deleted")->save(); 
+        $table = $this->table('contas_receber');
+        $table->dropForeignKey('user_deleted','fk_user_deleted_contas_receber')->save();
+        $table->removeColumn("user_deleted")->save(); 
     }
 }
