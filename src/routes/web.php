@@ -44,6 +44,7 @@ Router::group([
 
     //----- ROTAS DE FORNECEDORES -------//
     $route->get("/fornecedores", []);
+
 });
 
 
