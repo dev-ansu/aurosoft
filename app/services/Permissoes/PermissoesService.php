@@ -8,7 +8,7 @@ use app\services\acessos\AcessosService;
 class PermissoesService extends Model{
 
     protected string $table = 'permissoes';
-    protected array $columns = ['id', 'usuario_id', 'permissao'];
+    protected array $columns = ['id', 'cargo_id', 'permissao'];
 
     public function __construct(string | null $env = '')
     {
@@ -28,11 +28,11 @@ class PermissoesService extends Model{
     public function fetchUsuarioPermissoes(int $id_usuario, int $id_permissao): ServiceResponse
     {
        $sql = 'SELECT * FROM permissoes 
-       WHERE usuario_id = :usuario_id AND permissao = :id_permissao';
+       WHERE cargo_id = :cargo_id AND permissao = :id_permissao';
        $stmt = $this->connection()->prepare($sql);
 
        $exec = $stmt->execute([
-        'usuario_id' => $id_usuario,
+        'cargo_id' => $id_usuario,
         'id_permissao' => $id_permissao
        ]) ;
 
@@ -44,11 +44,11 @@ class PermissoesService extends Model{
     public function fetchUsuarioPermissoesByUsuario(int $id_usuario): ServiceResponse
     {
        $sql = 'SELECT * FROM permissoes 
-       WHERE usuario_id = :usuario_id ';
+       WHERE cargo_id = :cargo_id ';
        $stmt = $this->connection()->prepare($sql);
 
        $exec = $stmt->execute([
-        'usuario_id' => $id_usuario,
+        'cargo_id' => $id_usuario,
        ]) ;
 
        $permissoesPorUsuario = $stmt->fetchAll();
@@ -61,11 +61,11 @@ class PermissoesService extends Model{
        $sql = 'SELECT acessos.nome, acessos.chave, acessos.grupo_id, grupo_acessos.nome as nome_grupo, pagina FROM permissoes 
        LEFT JOIN acessos ON acessos.id = permissoes.permissao
        LEFT JOIN grupo_acessos ON grupo_acessos.id = acessos.grupo_id
-       WHERE usuario_id = :usuario_id ';
+       WHERE cargo_id = :cargo_id ';
        $stmt = $this->connection()->prepare($sql);
 
        $exec = $stmt->execute([
-        'usuario_id' => $id_usuario,
+        'cargo_id' => $id_usuario,
        ]) ;
 
        $permissoesPorUsuario = $stmt->fetchAll();
@@ -75,19 +75,19 @@ class PermissoesService extends Model{
 
 
     public function insert($data){
-        $sql = "SELECT * FROM {$this->table} WHERE usuario_id =:usuario_id AND permissao = :permissao";
+        $sql = "SELECT * FROM {$this->table} WHERE cargo_id =:cargo_id AND permissao = :permissao";
         $stmt = $this->connection()->prepare($sql);
         $stmt->execute($data);
         $result = $stmt->fetch();
 
         if($result){
-            $deleteSql = "DELETE FROM {$this->table} WHERE usuario_id =:usuario_id AND permissao = :permissao";
+            $deleteSql = "DELETE FROM {$this->table} WHERE cargo_id =:cargo_id AND permissao = :permissao";
             $stmt = $this->connection()->prepare($deleteSql);
             $stmt->execute($data);
             return ServiceResponse::success('Permissão removida com sucesso.', null);
         }
 
-        $this->columns = ['usuario_id', 'permissao'];
+        $this->columns = ['cargo_id', 'permissao'];
         
         $created = $this->create($data);
 
@@ -96,28 +96,28 @@ class PermissoesService extends Model{
 
     public function insertAllPermissoes($data){
 
-        $sql = "SELECT * FROM {$this->table} WHERE usuario_id =:usuario_id";
+        $sql = "SELECT * FROM {$this->table} WHERE cargo_id =:cargo_id";
         $stmt = $this->connection()->prepare($sql);
         $stmt->execute([
-            'usuario_id' => $data
+            'cargo_id' => $data
         ]);
         $result = $stmt->fetchAll();
 
         if($result){
-            $deleteSql = "DELETE FROM {$this->table} WHERE usuario_id =:usuario_id";
+            $deleteSql = "DELETE FROM {$this->table} WHERE cargo_id =:cargo_id";
             $stmt = $this->connection()->prepare($deleteSql);
             $stmt->execute([
-                'usuario_id' => $data
+                'cargo_id' => $data
             ]);
         }
 
         $acessos = (new AcessosService())->fetchAll()->toArray();
-        $this->columns = ['usuario_id', 'permissao'];
+        $this->columns = ['cargo_id', 'permissao'];
 
             
         foreach($acessos['data'] as $acesso){
             $created = $this->create([
-                'usuario_id' => $data,
+                'cargo_id' => $data,
                 'permissao' => $acesso->id,
             ]);
         }

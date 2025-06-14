@@ -18,14 +18,14 @@ class InserirPermissoes extends RequestValidation implements RequestValidationCo
 
     public function rules(): array{
         return [
-            'usuario_id' => 'required|notNull',
+            'cargo_id' => 'required|notNull',
             'permissao_id' => 'required|notNull',
         ];
     }
     
     public function messages(): array{
         return [
-            'usuario_id.notNull' => "O id do usuário é obrigatório.",
+            'cargo_id.notNull' => "O id do usuário é obrigatório.",
             'permissao_id.notNull' => "O id da permissão é obrigatório.",
         ];
     }

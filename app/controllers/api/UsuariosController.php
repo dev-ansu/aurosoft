@@ -52,19 +52,7 @@ class UsuariosController extends Controller{
             $classe_ativo = $ativo === "Sim" ? "#c4c4c4":"";
             $hrefDelete = route("/api/usuarios/delete");
             
-            if($user->cargo_nome !== "Administrador"){
-                if((PermissionService::has('api/permissoes'))){
-                    $permissoesButton = <<<HTML
-                    <big>
-                        <a href="#" onclick='definirPermissoes("{$id}", "{$nome}")' title="Definir permissões">
-                            <i class="fa fa-lock" style="color: blue; margin-left:3px"></i>
-                        </a>
-                    </big>
-                    HTML;
-                }
-            }else{
-                $permissoesButton = '';
-            }
+
             $botoes = null;
 
 
@@ -135,7 +123,6 @@ class UsuariosController extends Controller{
                         <td>{$created_at}</td>
                         <td>
                             {$botoes}
-                            {$permissoesButton}
                         </td>
                     </tr>
                 HTML;

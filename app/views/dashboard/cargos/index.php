@@ -71,6 +71,8 @@ use app\services\PermissionService;
 
 <?php if(PermissionService::has('api/cargos/patch')): ?>
 
+<?php component("/ModalPermissoes/Modal"); ?>
+
 <script>
 	const editarCargos = ($user)=>{
 		$(document).ready(()=>{

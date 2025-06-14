@@ -7,7 +7,7 @@ class RouteCollection{
 
     private array $routes = [];
 
-    public function add(string $method, string $route, array $action, array $middlewares = []):void{
+    public function add(string $method, string $route, array $action, array $middlewares = [], ?string $description = null):void{
 
         $method = strtoupper($method);
 
@@ -18,6 +18,8 @@ class RouteCollection{
         $this->routes[$method][$route] = [
             'action' => $action,
             'middlewares' => $middlewares,
+            'description'  => $description,
+            'key'          => ltrim($route, '/'), 
         ];
 
     }

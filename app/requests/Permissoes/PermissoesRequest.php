@@ -24,7 +24,7 @@ class PermissoesRequest extends RequestValidation implements RequestValidationCo
     
     public function messages(): array{
         return [
-            'id.notNull' => "O id do usuário é obrigatório.",
+            'id.notNull' => "O id do cargo é obrigatório.",
         ];
     }
 

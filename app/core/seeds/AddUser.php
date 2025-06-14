@@ -21,7 +21,7 @@ class AddUser extends AbstractSeed
                 'nome' => 'Anderson',
                 'email' => 'anderson@gmail.com',
                 'senha' => password_hash('123', PASSWORD_DEFAULT),
-                'nivel' => 'Administrador',
+                'nivel' => 1,
                 'ativo' => 'Sim',
                 'telefone' => '558599999999',
                 'rua' => 'ali',

@@ -49,9 +49,10 @@ class LoginController{
             session_regenerate_id(true);
 
             
-            $permissoes = $this->permissoesService->fetchUsuarioPermissoesByUsuarioWithChave($user->id)->toArray()['data'];
+            $permissoes = $this->permissoesService->fetchUsuarioPermissoesByUsuarioWithChave($user->nivel)->toArray()['data'];
 
-            
+        
+    
             $user->permissoes = $permissoes;
 
             $gruposPermissao = [];

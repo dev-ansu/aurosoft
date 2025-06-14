@@ -15,12 +15,12 @@ class Router{
         return self::$collection;
     }
     
-    public static function get(string $route, array $action, array $middlewares = []):void{
-        self::init()->add('GET', $route, $action, $middlewares);
+    public static function get(string $route, array $action, array $middlewares = [], ?string $description = null):void{
+        self::init()->add('GET', $route, $action, $middlewares, $description);
     }
 
-    public static function post(string $route, array $action, array $middlewares = []): void{
-        self::init()->add('POST', $route, $action, $middlewares);
+    public static function post(string $route, array $action, array $middlewares = [], ?string $description = null): void{
+        self::init()->add('POST', $route, $action, $middlewares, $description);
     }
 
     /**
@@ -125,7 +125,7 @@ class Router{
 
         foreach($routes as $method => $routesByMethod){
             foreach($routesByMethod as $route => $actionData){
-                $collection->add($method, $route, $actionData['action'], $actionData['middlewares']);
+                $collection->add($method, $route, $actionData['action'], $actionData['middlewares'], $actionData['description'] ?? null);
             }
         }
 

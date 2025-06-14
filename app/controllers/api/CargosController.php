@@ -50,6 +50,19 @@ class CargosController{
                 </big>
                 HTML;
             }
+
+            $permissoesButton = null;
+        
+            if((PermissionService::has('api/permissoes'))){
+                $permissoesButton = <<<HTML
+                <big>
+                    <a href="#" onclick='definirPermissoes("{$id}", "{$nome}")' title="Definir permissões">
+                        <i class="fa fa-lock" style="color: blue; margin-left:3px"></i>
+                    </a>
+                </big>
+                HTML;
+            }
+            
             
             if(PermissionService::has('api/cargos/delete')){   
                 $hrefDelete = route("/api/cargos/delete");
@@ -83,6 +96,7 @@ class CargosController{
                         <td>{$nome}</td>
                         <td>
                             {$botoes}
+                            {$permissoesButton}
                         </td>
                     </tr>
                 HTML;
@@ -134,8 +148,25 @@ class CargosController{
     }
 
     public function delete(int $id, Response $res){
+        
+        if($id === 1 || $id === 2){
+            $response = $this->cargosService->find('id', $id);
+            if(strtolower($response->nome) === "cliente" || strtolower($response->nome) === 'administrador'){
+                return $res->json([
+                    'error' => true,
+                    'message' => "Não é possível excluir os cargos padrões."
+                ]);
+                exit;
+            }
+            return $res->json([
+                'error' => true,
+                'message' => "Não é possível excluir os cargos padrões."
+            ]);
+            exit;
+        }
+
         $response = $this->cargosService->trash('id', $id);
-   
+        
         return $res->json($response->toArray());
     }
     

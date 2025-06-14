@@ -103,6 +103,7 @@ const ativar = (url)=>{
                 const json = JSON.parse(response);
                 if(json.error == false){
                     notyf.success(json.message)
+                    listar();
                 }else{
                     notyf.error(json.message)
                 }

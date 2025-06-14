@@ -49,8 +49,8 @@ Router::group([
 });
 
 
-Router::get("/", [ControllersHomeController::class, 'index']);
+Router::get("/", [ControllersHomeController::class, 'index'], description:'Página de login do Aurosoft.');
 Router::get("/teste", [TesteController::class, 'index']);
 
-Router::post("/login", [LoginController::class, 'index'], [CSRFMiddleware::class]);
-Router::get("/logout", [LoginController::class, 'logout']);
+Router::post("/login", [LoginController::class, 'index'], [CSRFMiddleware::class], description:'Realiza a autenticação do usuário no Aurosoft.');
+Router::get("/logout", [LoginController::class, 'logout'], description:'Realiza o logout do usuário no Aurosoft.');

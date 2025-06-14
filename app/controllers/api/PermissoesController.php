@@ -144,7 +144,7 @@ class PermissoesController extends Controller{
 
         $data = $validated['issues'];
         $response = $this->permissoesService->insert([
-            'usuario_id' => $data['usuario_id'],
+            'cargo_id' => $data['cargo_id'],
             'permissao' => $data['permissao_id']
         ]);
         
