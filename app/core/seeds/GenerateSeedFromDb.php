@@ -25,6 +25,23 @@ class GenerateSeedFromDb extends AbstractSeed
         $seedContent .= "{\n";
         $seedContent .= "    public function run():void\n";
         $seedContent .= "    {\n";
+        $seedContent .= "
+                    \$data = [
+                    [
+                        'nome' => 'Cadastros'
+                    ],
+                    [
+                        'nome' => 'Pessoas'
+                    ],
+                    [
+                        'nome' => 'Financeiro'
+                    ]
+                ];
+                \$rows = \$this->fetchAll('SELECT * FROM grupo_acessos');
+                if(count(\$rows) === 0){
+                    \$this->table('grupo_acessos')->insert(\$data)->save();
+                }
+        ";
         $seedContent .= "        \$rawData = " . var_export($rows2, true) . ";\n";
         $seedContent .= "\$data = array_map(function (\$item) {
             return array_filter(\$item, function (\$key) {

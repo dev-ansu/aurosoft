@@ -6,6 +6,7 @@ class Acessos extends AbstractSeed
 {
     public function run():void
     {
+
         $rawData = array (
   0 => 
   array (
