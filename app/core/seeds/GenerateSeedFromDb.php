@@ -16,6 +16,23 @@ class GenerateSeedFromDb extends AbstractSeed
      */
     public function run(): void
     {
+
+        $data = [
+            [
+                'nome' => 'Cadastros'
+            ],
+            [
+                'nome' => 'Pessoas'
+            ],
+            [
+                'nome' => 'Financeiro'
+            ]
+        ];
+        $rows = $this->fetchAll('SELECT * FROM grupo_acessos');
+        if(count($rows) === 0){
+            $this->table('grupo_acessos')->insert($data)->save();
+        }
+        
         $rows = $this->fetchAll("SELECT * FROM acessos");
         $rows2 = json_decode(json_encode($rows), true);
         // Gerar o conteúdo do seed

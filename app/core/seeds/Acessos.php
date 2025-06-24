@@ -7,7 +7,22 @@ class Acessos extends AbstractSeed
     public function run():void
     {
 
-        $rawData = array (
+                    $data = [
+                    [
+                        'nome' => 'Cadastros'
+                    ],
+                    [
+                        'nome' => 'Pessoas'
+                    ],
+                    [
+                        'nome' => 'Financeiro'
+                    ]
+                ];
+                $rows = $this->fetchAll('SELECT * FROM grupo_acessos');
+                if(count($rows) === 0){
+                    $this->table('grupo_acessos')->insert($data)->save();
+                }
+                $rawData = array (
   0 => 
   array (
     'id' => 1,
